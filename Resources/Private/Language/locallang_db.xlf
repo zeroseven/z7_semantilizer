@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" product-name="z7_semantilizer">
+		<header/>
+		<body>
+			<trans-unit id="tt_content.header_type">
+				<source>Type</source>
+			</trans-unit>
+			<trans-unit id="tt_content.header_type.0">
+				<source>None</source>
+			</trans-unit>
+			<trans-unit id="tt_content.header_type.1">
+				<source>1</source>
+			</trans-unit>
+			<trans-unit id="tt_content.header_type.2">
+				<source>2</source>
+			</trans-unit>
+			<trans-unit id="tt_content.header_type.3">
+				<source>3</source>
+			</trans-unit>
+			<trans-unit id="tt_content.header_layout">
+				<source>Layout</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

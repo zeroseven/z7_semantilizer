@@ -1,0 +1,4 @@
+##################################################
+# Add template paths
+##################################################
+lib.contentElement.layoutRootPaths.156587902 = EXT:z7_semantilizer/Resources/Private/Partials/Header

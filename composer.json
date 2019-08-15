@@ -1,0 +1,16 @@
+{
+  "name": "zeroseven/z7-semantilizer",
+  "type": "typo3-cms-extension",
+  "description": "Gives more semantic control for the headlines of the content elements.",
+  "authors": [
+    {
+      "name": "Raphael Thanner",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Zeroseven\\Semantilizer\\": "Classes"
+    }
+  }
+}
