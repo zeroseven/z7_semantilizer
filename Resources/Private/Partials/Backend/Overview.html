@@ -3,14 +3,14 @@
 	<f:be.infobox title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
 
 		<p>{f:translate(key:'overview.description', extensionName: 'z7_semantilizer')}</p>
-		
+
 		<ul class="headings">
 			 <f:for each="{contentElements}" as="contentElement">
 				<f:if condition="{contentElement.header_type}">
 					<li class="headings__item--type{contentElement.header_type}">
 						<a href="{contentElement.editLink}">
 							{contentElement.header}
-							<f:if condition="{contentElement.error}">ERROR</f:if>
+							<f:if condition="{contentElement.error}"><span style="color:red">ERROR</span></f:if>
 						</a>
 
 						<f:if condition="{contentElement.moveUpLink}">
@@ -37,8 +37,16 @@
 		</ul>
 
 		<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
-			Validate
-			<core:icon identifier="{f:if(condition:validationEnabled, then:'actions-edit-hide', else:'actions-edit-unhide')}" size="small" />
+			<f:if condition="{validationEnabled}">
+				<f:then>
+					{f:translate(key:'overview.disableValidation', extensionName: 'z7_semantilizer')}
+					<core:icon identifier="actions-edit-hide" size="small" />
+				</f:then>
+				<f:else>
+					{f:translate(key:'overview.enableValidation', extensionName: 'z7_semantilizer')}
+					<core:icon identifier="actions-edit-unhide" size="small" />
+				</f:else>
+			</f:if>
 		</a>
 
 		<style>
@@ -69,6 +77,6 @@
 				content: '------';
 			}
 		</style>
-	</p>
+	</f:be.infobox>
 
 </html>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" product-name="z7_semantilizer">
+		<header/>
+		<body>
+			<trans-unit id="overview.title">
+				<source>Überschriften-Struktur</source>
+			</trans-unit>
+			<trans-unit id="overview.description">
+				<source>Dies ist eine semantische Übersicht der verwendeten Überschriften auf der aktuellen Seite</source>
+			</trans-unit>
+			<trans-unit id="overview.enableValidation">
+				<source>Prüfung deaktivieren</source>
+			</trans-unit>
+			<trans-unit id="overview.disableValidation">
+				<source>Struktur prüfen</source>
+			</trans-unit>
+
+			<trans-unit id="notification.1.title">
+				<source>Keine Hauptüberschrift</source>
+			</trans-unit>
+			<trans-unit id="notification.1.description">
+				<source>Für den korrekten semantischen Aufbau von Überschriften wird eine Hauptüberschrift (Typ 1) benötigt.</source>
+			</trans-unit>
+
+			<trans-unit id="notification.2.title">
+				<source>Mehrere Hauptüberschriften</source>
+			</trans-unit>
+			<trans-unit id="notification.2.description">
+				<source>In den aller meisten Fällen sollte nur eine Hauptüberschrift pro Seite verwendet werden</source>
+			</trans-unit>
+
+			<trans-unit id="notification.3.title">
+				<source>Positionierung der Hauptüberschriften</source>
+			</trans-unit>
+			<trans-unit id="notification.3.description">
+				<source>Das erste Überschrift der Seite sollte als Hauptüberschrift ausgezeichnet werden.</source>
+			</trans-unit>
+
+			<trans-unit id="notification.4.title">
+				<source>Ungültige Auszeichnung</source>
+			</trans-unit>
+			<trans-unit id="notification.4.description">
+				<source>Die semantische Auszeichnung der Überschriften scheint nicht korrekt zu sein.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
