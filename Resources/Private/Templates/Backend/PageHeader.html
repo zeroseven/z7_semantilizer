@@ -1,74 +1,13 @@
-<f:be.infobox title="Headline Strucure" state="{state}">
-	<ul class="headings">
-		 <f:for each="{contentElements}" as="contentElement">
-			<f:if condition="{contentElement.header_type}">
-				<li class="headings__item--type{contentElement.header_type}">
-					<a href="{contentElement.editLink}">
-						{contentElement.header}
-					</a>
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
 
-					<f:if condition="{contentElement.moveUpLink}">
-						<f:then>
-							<a href="{contentElement.moveUpLink}"><</a>
-						</f:then>
-						<f:else>
-							<span><</span>
-						</f:else>
-					</f:if>
-
-					<f:if condition="{contentElement.moveDownLink}">
-						<f:then>
-							<a href="{contentElement.moveDownLink}">></a>
-						</f:then>
-						<f:else>
-							<span>></span>
-						</f:else>
-					</f:if>
-
-				</li>
-			</f:if>
+	<f:if condition="{notifications}">
+		<!-- Render the notifications -->
+		<f:for each="{notifications}" as="notification">
+			{f:render(partial: 'Notification', arguments: '{notification:notification}')}
 		</f:for>
-	</ul>
+	</f:if>
 
-	<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
-		Validate
-		<core:icon identifier="{f:if(condition:validationEnabled, then:'actions-edit-hide', else:'actions-edit-unhide')}" size="small" />
-	</a>
+	<!-- Render the overview -->
+	{f:render(partial: 'Overview', arguments: '{_all}')}
 
-	<style>
-		.headings {
-			margin: 0 0 2em 0;
-			padding: 0;
-			list-style: none;
-		}
-
-		.headings__item--type1,
-		.headings__item--type2,
-		.headings__item--type3,
-		.headings__item--type4,
-		.headings__item--type5,
-		.headings__item--type6 {
-			display: block;
-			margin: 0;
-			padding: 0;
-		}
-
-		.headings__item--type1:before {
-			content: '--';
-		}
-		.headings__item--type2:before {
-			content: '----';
-		}
-		.headings__item--type3:before {
-			content: '------';
-		}
-	</style>
-</f:be.infobox>
-
-<f:be.infobox title="Warning" state="{state.warning}">
-	Ooops
-</f:be.infobox>
-
-<f:be.infobox title="Nice!" state="{state.ok}">
-	Looks good!
-</f:be.infobox>
+</html>

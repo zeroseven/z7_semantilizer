@@ -32,19 +32,30 @@ class DrawHeaderHook
     /** @var bool */
     protected $validationEnabled = true;
 
-    /** @var string */
-    private const validationSessionKey = 'semantilizer_validation';
+    /** @var array */
+    protected $notifications = [];
 
     /** @var string */
-    private const table = 'tt_content';
+    private const VALIDATION_SESSION_KEY = 'semantilizer_validation';
+
+    /** @var string */
+    private const TABLE = 'tt_content';
 
     /** @var array */
-    private const states = [
+    private const STATES = [
         'notice' => FlashMessage::NOTICE,
         'info' => FlashMessage::INFO,
         'ok' => FlashMessage::OK,
         'warning' => FlashMessage::WARNING,
         'error' => FlashMessage::ERROR
+    ];
+
+    /** @var array */
+    private const ERROR_CODES = [
+        'missing_h1' => 1,
+        'double_h1' => 2,
+        'wrong_ordered_h1' => 3,
+        'unexpected_heading' => 4,
     ];
 
     public function __construct()
@@ -59,14 +70,14 @@ class DrawHeaderHook
 
     private function setValidationCookie(): bool
     {
-        $validate = GeneralUtility::_GP(self::validationSessionKey);
+        $validate = GeneralUtility::_GP(self::VALIDATION_SESSION_KEY);
 
         if($validate === null) {
-            $sessionData = $this->backendUser->getSessionData(self::validationSessionKey, 1);
+            $sessionData = $this->backendUser->getSessionData(self::VALIDATION_SESSION_KEY, 1);
             return $sessionData === null ? $this->validationEnabled : (bool)$sessionData;
         }
 
-        $this->backendUser->setSessionData(self::validationSessionKey, (int)$validate);
+        $this->backendUser->setSessionData(self::VALIDATION_SESSION_KEY, (int)$validate);
 
         return (bool)$validate;
 
@@ -75,9 +86,8 @@ class DrawHeaderHook
     private function getToggleValidationLink(): string
     {
         return $this->uriBuilder->buildUriFromRoute('web_layout', [
-            self::validationSessionKey => (int)!$this->validationEnabled,
+            self::VALIDATION_SESSION_KEY => (int)!$this->validationEnabled,
             'id' => $this->pageInfo['uid'],
-            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
         ]);
     }
 
@@ -85,7 +95,7 @@ class DrawHeaderHook
     {
         return $this->uriBuilder->buildUriFromRoute('record_edit', [
             'edit' => [
-                $table ?: self::table => [
+                $table ?: self::TABLE => [
                     $uid => 'edit'
                 ]
             ],
@@ -101,7 +111,7 @@ class DrawHeaderHook
         $highestType = $lowestType;
 
         // Get the highest type from the tca configuration
-        foreach ($GLOBALS['TCA'][self::table]['columns']['header_type']['config']['items'] as $item) {
+        foreach ($GLOBALS['TCA'][self::TABLE]['columns']['header_type']['config']['items'] as $item) {
             $highestType = (int)max($highestType, $item[1]);
         }
 
@@ -111,7 +121,7 @@ class DrawHeaderHook
         }
 
         return BackendUtility::getLinkToDataHandlerAction(
-            sprintf('&data[%s][%d][%s]=%d', self::table, $row['uid'], 'header_type', $newType),
+            sprintf('&data[%s][%d][%s]=%d', self::TABLE, $row['uid'], 'header_type', $newType),
             GeneralUtility::getIndpEnv('REQUEST_URI')
         );
     }
@@ -119,12 +129,15 @@ class DrawHeaderHook
     protected function collectContentElements(): array
     {
 
+        // The retuning array
+        $contentElements = [];
+
         // Get instance of the query builder
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::table);
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE);
 
         // Get results from the database
-        return $queryBuilder->select('uid', 'header', 'header_type')
-            ->from(self::table)
+        $results = $queryBuilder->select('uid', 'header', 'header_type')
+            ->from(self::TABLE)
             ->where(
                 // $queryBuilder->expr()->gt('header_type', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->lt('header_layout', $queryBuilder->createNamedParameter(100, \PDO::PARAM_INT)),
@@ -134,14 +147,83 @@ class DrawHeaderHook
             ->execute()
             ->fetchAll() ?: [];
 
-        // Convert the keys to lowerCamelCase
-        //foreach ($results as $index => $row) {
-        //    foreach ($row as $key => $value) {
-        //        $contentElements[$index][GeneralUtility::underscoredToLowerCamelCase($key)] = $value;
-        //    }
-        //}
-        //
-        //return $contentElements;
+
+        // Add some links and attributes to the content elements
+        $i = 0;
+        foreach ($results as $contentElement) {
+
+            // Pass all data
+            $contentElements[$i] = $contentElement;
+
+            // Add some additional stuff
+            $contentElements[$i]['error'] = false;
+            $contentElements[$i]['editLink'] = $this->getEditRecordUrl($contentElement['uid']);
+            $contentElements[$i]['moveUpLink'] = $this->getMoveHierarchyLink($contentElement, 1);
+            $contentElements[$i]['moveDownLink'] = $this->getMoveHierarchyLink($contentElement, -1);
+
+            // Convert the keys to lowerCamelCase
+            //foreach ($row as $key => $value) {
+                //$contentElements[$i][GeneralUtility::underscoredToLowerCamelCase($key)] = $value;
+            //}
+
+            $i++;
+        }
+
+        return $contentElements;
+    }
+
+    protected function registerNotification(string $errorCode, string $state, array $contentElements = null): void
+    {
+        $this->notifications[] = [
+            'key' => self::ERROR_CODES[$errorCode],
+            'state' => self::STATES[$state],
+            'contentElements' => $contentElements
+        ];
+
+        if(is_array($contentElements)) {
+            foreach ($contentElements as $index => $contentElement) {
+                $this->contentElements[$index]['error'] = true;
+            }
+        }
+    }
+
+    protected function setErrorNotifications(): void
+    {
+
+        $mainHeadingContents = [];
+        $lastHeadingType = 0;
+
+        foreach ($this->contentElements as $index => $contentElement) {
+
+            // Get the header_type
+            $type = (int)$contentElement['header_type'];
+
+            if($type > 0) {
+
+                // Check for the h1
+                if ($type === 1) {
+                    $mainHeadingContents[$index] = $contentElement;
+                }
+
+                // Check if the headlines are nested in the right way
+                if ($lastHeadingType > 0 && $type > $lastHeadingType + 1) {
+                    $this->registerNotification('unexpected_heading', 'warning', [$index => $contentElement]);
+                }
+
+                // Store the last headline type
+                $lastHeadingType = $type;
+            }
+        }
+
+        // Check the length of the main heading(s)
+        if(count($mainHeadingContents) === 0) {
+            $this->registerNotification('missing_h1', 'error');
+        } elseif (count($mainHeadingContents) > 1) {
+            $this->registerNotification('double_h1', 'warning', $mainHeadingContents);
+        } elseif ((int)array_keys($mainHeadingContents)[0] > 0) {
+            $this->registerNotification('wrong_ordered_h1', 'warning', $mainHeadingContents);
+        }
+
     }
 
     /**
@@ -150,20 +232,19 @@ class DrawHeaderHook
     public function render(): string
     {
 
-        // Add edit links
-        foreach ($this->contentElements as $index => $contentElement) {
-            $this->contentElements[$index]['editLink'] = $this->getEditRecordUrl($contentElement['uid']);
-            $this->contentElements[$index]['moveUpLink'] = $this->getMoveHierarchyLink($contentElement, 1);
-            $this->contentElements[$index]['moveDownLink'] = $this->getMoveHierarchyLink($contentElement, -1);
+        // Validate
+        if($this->validationEnabled) {
+            $this->setErrorNotifications();
         }
 
         // One or more contents are found
         $view = GeneralUtility::makeInstance(StandaloneView::class);
         $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html'));
+        $view->setPartialRootPaths([0 => GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Partials/Backend')]);
         $view->assignMultiple([
-            'state' => self::states['notice'],
             'contentElements' => $this->contentElements,
             'validationEnabled' => $this->validationEnabled,
+            'notifications' => $this->notifications,
             'toggleValidationLink' => $this->getToggleValidationLink()
         ]);
 

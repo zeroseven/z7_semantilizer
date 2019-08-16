@@ -1,0 +1,17 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:be.infobox title="Headline key:{notification.key}" state="{notification.state}">
+		<p>content: {notification.key}</p>
+
+		<f:if condition="{notification.contentElements}">
+			Betroffene Content-Elemente:
+
+			<ul>
+				<f:for each="{notification.contentElements}" as="contentElement">
+					<li>
+						<a href="{contentElement.editLink}">{contentElement.header}</a>
+					</li>
+				</f:for>
+			</ul>
+		</f:if>
+	</f:be.infobox>
+</html>
