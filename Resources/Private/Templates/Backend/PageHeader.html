@@ -1,5 +1,4 @@
-<f:be.infobox title="Headline Strucure" state="{state.notice}">
-
+<f:be.infobox title="Headline Strucure" state="{state}">
 	<ul class="headings">
 		 <f:for each="{contentElements}" as="contentElement">
 			<f:if condition="{contentElement.header_type}">
@@ -31,9 +30,14 @@
 		</f:for>
 	</ul>
 
+	<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
+		Validate
+		<core:icon identifier="{f:if(condition:validationEnabled, then:'actions-edit-hide', else:'actions-edit-unhide')}" size="small" />
+	</a>
+
 	<style>
 		.headings {
-			margin: 0;
+			margin: 0 0 2em 0;
 			padding: 0;
 			list-style: none;
 		}
@@ -59,5 +63,12 @@
 			content: '------';
 		}
 	</style>
+</f:be.infobox>
 
+<f:be.infobox title="Warning" state="{state.warning}">
+	Ooops
+</f:be.infobox>
+
+<f:be.infobox title="Nice!" state="{state.ok}">
+	Looks good!
 </f:be.infobox>
