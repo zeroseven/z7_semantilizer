@@ -10,6 +10,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Frontend\Page\PageRepository;
 
 class DrawHeaderHook
 {
@@ -237,6 +238,19 @@ class DrawHeaderHook
      */
     public function render(): string
     {
+
+        // Abort on some doktypes
+        if(in_array((int)$this->pageInfo['doktype'], [
+            PageRepository::DOKTYPE_LINK,
+            PageRepository::DOKTYPE_SHORTCUT,
+            PageRepository::DOKTYPE_BE_USER_SECTION,
+            PageRepository::DOKTYPE_MOUNTPOINT,
+            PageRepository::DOKTYPE_SPACER,
+            PageRepository::DOKTYPE_SYSFOLDER,
+            PageRepository::DOKTYPE_RECYCLER
+        ], true)) {
+            return '';
+        }
 
         // Validate
         $this->setErrorNotifications();
