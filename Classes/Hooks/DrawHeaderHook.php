@@ -172,7 +172,7 @@ class DrawHeaderHook
         return $contentElements;
     }
 
-    protected function registerNotification(string $errorCode, string $state, array $contentElements = null): void
+    protected function registerNotification(string $errorCode, array $contentElements = null, string $state = 'warning'): void
     {
         $this->notifications[] = [
             'key' => self::ERROR_CODES[$errorCode],
@@ -191,6 +191,7 @@ class DrawHeaderHook
     {
 
         $mainHeadingContents = [];
+        $unexpectedHeadingContents = [];
         $lastHeadingType = 0;
 
         foreach ($this->contentElements as $index => $contentElement) {
@@ -207,7 +208,7 @@ class DrawHeaderHook
 
                 // Check if the headlines are nested in the right way
                 if ($lastHeadingType > 0 && $type > $lastHeadingType + 1) {
-                    $this->registerNotification('unexpected_heading', 'warning', [$index => $contentElement]);
+                    $unexpectedHeadingContents[$index] = $contentElement;
                 }
 
                 // Store the last headline type
@@ -217,11 +218,16 @@ class DrawHeaderHook
 
         // Check the length of the main heading(s)
         if(count($mainHeadingContents) === 0) {
-            $this->registerNotification('missing_h1', 'error');
+            $this->registerNotification('missing_h1', $this->contentElements);
         } elseif (count($mainHeadingContents) > 1) {
-            $this->registerNotification('double_h1', 'warning', $mainHeadingContents);
+            $this->registerNotification('double_h1', $mainHeadingContents);
         } elseif ((int)array_keys($mainHeadingContents)[0] > 0) {
-            $this->registerNotification('wrong_ordered_h1', 'warning', $mainHeadingContents);
+            $this->registerNotification('wrong_ordered_h1', $mainHeadingContents);
+        }
+
+        // Add a notification for the unexpected ones
+        if(!empty($unexpectedHeadingContents)) {
+            $this->registerNotification('unexpected_heading', $unexpectedHeadingContents);
         }
 
     }
@@ -233,9 +239,7 @@ class DrawHeaderHook
     {
 
         // Validate
-        if($this->validationEnabled) {
-            $this->setErrorNotifications();
-        }
+        $this->setErrorNotifications();
 
         // One or more contents are found
         $view = GeneralUtility::makeInstance(StandaloneView::class);

@@ -6,21 +6,34 @@
 			<trans-unit id="overview.title">
 				<source>Überschriften-Struktur</source>
 			</trans-unit>
+			<trans-unit id="overview.empty">
+				<source>Auf dieser Seite wurden noch keine Überschriften erstellt.</source>
+			</trans-unit>
 			<trans-unit id="overview.description">
 				<source>Dies ist eine semantische Übersicht der verwendeten Überschriften auf der aktuellen Seite</source>
 			</trans-unit>
 			<trans-unit id="overview.enableValidation">
-				<source>Prüfung deaktivieren</source>
+				<source>Headline-Check aktivieren</source>
 			</trans-unit>
 			<trans-unit id="overview.disableValidation">
-				<source>Struktur prüfen</source>
+				<source>Headline-Check deaktivieren</source>
+			</trans-unit>
+			<trans-unit id="overview.problems">
+				<source>%s Probleme</source>
+			</trans-unit>
+			<trans-unit id="overview.problem">
+				<source>%s Problem</source>
+			</trans-unit>
+
+			<trans-unit id="notification.affectedElements">
+				<source>Betroffene Content-Elemente</source>
 			</trans-unit>
 
 			<trans-unit id="notification.1.title">
 				<source>Keine Hauptüberschrift</source>
 			</trans-unit>
 			<trans-unit id="notification.1.description">
-				<source>Für den korrekten semantischen Aufbau von Überschriften wird eine Hauptüberschrift (Typ 1) benötigt.</source>
+				<source>Für diese Seite ist aktuell keine Hauptüberschrift vorhanden. Für einen korrekten semantischen Aufbau wird eine Hauptüberschrift (Typ 1) benötigt.</source>
 			</trans-unit>
 
 			<trans-unit id="notification.2.title">
@@ -34,7 +47,7 @@
 				<source>Positionierung der Hauptüberschriften</source>
 			</trans-unit>
 			<trans-unit id="notification.3.description">
-				<source>Das erste Überschrift der Seite sollte als Hauptüberschrift ausgezeichnet werden.</source>
+				<source>Die erste Überschrift der Seite sollte als Hauptüberschrift (Typ 1) ausgezeichnet werden.</source>
 			</trans-unit>
 
 			<trans-unit id="notification.4.title">

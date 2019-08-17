@@ -1,19 +1,30 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
 	<f:be.infobox title="{f:translate(key:'notification.{notification.key}.title', extensionName: 'z7_semantilizer')}" state="{notification.state}">
-		<p>{f:translate(key:'notification.{notification.key}.description', extensionName: 'z7_semantilizer')}</p>
+		<div class="semantilizer-notification">
+			<p>{f:translate(key:'notification.{notification.key}.description', extensionName: 'z7_semantilizer')}</p>
 
-		<f:if condition="{notification.contentElements}">
-			<div style="font-size: 0.8em; border-top: 1px solid rgba(0,0,0,0.4); padding-top: 10px; margin-top: 10px;">
-				Betroffene Content-Elemente:
+			<f:if condition="{notification.contentElements}">
+				<div class="semantilizer-notification__affecteds">
+					<p>{f:translate(key:'notification.affectedElements', extensionName: 'z7_semantilizer')}:</p>
 
-				<ul>
-					<f:for each="{notification.contentElements}" as="contentElement">
-						<li>
-							<a href="{contentElement.editLink}">{contentElement.header}</a>
-						</li>
-					</f:for>
-				</ul>
-			</div>
-		</f:if>
+					<ul>
+						<f:for each="{notification.contentElements}" as="contentElement">
+							<li>
+								<a href="{contentElement.editLink}">{contentElement.header}</a>
+							</li>
+						</f:for>
+					</ul>
+				</div>
+			</f:if>
+		</div>
 	</f:be.infobox>
+
+	<style>
+		.semantilizer-notification__affecteds {
+			font-size: 0.9em;
+			border-top: 1px solid rgba(0,0,0,0.2);
+			padding-top: 1em;
+			margin-top: 1em;
+		}
+	</style>
 </html>

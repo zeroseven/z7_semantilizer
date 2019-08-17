@@ -1,82 +1,115 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
 
-	<f:be.infobox title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
+	<f:be.infobox disableIcon="{f:if(condition:validationEnabled, then:0, else:1)}" iconName="{f:if(condition:notifications, then:'exclamation', else:'check')}" title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
 
-		<p>{f:translate(key:'overview.description', extensionName: 'z7_semantilizer')}</p>
-
-		<ul class="headings">
-			 <f:for each="{contentElements}" as="contentElement">
-				<f:if condition="{contentElement.header_type}">
-					<li class="headings__item--type{contentElement.header_type}">
-						<a href="{contentElement.editLink}">
-							{contentElement.header}
-							<f:if condition="{contentElement.error}"><span style="color:red">ERROR</span></f:if>
-						</a>
-
-						<f:if condition="{contentElement.moveUpLink}">
-							<f:then>
-								<a href="{contentElement.moveUpLink}"><</a>
-							</f:then>
-							<f:else>
-								<span><</span>
-							</f:else>
-						</f:if>
-
-						<f:if condition="{contentElement.moveDownLink}">
-							<f:then>
-								<a href="{contentElement.moveDownLink}">></a>
-							</f:then>
-							<f:else>
-								<span>></span>
-							</f:else>
-						</f:if>
-
-					</li>
-				</f:if>
-			</f:for>
-		</ul>
-
-		<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
-			<f:if condition="{validationEnabled}">
+		<div class="semantilzer">
+			<f:if condition="{contentElements}">
 				<f:then>
-					{f:translate(key:'overview.disableValidation', extensionName: 'z7_semantilizer')}
-					<core:icon identifier="actions-edit-hide" size="small" />
+					<p>{f:translate(key:'overview.description', extensionName: 'z7_semantilizer')}</p>
 				</f:then>
 				<f:else>
-					{f:translate(key:'overview.enableValidation', extensionName: 'z7_semantilizer')}
-					<core:icon identifier="actions-edit-unhide" size="small" />
+					<p>{f:translate(key:'overview.empty', extensionName: 'z7_semantilizer')}</p>
 				</f:else>
 			</f:if>
-		</a>
+
+			<ul class="semantilzer__list">
+				<f:for each="{contentElements}" as="contentElement">
+					<f:if condition="{contentElement.header_type}">
+						<li class="semantilzer__item--type{contentElement.header_type}">
+							<a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:'{validationEnabled} && {contentElement.error}', then:'--error')}">{contentElement.header}</a>
+
+							<f:if condition="{contentElement.moveUpLink}">
+								<f:then>
+									<a href="{contentElement.moveUpLink}"><</a>
+								</f:then>
+								<f:else>
+									<span><</span>
+								</f:else>
+							</f:if>
+
+							<f:if condition="{contentElement.moveDownLink}">
+								<f:then>
+									<a href="{contentElement.moveDownLink}">></a>
+								</f:then>
+								<f:else>
+									<span>></span>
+								</f:else>
+							</f:if>
+
+						</li>
+					</f:if>
+				</f:for>
+			</ul>
+
+			<div class="semantilzer__control">
+				<f:if condition="{validationEnabled}">
+					<f:then>
+						<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
+							{f:translate(key:'overview.disableValidation', extensionName: 'z7_semantilizer')}
+						</a>
+					</f:then>
+					<f:else>
+						<f:if condition="{notifications}">
+							<f:then>
+								<a class="btn btn-warning btn-sm" href="{toggleValidationLink}">
+									{f:translate(key:'overview.enableValidation', extensionName: 'z7_semantilizer')}
+									<f:if condition="{notifications -> f:count()} > 1">
+										<f:then>({f:translate(key:'overview.problems', extensionName: 'z7_semantilizer', arguments: '{0:"{notifications -> f:count()}"}')})</f:then>
+										<f:else>({f:translate(key:'overview.problem', extensionName: 'z7_semantilizer', arguments: '{0:"{notifications -> f:count()}"}')})</f:else>
+									</f:if>
+								</a>
+							</f:then>
+							<f:else>
+								<a class="btn btn-info btn-sm" href="{toggleValidationLink}">
+									{f:translate(key:'overview.enableValidation', extensionName: 'z7_semantilizer')}
+								</a>
+							</f:else>
+						</f:if>
+					</f:else>
+				</f:if>
+			</div>
+		</div>
 
 		<style>
-			.headings {
+			.semantilzer__list {
 				margin: 0 0 2em 0;
-				padding: 0;
 				list-style: none;
 			}
 
-			.headings__item--type1,
-			.headings__item--type2,
-			.headings__item--type3,
-			.headings__item--type4,
-			.headings__item--type5,
-			.headings__item--type6 {
+			.semantilzer__item--type1,
+			.semantilzer__item--type2,
+			.semantilzer__item--type3,
+			.semantilzer__item--type4,
+			.semantilzer__item--type5,
+			.semantilzer__item--type6 {
 				display: block;
 				margin: 0;
 				padding: 0;
 			}
 
-			.headings__item--type1:before {
+			.semantilzer__item--type1:before {
 				content: '--';
 			}
-			.headings__item--type2:before {
+
+			.semantilzer__item--type2:before {
 				content: '----';
 			}
-			.headings__item--type3:before {
+
+			.semantilzer__item--type3:before {
 				content: '------';
+			}
+
+			.semantilzer__link {
+				text-decoration: none;
+			}
+
+			.semantilzer__link--error {
+				text-decoration: underline dotted red;
+			}
+
+			.semantilzer__link--error:hover {
+				text-decoration: underline solid red;
 			}
 		</style>
 	</f:be.infobox>
-
 </html>
