@@ -27,8 +27,6 @@
 								</f:else>
 							</f:if>
 
-							<a href="#" onclick="scrollToContentElement(event, {contentElement.uid})">scroll</a>
-
 							<f:if condition="{contentElement.moveDownLink}">
 								<f:then>
 									<a href="{contentElement.moveDownLink}">></a>
@@ -113,29 +111,5 @@
 				text-decoration: underline solid red;
 			}
 		</style>
-
-		<script>
-			var scrollToContentElement = function(event, uid) {
-					let anchor = document.querySelector('[data-uid="' + uid + '"]') || null;
-
-        	if (anchor && typeof Element.prototype.getBoundingClientRect === 'function') {
-					console.log(anchor.getBoundingClientRect().top);
-
-						if(event) {
-							event.preventDefault();
-						}
-
-        		document.querySelector('.module-body').scrollTo({
-        			top: anchor.getBoundingClientRect().top + window.scrollY,
-        			left: 0,
-        			behavior: 'smooth'
-        		});
-
-        		return false;
-        	}
-
-					return true;
-			}
-		</script>
 	</f:be.infobox>
 </html>
