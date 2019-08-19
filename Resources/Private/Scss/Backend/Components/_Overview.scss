@@ -1,13 +1,18 @@
-$overview-indent: 30px;
-$overview-indent-dot-size: 6px;
+$overview-pattern-width: 30px;
+$overview-pattern-height: 24px;
+$overview-pattern-color: #888;
+$overview-pattern-dot-size: 6px;
 $overview-background-color: #fff;
 
 .semantilzer__listwrap {
-    background: url("data:image/svg+xml,%0A%3Csvg viewBox='0 0 #{strip-unit($overview-indent)} 2' xmlns='http://www.w3.org/2000/svg' width='#{strip-unit($overview-indent)}' height='5'%3E%3Ccircle cx='#{strip-unit($overview-indent-dot-size)}' cy='1' r='0.5' fill='%23000'/%3E%3C/svg%3E%0A") repeat top left $overview-background-color;
-    border-top: 1em solid $overview-background-color;
-    border-bottom: 1em solid $overview-background-color;
-    border-left: 1em solid $overview-background-color;
-    margin: 0 0 2em 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 #{strip-unit($overview-pattern-width)} #{strip-unit($overview-pattern-height)}' xmlns='http://www.w3.org/2000/svg' width='#{strip-unit($overview-pattern-width)}' height='#{strip-unit($overview-pattern-height)}'%3E%3Cline x1='0' y1='12' x2='#{strip-unit($overview-pattern-width)}' y2='12' stroke-linecap='round' stroke-width='2' stroke-dasharray='0,6' stroke='#{str-replace(quote($overview-pattern-color), '#', '%23')}' /%3E%3Cline x1='6' y1='0' x2='6' y2='#{strip-unit($overview-pattern-height)}' stroke-linecap='round' stroke-width='2' stroke-dasharray='0,6' stroke='#{str-replace(quote($overview-pattern-color), '#', '%23')}' /%3E%3C/svg%3E%0A") repeat top left $overview-background-color;
+    border-style: solid;
+    border-color: $overview-background-color;
+    border-width: 1em;
+
+    // This will fake a border
+    outline: 1px solid rgba($overview-pattern-color, 0.5);
+    margin: 1px 1px 2em 1px;
 }
 
 .semantilzer__list {
@@ -20,41 +25,33 @@ $overview-background-color: #fff;
 %semantilzer__item {
     display: block;
     margin: 0;
-    padding: 0.25em 0 0.25em $overview-indent-dot-size + 10px;
-    //line-height: $overview-indent;
-    //height: $overview-indent;
+    padding: 0 1em 0 $overview-pattern-dot-size + 10px;
+    line-height: $overview-pattern-height;
+    height: $overview-pattern-height;
     background: $overview-background-color;
     position: relative;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 
     &:before {
         content: '';
-        width: $overview-indent-dot-size;
-        height: $overview-indent-dot-size;
+        width: $overview-pattern-dot-size;
+        height: $overview-pattern-dot-size;
         position: absolute;
         left: 0;
         top: 50%;
-        border-radius: $overview-indent-dot-size / 2;
-        margin-top: $overview-indent-dot-size / - 2;
-        background: #888;
-        box-shadow: 0 0 0 $overview-indent-dot-size $overview-background-color;
+        border-radius: $overview-pattern-dot-size / 2;
+        margin-top: $overview-pattern-dot-size / - 2;
+        background: $overview-pattern-color;
+        box-shadow: 0 0 0 8px $overview-background-color;
         z-index: 1;
-    }
-
-    &:after {
-        content: '';
-        width: 100%;
-        height: 1px;
-        position: absolute;
-        right: 100%;
-        top: 50%;
-        background: url("data:image/svg+xml,%0A%3Csvg viewBox='0 0 5 1' xmlns='http://www.w3.org/2000/svg' width='5' height='1'%3E%3Ccircle cx='1' cy='0.5' r='0.5' fill='%23000'/%3E%3C/svg%3E%0A") repeat top left $overview-background-color;
     }
 }
 
 @for $i from 1 through 6 {
     .semantilzer__item--h#{$i} {
         @extend %semantilzer__item;
-        margin-left: $overview-indent * ($i - 1) + $overview-indent-dot-size / 2;
+        margin-left: $overview-pattern-width * ($i - 1) + $overview-pattern-dot-size / 2;
     }
 }
 

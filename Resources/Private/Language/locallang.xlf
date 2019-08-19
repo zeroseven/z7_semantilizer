@@ -10,7 +10,7 @@
 				<source>Auf dieser Seite wurden noch keine Überschriften erstellt.</source>
 			</trans-unit>
 			<trans-unit id="overview.description">
-				<source>Dies ist eine semantische Übersicht der verwendeten Überschriften auf der aktuellen Seite</source>
+				<source>Dies ist eine semantische Übersicht der verwendeten Überschriften auf der aktuellen Seite:</source>
 			</trans-unit>
 			<trans-unit id="overview.enableValidation">
 				<source>Headline-Check aktivieren</source>
