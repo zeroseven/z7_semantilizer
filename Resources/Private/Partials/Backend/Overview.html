@@ -16,34 +16,36 @@
 				</f:else>
 			</f:if>
 
-			<ul class="semantilzer__list">
-				<f:for each="{contentElements}" as="contentElement">
-					<f:if condition="{contentElement.header_type}">
-						<li class="semantilzer__item--type{contentElement.header_type}">
-							<a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:'{validationEnabled} && {contentElement.error}', then:'--error')}">{contentElement.header}</a>
+			<div class="semantilzer__listwrap">
+				<ul class="semantilzer__list">
+					<f:for each="{contentElements}" as="contentElement">
+						<f:if condition="{contentElement.header_type}">
+							<li class="semantilzer__item--h{contentElement.header_type}">
+								<a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:'{validationEnabled} && {contentElement.error}', then:'--error')}">{contentElement.header}</a>
 
-							<f:if condition="{contentElement.moveUpLink}">
-								<f:then>
-									<a href="{contentElement.moveUpLink}"><</a>
-								</f:then>
-								<f:else>
-									<span><</span>
-								</f:else>
-							</f:if>
+								<f:if condition="{contentElement.moveUpLink}">
+									<f:then>
+										<a href="{contentElement.moveUpLink}"><</a>
+									</f:then>
+									<f:else>
+										<span><</span>
+									</f:else>
+								</f:if>
 
-							<f:if condition="{contentElement.moveDownLink}">
-								<f:then>
-									<a href="{contentElement.moveDownLink}">></a>
-								</f:then>
-								<f:else>
-									<span>></span>
-								</f:else>
-							</f:if>
+								<f:if condition="{contentElement.moveDownLink}">
+									<f:then>
+										<a href="{contentElement.moveDownLink}">></a>
+									</f:then>
+									<f:else>
+										<span>></span>
+									</f:else>
+								</f:if>
 
-						</li>
-					</f:if>
-				</f:for>
-			</ul>
+							</li>
+						</f:if>
+					</f:for>
+				</ul>
+			</div>
 
 			<div class="semantilzer__control">
 				<f:if condition="{validationEnabled}">
@@ -73,47 +75,5 @@
 				</f:if>
 			</div>
 		</div>
-
-		<style>
-			.semantilzer__list {
-				margin: 0 0 2em 0;
-				list-style: none;
-			}
-
-			.semantilzer__item--type1,
-			.semantilzer__item--type2,
-			.semantilzer__item--type3,
-			.semantilzer__item--type4,
-			.semantilzer__item--type5,
-			.semantilzer__item--type6 {
-				display: block;
-				margin: 0;
-				padding: 0;
-			}
-
-			.semantilzer__item--type1:before {
-				content: '--';
-			}
-
-			.semantilzer__item--type2:before {
-				content: '----';
-			}
-
-			.semantilzer__item--type3:before {
-				content: '------';
-			}
-
-			.semantilzer__link {
-				text-decoration: none;
-			}
-
-			.semantilzer__link--error {
-				text-decoration: underline dotted red;
-			}
-
-			.semantilzer__link--error:hover {
-				text-decoration: underline solid red;
-			}
-		</style>
 	</semantilizer:infobox>
 </html>

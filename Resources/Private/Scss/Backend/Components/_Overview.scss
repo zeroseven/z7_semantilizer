@@ -1,0 +1,71 @@
+$overview-indent: 30px;
+$overview-indent-dot-size: 6px;
+$overview-background-color: #fff;
+
+.semantilzer__listwrap {
+    background: url("data:image/svg+xml,%0A%3Csvg viewBox='0 0 #{strip-unit($overview-indent)} 2' xmlns='http://www.w3.org/2000/svg' width='#{strip-unit($overview-indent)}' height='5'%3E%3Ccircle cx='#{strip-unit($overview-indent-dot-size)}' cy='1' r='0.5' fill='%23000'/%3E%3C/svg%3E%0A") repeat top left $overview-background-color;
+    border-top: 1em solid $overview-background-color;
+    border-bottom: 1em solid $overview-background-color;
+    border-left: 1em solid $overview-background-color;
+    margin: 0 0 2em 0;
+}
+
+.semantilzer__list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    overflow: hidden;
+}
+
+%semantilzer__item {
+    display: block;
+    margin: 0;
+    padding: 0.25em 0 0.25em $overview-indent-dot-size + 10px;
+    //line-height: $overview-indent;
+    //height: $overview-indent;
+    background: $overview-background-color;
+    position: relative;
+
+    &:before {
+        content: '';
+        width: $overview-indent-dot-size;
+        height: $overview-indent-dot-size;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        border-radius: $overview-indent-dot-size / 2;
+        margin-top: $overview-indent-dot-size / - 2;
+        background: #888;
+        box-shadow: 0 0 0 $overview-indent-dot-size $overview-background-color;
+        z-index: 1;
+    }
+
+    &:after {
+        content: '';
+        width: 100%;
+        height: 1px;
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        background: url("data:image/svg+xml,%0A%3Csvg viewBox='0 0 5 1' xmlns='http://www.w3.org/2000/svg' width='5' height='1'%3E%3Ccircle cx='1' cy='0.5' r='0.5' fill='%23000'/%3E%3C/svg%3E%0A") repeat top left $overview-background-color;
+    }
+}
+
+@for $i from 1 through 6 {
+    .semantilzer__item--h#{$i} {
+        @extend %semantilzer__item;
+        margin-left: $overview-indent * ($i - 1) + $overview-indent-dot-size / 2;
+    }
+}
+
+.semantilzer__link {
+    text-decoration: none;
+}
+
+.semantilzer__link--error {
+    text-decoration: underline dotted red;
+
+    &:hover {
+        text-decoration: underline solid red;
+    }
+}
