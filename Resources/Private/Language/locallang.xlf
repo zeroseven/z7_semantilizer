@@ -18,11 +18,11 @@
 			<trans-unit id="overview.disableValidation">
 				<source>Headline-Check deaktivieren</source>
 			</trans-unit>
-			<trans-unit id="overview.problems">
-				<source>%s Probleme</source>
+			<trans-unit id="overview.notifications">
+				<source>%s Hinweise</source>
 			</trans-unit>
-			<trans-unit id="overview.problem">
-				<source>%s Problem</source>
+			<trans-unit id="overview.notification">
+				<source>%s Hinweis</source>
 			</trans-unit>
 
 			<trans-unit id="notification.affectedElements">

@@ -11,6 +11,7 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\Page\PageRepository;
+use Zeroseven\Semantilizer\Services\BootstrapColorClassService;
 
 class DrawHeaderHook
 {
@@ -35,6 +36,9 @@ class DrawHeaderHook
 
     /** @var array */
     protected $notifications = [];
+
+    /** @var int */
+    protected $strongestNotificationLevel = FlashMessage::NOTICE;
 
     /** @var string */
     private const VALIDATION_SESSION_KEY = 'semantilizer_validation';
@@ -159,6 +163,9 @@ class DrawHeaderHook
                 $this->contentElements[$index]['error'] = true;
             }
         }
+
+        // Set the strongest notification
+        $this->strongestNotificationLevel = max(self::STATES[$state], $this->strongestNotificationLevel);
     }
 
     protected function setErrorNotifications(): void
@@ -234,6 +241,8 @@ class DrawHeaderHook
         $view->setPartialRootPaths([0 => GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Partials/Backend')]);
         $view->assignMultiple([
             'states' => self::STATES,
+            'strongestNotificationLevel' => $this->strongestNotificationLevel,
+            'strongestNotificationClassname' => BootstrapColorClassService::getClassnameByFlashMessageState($this->strongestNotificationLevel),
             'contentElements' => $this->contentElements,
             'validationEnabled' => $this->validationEnabled,
             'notifications' => $this->notifications,

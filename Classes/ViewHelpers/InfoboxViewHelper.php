@@ -5,16 +5,10 @@ namespace Zeroseven\Semantilizer\ViewHelpers;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use Zeroseven\Semantilizer\Services\BootstrapColorClassService;
 
 class InfoboxViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Be\InfoboxViewHelper
 {
-
-    protected const CLASSNAMES = [
-        self::STATE_INFO => '#6daae0',
-        self::STATE_OK => '#79a548',
-        self::STATE_WARNING => '#e8a33d',
-        self::STATE_ERROR => '#c83c3c'
-    ];
 
     /**
      * Initialize arguments.
@@ -44,7 +38,7 @@ class InfoboxViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Be\InfoboxViewHelpe
             $uniqueId = 'b' . md5(uniqid('box', true));
             $infoBox = sprintf('<div id="%s">%s</div>', $uniqueId, $infoBox);
 
-            if($color = self::CLASSNAMES[$arguments['iconColor']]) {
+            if($color = BootstrapColorClassService::getColorByFlashMessageState($arguments['iconColor'])) {
                 GeneralUtility::makeInstance(PageRenderer::class)->addCssInlineBlock($uniqueId, sprintf('
                     #%s .media-left .fa-circle:before {
                         color: %s;

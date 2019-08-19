@@ -2,7 +2,7 @@
 
 	<semantilizer:infobox
 		disableIcon="{f:if(condition:validationEnabled, then:0, else:1)}"
-		iconColor="{f:if(condition:'{validationEnabled} && {notifications -> f:count()} == 0', then:states.ok, else:states.warning)}"
+		iconColor="{f:if(condition:notifications, then:strongestNotificationLevel, else:states.ok)}"
 		iconName="{f:if(condition:notifications, then:'exclamation', else:'check')}"
 		title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
 
@@ -46,11 +46,11 @@
 					<f:else>
 						<f:if condition="{notifications}">
 							<f:then>
-								<a class="btn btn-warning btn-sm" href="{toggleValidationLink}">
+								<a class="btn btn-{strongestNotificationClassname} btn-sm" href="{toggleValidationLink}">
 									{f:translate(key:'overview.enableValidation', extensionName: 'z7_semantilizer')}
 									<f:if condition="{notifications -> f:count()} > 1">
-										<f:then>({f:translate(key:'overview.problems', extensionName: 'z7_semantilizer', arguments: '{0:"{notifications -> f:count()}"}')})</f:then>
-										<f:else>({f:translate(key:'overview.problem', extensionName: 'z7_semantilizer', arguments: '{0:"{notifications -> f:count()}"}')})</f:else>
+										<f:then>({f:translate(key:'overview.notifications', extensionName: 'z7_semantilizer', arguments: '{0:"{notifications -> f:count()}"}')})</f:then>
+										<f:else>({f:translate(key:'overview.notification', extensionName: 'z7_semantilizer', arguments: '{0:"{notifications -> f:count()}"}')})</f:else>
 									</f:if>
 								</a>
 							</f:then>
