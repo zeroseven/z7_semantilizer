@@ -11,11 +11,12 @@ call_user_func(static function () {
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'default' => 2, // Todo: Here we could use the typoscript constant "styles.content.defaultHeaderType" instead
+                'default' => 2,
                 'range' => [
                     'lower' => 0,
                     'upper' => 6,
                 ],
+                // Todo: Create something like the "hightesType" in the plugin typoscript setupt and create the list automatically
                 'items' => [
                     ['LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.1', 1],
                     ['LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.2', 2],

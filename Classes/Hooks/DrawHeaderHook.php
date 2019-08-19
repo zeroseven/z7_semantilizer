@@ -104,29 +104,6 @@ class DrawHeaderHook
         ]);
     }
 
-    private function getMoveHierarchyLink(array $row, int $move): ?string
-    {
-        $currentType = (int)$row['header_type'];
-        $newType = $move > 0 ? $currentType - 1 : $currentType + 1;
-        $lowestType = 1;
-        $highestType = $lowestType;
-
-        // Get the highest type from the tca configuration
-        foreach ($GLOBALS['TCA'][self::TABLE]['columns']['header_type']['config']['items'] as $item) {
-            $highestType = (int)max($highestType, $item[1]);
-        }
-
-        // Check, if the new type is valid
-        if($newType < $lowestType || $newType > $highestType) {
-            return null;
-        }
-
-        return BackendUtility::getLinkToDataHandlerAction(
-            sprintf('&data[%s][%d][%s]=%d', self::TABLE, $row['uid'], 'header_type', $newType),
-            GeneralUtility::getIndpEnv('REQUEST_URI')
-        );
-    }
-
     protected function collectContentElements(): array
     {
 
@@ -159,9 +136,6 @@ class DrawHeaderHook
             // Add some additional stuff
             $contentElements[$i]['error'] = false;
             $contentElements[$i]['editLink'] = $this->getEditRecordUrl($contentElement['uid']);
-            $contentElements[$i]['moveUpLink'] = $this->getMoveHierarchyLink($contentElement, 1);
-            $contentElements[$i]['moveDownLink'] = $this->getMoveHierarchyLink($contentElement, -1);
-
             // Convert the keys to lowerCamelCase
             //foreach ($row as $key => $value) {
                 //$contentElements[$i][GeneralUtility::underscoredToLowerCamelCase($key)] = $value;

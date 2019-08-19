@@ -1,4 +1,4 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:semantilizer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers" xmlns:semantilizer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" data-namespace-typo3-fluid="true">
 
 	<semantilizer:infobox
 		disableIcon="{f:if(condition:validationEnabled, then:0, else:1)}"
@@ -17,35 +17,22 @@
 			</f:if>
 
 			<f:if condition="{contentElements}">
-				<div class="semantilzer__listwrap">
+				<div class="semantilzer__listwrap" id="js-semantilizer-list">
 					<ul class="semantilzer__list">
 						<f:for each="{contentElements}" as="contentElement">
 							<f:if condition="{contentElement.header_type}">
 								<li class="semantilzer__item--h{contentElement.header_type}">
+									<semantilizer:selectType class="semantilzer__select-type" selected="{contentElement.header_type}" uid="{contentElement.uid}" onchange="var v=this.value;v&&(window.location=v)&&(document.getElementById('js-semantilizer-loader').style.display='block');" />
 									<a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:'{validationEnabled} && {contentElement.error}', then:'--error')}">{contentElement.header}</a>
-
-									<f:if condition="{contentElement.moveUpLink}">
-										<f:then>
-											<a href="{contentElement.moveUpLink}"><</a>
-										</f:then>
-										<f:else>
-											<span><</span>
-										</f:else>
-									</f:if>
-
-									<f:if condition="{contentElement.moveDownLink}">
-										<f:then>
-											<a href="{contentElement.moveDownLink}">></a>
-										</f:then>
-										<f:else>
-											<span>></span>
-										</f:else>
-									</f:if>
-
 								</li>
 							</f:if>
 						</f:for>
 					</ul>
+				</div>
+
+				<!-- The loader -->
+				<div class="ui-block" id="js-semantilizer-loader" style="/*This will be removed by JavaScript*/display: none;">
+					<core:icon identifier="spinner-circle-light" size="large" />
 				</div>
 			</f:if>
 
