@@ -223,7 +223,7 @@ class DrawHeaderHook
         } elseif (count($mainHeadingContents) > 1) {
             $this->registerNotification('double_h1', $mainHeadingContents);
         } elseif ((int)array_keys($mainHeadingContents)[0] > 0) {
-            $this->registerNotification('wrong_ordered_h1', $mainHeadingContents);
+            $this->registerNotification('wrong_ordered_h1', [0 => $this->contentElements[0]] + $mainHeadingContents);
         }
 
         // Add a notification for the unexpected ones

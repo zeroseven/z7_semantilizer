@@ -10,13 +10,13 @@
 				<source>None</source>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.1">
-				<source>1</source>
+				<source>H1</source>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.2">
-				<source>2</source>
+				<source>H2</source>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.3">
-				<source>3</source>
+				<source>H3</source>
 			</trans-unit>
 			<trans-unit id="tt_content.header_layout">
 				<source>Layout</source>

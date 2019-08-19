@@ -33,28 +33,28 @@
 				<source>Keine Hauptüberschrift</source>
 			</trans-unit>
 			<trans-unit id="notification.1.description">
-				<source>Für diese Seite ist aktuell keine Hauptüberschrift vorhanden. Für einen korrekten semantischen Aufbau wird eine Hauptüberschrift (Typ 1) benötigt.</source>
+				<source>Für diese Seite ist aktuell keine Hauptüberschrift vorhanden. Für einen korrekten Aufbau der Überschriften wird eine Hauptüberschrift (Typ: "H1") benötigt.</source>
 			</trans-unit>
 
 			<trans-unit id="notification.2.title">
 				<source>Mehrere Hauptüberschriften</source>
 			</trans-unit>
 			<trans-unit id="notification.2.description">
-				<source>In den aller meisten Fällen sollte nur eine Hauptüberschrift pro Seite verwendet werden</source>
+				<source>Es wird empfohlen nur eine Hauptüberschrift (Typ: "H1") pro Seite zu verwenden.</source>
 			</trans-unit>
 
 			<trans-unit id="notification.3.title">
-				<source>Positionierung der Hauptüberschriften</source>
+				<source>Positionierung der Hauptüberschrift</source>
 			</trans-unit>
 			<trans-unit id="notification.3.description">
-				<source>Die erste Überschrift der Seite sollte als Hauptüberschrift (Typ 1) ausgezeichnet werden.</source>
+				<source>Es wird empfohlen die erste Überschrift der Seite als die Hauptüberschrift (Typ: "H1") auszuzeichnen. Aktuell steht diese an falscher Stelle.</source>
 			</trans-unit>
 
 			<trans-unit id="notification.4.title">
-				<source>Ungültige Auszeichnung</source>
+				<source>Ungültige Überschriften-Hierarchie</source>
 			</trans-unit>
 			<trans-unit id="notification.4.description">
-				<source>Die semantische Auszeichnung der Überschriften scheint nicht korrekt zu sein.</source>
+				<source>Es wurde ein Fehler in der Hierarchie der Überschriften festgestellt. Für eine korrekte semantische Auszeichnung einer Seite soll auf eine H1 eine H2 folgen, nach einer H2 eine H3 usw.</source>
 			</trans-unit>
 		</body>
 	</file>
