@@ -1,6 +1,10 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:semantilizer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" data-namespace-typo3-fluid="true">
 
-	<f:be.infobox disableIcon="{f:if(condition:validationEnabled, then:0, else:1)}" iconName="{f:if(condition:notifications, then:'exclamation', else:'check')}" title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
+	<semantilizer:infobox
+		disableIcon="{f:if(condition:validationEnabled, then:0, else:1)}"
+		iconColor="{f:if(condition:'{validationEnabled} && {notifications -> f:count()} == 0', then:states.ok, else:states.warning)}"
+		iconName="{f:if(condition:notifications, then:'exclamation', else:'check')}"
+		title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
 
 		<div class="semantilzer">
 			<f:if condition="{contentElements}">
@@ -111,5 +115,5 @@
 				text-decoration: underline solid red;
 			}
 		</style>
-	</f:be.infobox>
+	</semantilizer:infobox>
 </html>

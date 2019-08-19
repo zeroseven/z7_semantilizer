@@ -260,6 +260,7 @@ class DrawHeaderHook
         $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html'));
         $view->setPartialRootPaths([0 => GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Partials/Backend')]);
         $view->assignMultiple([
+            'states' => self::STATES,
             'contentElements' => $this->contentElements,
             'validationEnabled' => $this->validationEnabled,
             'notifications' => $this->notifications,
