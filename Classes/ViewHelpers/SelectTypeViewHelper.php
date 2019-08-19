@@ -14,7 +14,8 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
         parent::registerUniversalTagAttributes();
         $this->registerArgument('selected', 'string', 'The element type', true);
         $this->registerArgument('uid', 'int', 'The id of the content element', true);
-        $this->registerArgument('onchange', 'string', 'Add JavaScript for a "onchange" event', true);
+        $this->registerArgument('onchange', 'string', 'Add JavaScript for a "onchange" event', false);
+        $this->registerArgument('section', 'string', 'An anchor to a section', false);
     }
 
     public function render()
@@ -24,7 +25,7 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
 
         // Add some attributes @see parent::registerUniversalTagAttributes()
         foreach (['class', 'dir', 'id', 'lang', 'style', 'title', 'accesskey', 'tabindex', 'onclick', 'onchange'] as $attribute) {
-            if(!empty($attribute)) {
+            if(!empty($this->arguments[$attribute])) {
                 $this->tag->addAttribute($attribute, $this->arguments[$attribute]);
             }
         }
@@ -49,18 +50,18 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
     protected function generateOptions(): string
     {
         $content = '';
-        $requestUrl =  GeneralUtility::getIndpEnv('REQUEST_URI');
+        $requestUrl =  GeneralUtility::getIndpEnv('REQUEST_URI') . ($this->arguments['section'] ? sprintf('#%s', htmlspecialchars($this->arguments['section'])) : '');
 
         foreach(range(1, $this->getHighestType()) as $type) {
 
-            $actionUrl = BackendUtility::getLinkToDataHandlerAction(
+            $selected = $type === $this->arguments['selected'] ? 'selected' : '';
+
+            $actionUrl = $selected ? '' : BackendUtility::getLinkToDataHandlerAction(
                 sprintf('&data[%s][%d][%s]=%d', 'tt_content', $this->arguments['uid'], 'header_type', $type),
                 $requestUrl
             );
 
-            $seleced = $type === $this->arguments['selected'] ? 'selected' : '';
-
-            $content .= sprintf('<option %s value="%s">H%d</option>', $seleced, $actionUrl, $type);
+            $content .= sprintf('<option %s value="%s">H%d</option>', $selected, $actionUrl, $type);
         }
 
         return $content;
