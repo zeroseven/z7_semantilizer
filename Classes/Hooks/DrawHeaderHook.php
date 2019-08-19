@@ -127,21 +127,20 @@ class DrawHeaderHook
 
 
         // Add some links and attributes to the content elements
-        $i = 0;
         foreach ($results as $contentElement) {
 
+            $uid = $contentElement['uid'];
+
             // Pass all data
-            $contentElements[$i] = $contentElement;
+            $contentElements[$uid] = $contentElement;
 
             // Add some additional stuff
-            $contentElements[$i]['error'] = false;
-            $contentElements[$i]['editLink'] = $this->getEditRecordUrl($contentElement['uid']);
+            $contentElements[$uid]['error'] = false;
+            $contentElements[$uid]['editLink'] = $this->getEditRecordUrl($uid);
             // Convert the keys to lowerCamelCase
             //foreach ($row as $key => $value) {
                 //$contentElements[$i][GeneralUtility::underscoredToLowerCamelCase($key)] = $value;
             //}
-
-            $i++;
         }
 
         return $contentElements;
@@ -193,11 +192,11 @@ class DrawHeaderHook
 
         // Check the length of the main heading(s)
         if(count($mainHeadingContents) === 0) {
-            $this->registerNotification('missing_h1', $this->contentElements);
+            $this->registerNotification('missing_h1', $this->contentElements, count($this->contentElements) ? 'error' : 'info');
         } elseif (count($mainHeadingContents) > 1) {
             $this->registerNotification('double_h1', $mainHeadingContents);
-        } elseif ((int)array_keys($mainHeadingContents)[0] > 0) {
-            $this->registerNotification('wrong_ordered_h1', [0 => $this->contentElements[0]] + $mainHeadingContents);
+        } elseif (array_key_first($mainHeadingContents) !== $firstKey = array_key_first($this->contentElements)) {
+            $this->registerNotification('wrong_ordered_h1', [$firstKey => $this->contentElements[$firstKey]] + $mainHeadingContents);
         }
 
         // Add a notification for the unexpected ones
