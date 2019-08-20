@@ -8,17 +8,19 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 class SelectTypeViewHelper extends AbstractTagBasedViewHelper
 {
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
-        parent::registerUniversalTagAttributes();
+
         $this->registerArgument('selected', 'string', 'The element type', true);
         $this->registerArgument('uid', 'int', 'The id of the content element', true);
-        $this->registerArgument('onchange', 'string', 'Add JavaScript for a "onchange" event', false);
-        $this->registerArgument('section', 'string', 'An anchor to a section', false);
+        $this->registerArgument('onchange', 'string', 'Add JavaScript for a "onchange" event');
+        $this->registerArgument('section', 'string', 'An anchor to a section');
+
+        $this->registerUniversalTagAttributes();
     }
 
-    public function render()
+    public function render(): string
     {
 
         $this->tag->setTagName('select');

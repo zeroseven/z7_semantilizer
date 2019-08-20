@@ -13,7 +13,7 @@ class InfoboxViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Be\InfoboxViewHelpe
     /**
      * Initialize arguments.
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
 
@@ -27,7 +27,7 @@ class InfoboxViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Be\InfoboxViewHelpe
      *
      * @return string
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext): string
     {
 
         // Call the "original" box
