@@ -12,6 +12,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
+use Zeroseven\Semantilizer\Services\EnableValidationService;
 
 class DrawHeaderHook
 {
@@ -32,7 +33,7 @@ class DrawHeaderHook
     protected $backendUser;
 
     /** @var bool */
-    protected $validationEnabled = true;
+    protected $validationEnabled = false;
 
     /** @var array */
     protected $notifications = [];
@@ -68,24 +69,20 @@ class DrawHeaderHook
         $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $this->pageInfo = BackendUtility::readPageAccess((int)GeneralUtility::_GP('id'), true);
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-        $this->backendUser = GeneralUtility::makeInstance(BackendUserAuthentication::class);
         $this->contentElements = $this->collectContentElements();
         $this->validationEnabled = $this->setValidationCookie();
     }
 
     private function setValidationCookie(): bool
     {
+
         $validate = GeneralUtility::_GP(self::VALIDATION_SESSION_KEY);
 
         if($validate === null) {
-            $sessionData = $this->backendUser->getSessionData(self::VALIDATION_SESSION_KEY);
-            return $sessionData === null ? $this->validationEnabled : (bool)$sessionData;
+            return EnableValidationService::getState();
         }
 
-        $this->backendUser->setSessionData(self::VALIDATION_SESSION_KEY, (int)$validate);
-
-        return (bool)$validate;
-
+        return EnableValidationService::setState((bool)$validate);
     }
 
     private function getToggleValidationLink(): string
