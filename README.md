@@ -9,4 +9,5 @@ tx_semantilizer.disableOnPages = 42,84
 ## Todo's
 
 * Do something in frontend
+* Translate the locallang files
 * There is currently no support or concept for multi language pages

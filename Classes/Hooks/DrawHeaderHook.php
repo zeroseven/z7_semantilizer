@@ -42,7 +42,7 @@ class DrawHeaderHook
     protected $strongestNotificationLevel = FlashMessage::NOTICE;
 
     /** @var string */
-    private const VALIDATION_SESSION_KEY = 'semantilizer_validation';
+    private const VALIDATION_PARAMETER = 'semantilizer_validation';
 
     /** @var string */
     private const TABLE = 'tt_content';
@@ -69,12 +69,13 @@ class DrawHeaderHook
         $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $this->pageInfo = BackendUtility::readPageAccess((int)GeneralUtility::_GP('id'), true);
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+        $this->validationEnabled = $this->setValidationCookie();
     }
 
     private function setValidationCookie(): bool
     {
 
-        $validate = GeneralUtility::_GP(self::VALIDATION_SESSION_KEY);
+        $validate = GeneralUtility::_GP(self::VALIDATION_PARAMETER);
 
         if($validate === null) {
             return EnableValidationService::getState();
@@ -86,7 +87,7 @@ class DrawHeaderHook
     private function getToggleValidationLink(): string
     {
         return $this->uriBuilder->buildUriFromRoute('web_layout', [
-            self::VALIDATION_SESSION_KEY => (int)!$this->validationEnabled,
+            self::VALIDATION_PARAMETER => (int)!$this->validationEnabled,
             'id' => $this->pageInfo['uid'],
         ]);
     }
@@ -103,7 +104,7 @@ class DrawHeaderHook
         ]);
     }
 
-    protected function collectContentElements(): array
+    protected function collectContentElements(): void
     {
 
         // The retuning array
@@ -140,7 +141,7 @@ class DrawHeaderHook
             }
         }
 
-        return $contentElements;
+        $this->contentElements = $contentElements;
     }
 
     protected function registerNotification(string $errorCode, array $contentElements = null, string $state = 'warning'): void
@@ -208,6 +209,21 @@ class DrawHeaderHook
 
     protected function skipSemantilzer(): bool
     {
+
+        // Skip on some doktypes
+        if(in_array((int)$this->pageInfo['doktype'], [
+            PageRepository::DOKTYPE_LINK,
+            PageRepository::DOKTYPE_SHORTCUT,
+            PageRepository::DOKTYPE_BE_USER_SECTION,
+            PageRepository::DOKTYPE_MOUNTPOINT,
+            PageRepository::DOKTYPE_SPACER,
+            PageRepository::DOKTYPE_SYSFOLDER,
+            PageRepository::DOKTYPE_RECYCLER
+        ], true)) {
+            return false;
+        }
+
+        // Check the TSconfig
         $pageId = (int)GeneralUtility::_GP('id');
         $pagesTsConfig = BackendUtility::getPagesTSconfig($pageId);
 
@@ -225,21 +241,12 @@ class DrawHeaderHook
     {
 
         // Abort on some doktypes
-        if($this->skipSemantilzer() || in_array((int)$this->pageInfo['doktype'], [
-            PageRepository::DOKTYPE_LINK,
-            PageRepository::DOKTYPE_SHORTCUT,
-            PageRepository::DOKTYPE_BE_USER_SECTION,
-            PageRepository::DOKTYPE_MOUNTPOINT,
-            PageRepository::DOKTYPE_SPACER,
-            PageRepository::DOKTYPE_SYSFOLDER,
-            PageRepository::DOKTYPE_RECYCLER
-        ], true)) {
+        if($this->skipSemantilzer()) {
             return '';
         }
 
-        // Get some stuff
-        $this->contentElements = $this->collectContentElements();
-        $this->validationEnabled = $this->setValidationCookie();
+        // Collect the content elements
+        $this->collectContentElements();
 
         // Validate
         $this->setErrorNotifications();
