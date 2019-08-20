@@ -11,7 +11,7 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\Page\PageRepository;
-use Zeroseven\Semantilizer\Services\BootstrapColorClassService;
+use Zeroseven\Semantilizer\Services\BootstrapColorService;
 
 class DrawHeaderHook
 {
@@ -78,7 +78,7 @@ class DrawHeaderHook
         $validate = GeneralUtility::_GP(self::VALIDATION_SESSION_KEY);
 
         if($validate === null) {
-            $sessionData = $this->backendUser->getSessionData(self::VALIDATION_SESSION_KEY, 1);
+            $sessionData = $this->backendUser->getSessionData(self::VALIDATION_SESSION_KEY);
             return $sessionData === null ? $this->validationEnabled : (bool)$sessionData;
         }
 
@@ -131,20 +131,18 @@ class DrawHeaderHook
 
 
         // Add some links and attributes to the content elements
-        foreach ($results as $contentElement) {
+        foreach ($results as $i => $row) {
 
-            $uid = $contentElement['uid'];
-
-            // Pass all data
-            $contentElements[$uid] = $contentElement;
+            $uid = $row['uid'];
 
             // Add some additional stuff
             $contentElements[$uid]['error'] = false;
             $contentElements[$uid]['editLink'] = $this->getEditRecordUrl($uid);
+
             // Convert the keys to lowerCamelCase
-            //foreach ($row as $key => $value) {
-                //$contentElements[$i][GeneralUtility::underscoredToLowerCamelCase($key)] = $value;
-            //}
+            foreach ($row as $key => $value) {
+                $contentElements[$uid][GeneralUtility::underscoredToLowerCamelCase($key)] = $value;
+            }
         }
 
         return $contentElements;
@@ -178,7 +176,7 @@ class DrawHeaderHook
         foreach ($this->contentElements as $index => $contentElement) {
 
             // Get the header_type
-            $type = (int)$contentElement['header_type'];
+            $type = (int)$contentElement['headerType'];
 
             if($type > 0) {
 
@@ -242,7 +240,7 @@ class DrawHeaderHook
         $view->assignMultiple([
             'states' => self::STATES,
             'strongestNotificationLevel' => $this->strongestNotificationLevel,
-            'strongestNotificationClassname' => BootstrapColorClassService::getClassnameByFlashMessageState($this->strongestNotificationLevel),
+            'strongestNotificationClassname' => BootstrapColorService::getClassnameByFlashMessageState($this->strongestNotificationLevel),
             'contentElements' => $this->contentElements,
             'validationEnabled' => $this->validationEnabled,
             'notifications' => $this->notifications,

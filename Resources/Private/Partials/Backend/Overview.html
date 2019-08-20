@@ -20,9 +20,9 @@
 				<div class="semantilzer__listwrap" id="js-semantilizer-list">
 					<ul class="semantilzer__list">
 						<f:for each="{contentElements}" as="contentElement">
-							<f:if condition="{contentElement.header_type}">
-								<li class="semantilzer__item--h{contentElement.header_type}">
-									<semantilizer:selectType class="semantilzer__select-type" selected="{contentElement.header_type}" uid="{contentElement.uid}" onchange="var v=this.value;v&&(window.location=v)&&(document.getElementById('js-semantilizer-loader').style.display='block');" />
+							<f:if condition="{contentElement.headerType}">
+								<li class="semantilzer__item--h{contentElement.headerType}">
+									<semantilizer:selectType class="semantilzer__select-type" selected="{contentElement.headerType}" uid="{contentElement.uid}" onchange="var v=this.value;v&&(window.location=v)&&(document.getElementById('js-semantilizer-loader').style.display='block');" />
 									<a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:'{validationEnabled} && {contentElement.error}', then:'--error')}">{contentElement.header}</a>
 								</li>
 							</f:if>

@@ -4,7 +4,7 @@ namespace Zeroseven\Semantilizer\Services;
 
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 
-class BootstrapColorClassService
+class BootstrapColorService
 {
 
     public static function getClassnameByFlashMessageState(int $state): string

@@ -18,6 +18,15 @@
 			<trans-unit id="tt_content.header_type.3">
 				<source>H3</source>
 			</trans-unit>
+			<trans-unit id="tt_content.header_type.4">
+				<source>H4</source>
+			</trans-unit>
+			<trans-unit id="tt_content.header_type.5">
+				<source>H5</source>
+			</trans-unit>
+			<trans-unit id="tt_content.header_type.6">
+				<source>H6</source>
+			</trans-unit>
 			<trans-unit id="tt_content.header_layout">
 				<source>Layout</source>
 			</trans-unit>
