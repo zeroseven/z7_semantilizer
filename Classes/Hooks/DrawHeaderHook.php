@@ -69,8 +69,6 @@ class DrawHeaderHook
         $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $this->pageInfo = BackendUtility::readPageAccess((int)GeneralUtility::_GP('id'), true);
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-        $this->contentElements = $this->collectContentElements();
-        $this->validationEnabled = $this->setValidationCookie();
     }
 
     private function setValidationCookie(): bool
@@ -238,6 +236,10 @@ class DrawHeaderHook
         ], true)) {
             return '';
         }
+
+        // Get some stuff
+        $this->contentElements = $this->collectContentElements();
+        $this->validationEnabled = $this->setValidationCookie();
 
         // Validate
         $this->setErrorNotifications();
