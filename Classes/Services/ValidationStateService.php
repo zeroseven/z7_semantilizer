@@ -5,7 +5,7 @@ namespace Zeroseven\Semantilizer\Services;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class EnableValidationService
+class ValidationStateService
 {
 
     private const TABLE = 'be_users';

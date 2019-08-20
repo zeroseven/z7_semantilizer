@@ -12,7 +12,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
-use Zeroseven\Semantilizer\Services\EnableValidationService;
+use Zeroseven\Semantilizer\Services\ValidationStateService;
 
 class DrawHeaderHook
 {
@@ -78,10 +78,10 @@ class DrawHeaderHook
         $validate = GeneralUtility::_GP(self::VALIDATION_PARAMETER);
 
         if($validate === null) {
-            return EnableValidationService::getState();
+            return ValidationStateService::getState();
         }
 
-        return EnableValidationService::setState((bool)$validate);
+        return ValidationStateService::setState((bool)$validate);
     }
 
     private function getToggleValidationLink(): string
