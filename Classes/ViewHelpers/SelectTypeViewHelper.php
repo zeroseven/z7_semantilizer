@@ -73,8 +73,9 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
     {
         $content = '';
         $requestUrl =  GeneralUtility::getIndpEnv('REQUEST_URI') . ($this->arguments['section'] ? sprintf('#%s', htmlspecialchars($this->arguments['section'])) : '');
-        
-        foreach($this->getHeaderTypes() as $key => $type) {
+        $types = $this->getHeaderTypes();
+
+        foreach($types as $key => $type) {
 
             if($type > 0) {
                 $selected = $type === $this->arguments['selected'] ? 'selected' : '';
@@ -86,6 +87,10 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
 
                 $content .= sprintf('<option %s value="%s">H%d</option>', $selected, $actionUrl, $type);
             }
+        }
+
+        if(!in_array((int)$this->arguments['selected'], $types)) {
+            $content .= '<option selected value="">⚠️</option>';
         }
 
         return $content;
