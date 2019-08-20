@@ -211,6 +211,18 @@ class DrawHeaderHook
 
     }
 
+    protected function skipSemantilzer(): bool
+    {
+        $pageId = (int)GeneralUtility::_GP('id');
+        $pagesTsConfig = BackendUtility::getPagesTSconfig($pageId);
+
+        if ($disableOnPages = $pagesTsConfig['tx_semantilizer.']['disableOnPages']) {
+            return in_array($pageId, GeneralUtility::intExplode(',', $disableOnPages), true);
+        }
+
+        return false;
+    }
+
     /**
      * @return string
      */
@@ -218,7 +230,7 @@ class DrawHeaderHook
     {
 
         // Abort on some doktypes
-        if(in_array((int)$this->pageInfo['doktype'], [
+        if($this->skipSemantilzer() || in_array((int)$this->pageInfo['doktype'], [
             PageRepository::DOKTYPE_LINK,
             PageRepository::DOKTYPE_SHORTCUT,
             PageRepository::DOKTYPE_BE_USER_SECTION,
