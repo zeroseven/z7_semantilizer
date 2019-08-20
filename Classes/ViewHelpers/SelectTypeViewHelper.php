@@ -35,33 +35,57 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
         return $this->tag->render();
     }
 
-    protected function getHighestType(): int
+    protected function getHeaderTypes(): array
     {
-        $highestType = 1;
+        $headerTypes = [];
 
         // Get the highest type from the tca configuration
         foreach ($GLOBALS['TCA']['tt_content']['columns']['header_type']['config']['items'] as $item) {
-            $highestType = (int)max($highestType, $item[1]);
+            $headerTypes[$item[1]] = true;
         }
 
-        return $highestType;
+        // Get the items by the TCEFORM
+        $pagesTsConfig = BackendUtility::getPagesTSconfig(GeneralUtility::_GP('id'));
+        $headerTypeConfig = $pagesTsConfig['TCEFORM.']['tt_content.']['header_type.'] ?: [];
+
+        // Remove Items
+        if($removeItems = $headerTypeConfig['removeItems']) {
+            foreach (GeneralUtility::intExplode(',', $removeItems) as $key) {
+                if($headerTypes[$key]) {
+                    unset($headerTypes[$key]);
+                }
+            }
+        }
+
+        // Add items
+        if($addItems = $headerTypeConfig['addItems.']) {
+            foreach ($addItems as $key => $value) {
+                $headerTypes[$key] = true;
+            }
+        }
+
+        ksort($headerTypes);
+
+        return array_keys($headerTypes);
     }
 
     protected function generateOptions(): string
     {
         $content = '';
         $requestUrl =  GeneralUtility::getIndpEnv('REQUEST_URI') . ($this->arguments['section'] ? sprintf('#%s', htmlspecialchars($this->arguments['section'])) : '');
+        
+        foreach($this->getHeaderTypes() as $key => $type) {
 
-        foreach(range(1, $this->getHighestType()) as $type) {
+            if($type > 0) {
+                $selected = $type === $this->arguments['selected'] ? 'selected' : '';
 
-            $selected = $type === $this->arguments['selected'] ? 'selected' : '';
+                $actionUrl = $selected ? '' : BackendUtility::getLinkToDataHandlerAction(
+                    sprintf('&data[%s][%d][%s]=%d', 'tt_content', $this->arguments['uid'], 'header_type', $type),
+                    $requestUrl
+                );
 
-            $actionUrl = $selected ? '' : BackendUtility::getLinkToDataHandlerAction(
-                sprintf('&data[%s][%d][%s]=%d', 'tt_content', $this->arguments['uid'], 'header_type', $type),
-                $requestUrl
-            );
-
-            $content .= sprintf('<option %s value="%s">H%d</option>', $selected, $actionUrl, $type);
+                $content .= sprintf('<option %s value="%s">H%d</option>', $selected, $actionUrl, $type);
+            }
         }
 
         return $content;

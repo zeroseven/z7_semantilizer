@@ -16,7 +16,6 @@ call_user_func(static function () {
                     'lower' => 0,
                     'upper' => 6,
                 ],
-                // Todo: Create something like the "hightesType" in the plugin typoscript setupt and create the list automatically
                 'items' => [
                     ['LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.1', 1],
                     ['LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.2', 2],
