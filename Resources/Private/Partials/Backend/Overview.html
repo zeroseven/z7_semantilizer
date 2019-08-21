@@ -44,7 +44,7 @@
 						<f:if condition="{notifications}">
 							<f:then>
 								<a class="btn btn-{strongestNotificationClassname} btn-sm" href="{toggleValidationLink}">
-									{f:translate(key:'overview.enableValidation', extensionName: 'z7_semantilizer')}
+									{f:translate(key:'overview.showNotifications', extensionName: 'z7_semantilizer')}
 									<f:if condition="{notifications -> f:count()} > 1">
 										<f:then>({f:translate(key:'overview.notifications', extensionName: 'z7_semantilizer', arguments: '{0:"{notifications -> f:count()}"}')})</f:then>
 										<f:else>({f:translate(key:'overview.notification', extensionName: 'z7_semantilizer', arguments: '{0:"{notifications -> f:count()}"}')})</f:else>
@@ -53,14 +53,14 @@
 							</f:then>
 							<f:else>
 								<a class="btn btn-info btn-sm" href="{toggleValidationLink}">
-									{f:translate(key:'overview.enableValidation', extensionName: 'z7_semantilizer')}
+									{f:translate(key:'overview.showNotifications', extensionName: 'z7_semantilizer')}
 								</a>
 							</f:else>
 						</f:if>
 					</f:then>
 					<f:else>
 						<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
-							{f:translate(key:'overview.disableValidation', extensionName: 'z7_semantilizer')}
+							{f:translate(key:'overview.hideNotifications', extensionName: 'z7_semantilizer')}
 						</a>
 					</f:else>
 				</f:if>

@@ -12,10 +12,10 @@
 			<trans-unit id="overview.description">
 				<source>Dies ist eine semantische Übersicht der verwendeten Überschriften auf der aktuellen Seite:</source>
 			</trans-unit>
-			<trans-unit id="overview.enableValidation">
+			<trans-unit id="overview.showNotifications">
 				<source>Headline-Check aktivieren</source>
 			</trans-unit>
-			<trans-unit id="overview.disableValidation">
+			<trans-unit id="overview.hideNotifications">
 				<source>Headline-Check deaktivieren</source>
 			</trans-unit>
 			<trans-unit id="overview.notifications">
