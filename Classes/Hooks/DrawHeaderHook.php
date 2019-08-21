@@ -12,7 +12,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
-use Zeroseven\Semantilizer\Services\ValidationStateService;
+use Zeroseven\Semantilizer\Services\HideNotificationStateService;
 
 class DrawHeaderHook
 {
@@ -33,7 +33,7 @@ class DrawHeaderHook
     protected $backendUser;
 
     /** @var bool */
-    protected $validationEnabled = false;
+    protected $hideNotifications = true;
 
     /** @var array */
     protected $notifications = [];
@@ -42,7 +42,7 @@ class DrawHeaderHook
     protected $strongestNotificationLevel = FlashMessage::NOTICE;
 
     /** @var string */
-    private const VALIDATION_PARAMETER = 'semantilizer_validation';
+    private const VALIDATION_PARAMETER = 'semantilizer_hide_notifications';
 
     /** @var string */
     private const TABLE = 'tt_content';
@@ -69,7 +69,7 @@ class DrawHeaderHook
         $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $this->pageInfo = BackendUtility::readPageAccess((int)GeneralUtility::_GP('id'), true);
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-        $this->validationEnabled = $this->setValidationCookie();
+        $this->hideNotifications = $this->setValidationCookie();
     }
 
     private function setValidationCookie(): bool
@@ -78,16 +78,16 @@ class DrawHeaderHook
         $validate = GeneralUtility::_GP(self::VALIDATION_PARAMETER);
 
         if($validate === null) {
-            return ValidationStateService::getState();
+            return HideNotificationStateService::getState();
         }
 
-        return ValidationStateService::setState((bool)$validate);
+        return HideNotificationStateService::setState((bool)$validate);
     }
 
     private function getToggleValidationLink(): string
     {
         return $this->uriBuilder->buildUriFromRoute('web_layout', [
-            self::VALIDATION_PARAMETER => (int)!$this->validationEnabled,
+            self::VALIDATION_PARAMETER => (int)!$this->hideNotifications,
             'id' => $this->pageInfo['uid'],
         ]);
     }
@@ -261,7 +261,7 @@ class DrawHeaderHook
             'strongestNotificationLevel' => $this->strongestNotificationLevel,
             'strongestNotificationClassname' => BootstrapColorService::getClassnameByFlashMessageState($this->strongestNotificationLevel),
             'contentElements' => $this->contentElements,
-            'validationEnabled' => $this->validationEnabled,
+            'hideNotifications' => $this->hideNotifications,
             'notifications' => $this->notifications,
             'toggleValidationLink' => $this->getToggleValidationLink()
         ]);

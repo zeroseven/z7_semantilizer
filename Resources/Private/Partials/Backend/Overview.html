@@ -1,7 +1,7 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers" xmlns:semantilizer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" data-namespace-typo3-fluid="true">
 
 	<semantilizer:infobox
-		disableIcon="{f:if(condition:validationEnabled, then:0, else:1)}"
+		disableIcon="{f:if(condition:hideNotifications, then:1, else:0)}"
 		iconColor="{f:if(condition:notifications, then:strongestNotificationLevel, else:states.ok)}"
 		iconName="{f:if(condition:notifications, then:'exclamation', else:'check')}"
 		title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
@@ -39,13 +39,8 @@
 			</f:if>
 
 			<div class="semantilzer__control">
-				<f:if condition="{validationEnabled}">
+				<f:if condition="{hideNotifications}">
 					<f:then>
-						<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
-							{f:translate(key:'overview.disableValidation', extensionName: 'z7_semantilizer')}
-						</a>
-					</f:then>
-					<f:else>
 						<f:if condition="{notifications}">
 							<f:then>
 								<a class="btn btn-{strongestNotificationClassname} btn-sm" href="{toggleValidationLink}">
@@ -62,6 +57,11 @@
 								</a>
 							</f:else>
 						</f:if>
+					</f:then>
+					<f:else>
+						<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
+							{f:translate(key:'overview.disableValidation', extensionName: 'z7_semantilizer')}
+						</a>
 					</f:else>
 				</f:if>
 			</div>

@@ -5,12 +5,12 @@ namespace Zeroseven\Semantilizer\Services;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ValidationStateService
+class HideNotificationStateService
 {
 
     private const TABLE = 'be_users';
 
-    private const FIELD = 'semantilizer_validation';
+    private const FIELD = 'semantilizer_hide_notifications';
 
     public static function getState(): ?bool
     {
