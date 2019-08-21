@@ -1,0 +1,9 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+    <f:if condition="{header}">
+        <f:variable name="tagName" value="{f:if(condition:type, then:'h{type}', else:'span')}" />
+
+        <{tagName} class="ce-header{f:if(condition:layout, then:'--layout{layout}')}{f:if(condition:position, then:' ce-header--{position}')}">
+          <f:link.typolink parameter="{link}">{header}</f:link.typolink>
+        </{tagName}>
+    </f:if>
+</html>

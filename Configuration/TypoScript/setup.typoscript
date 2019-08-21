@@ -1,4 +1,6 @@
 ##################################################
 # Add template paths
+# NOTE: It's important to add include this setup
+# after the setup of the fluid_styled_content.
 ##################################################
-lib.contentElement.layoutRootPaths.156587902 = EXT:z7_semantilizer/Resources/Private/Partials/Frontend/Header
+lib.contentElement.partialRootPaths.156587902 = EXT:z7_semantilizer/Resources/Private/Partials/Frontend
