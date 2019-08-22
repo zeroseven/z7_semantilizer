@@ -1,5 +1,5 @@
 ##################################################
-# Add template paths
+# Add a new layout path
 # NOTE: It's important to add include this setup
 # after the setup of the fluid_styled_content.
 ##################################################
