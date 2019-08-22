@@ -9,12 +9,11 @@
                     type: data.header_type,
                     position: data.header_position,
                     link: data.header_link}" />
-                <f:render partial="Header/SubHeader" arguments="{
-                    subheader: data.subheader,
+                <f:render partial="Header/Header" arguments="{
+                    header: data.subheader,
                     layout: data.header_layout,
-                    type: data.header_type,
                     position: data.header_position,
-                    link: data.header_link}" />
+                    class: 'ce-subheader'}" />
                 <f:render partial="Header/Date" arguments="{
                     date: data.date,
                     layout: data.header_layout,
