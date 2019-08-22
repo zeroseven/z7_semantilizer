@@ -1,6 +1,6 @@
 # The semantilizer
 
-This extension will detach the semantic definition from the field `header_layout` for the headlines of the content elements. Further you will get a semantic overview of your headline structure in the backend which also validate some mistakes in your headline structure.
+This extension will detach the semantic definition from the field `header_layout` for the headlines of the content elements. Further you will get a semantic overview of your headline structure in the backend which also validate some mistakes.
 
 ## Installation
 
@@ -8,7 +8,7 @@ Install the extension and include the typoscript setup **after** the configurati
 
 ## How to use
 
-Now, if you want, you can simply override the labels of the `header_layouts` to make them more understandable.
+Now, if you want, you can simply overwrite the labels of the `header_layouts` to make them more understandable.
 
 **Example:**
 
