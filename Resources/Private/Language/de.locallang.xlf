@@ -5,56 +5,72 @@
 		<body>
 			<trans-unit id="overview.title">
 				<source>Headline structure</source>
+				<target>Überschriften-Struktur</target>
 			</trans-unit>
 			<trans-unit id="overview.empty">
 				<source>There are no created headlines on this page yet.</source>
+				<target>Auf dieser Seite wurden noch keine Überschriften erstellt.</target>
 			</trans-unit>
 			<trans-unit id="overview.description">
-				<source>This is a semantic overview of all the used headlines on the current page:</source>
+				<source>This is a semantic overview of all used headlines on the current page:</source>
+				<target>Dies ist eine semantische Übersicht der verwendeten Überschriften auf der aktuellen Seite:</target>
 			</trans-unit>
 			<trans-unit id="overview.showNotifications">
 				<source>Activate headline check</source>
+				<target>Headline-Check aktivieren</target>
 			</trans-unit>
 			<trans-unit id="overview.hideNotifications">
 				<source>Deactivate headline check</source>
+				<target>Headline-Check deaktivieren</target>
 			</trans-unit>
 			<trans-unit id="overview.notifications">
 				<source>%s hints</source>
+				<target>%s Hinweise</target>
 			</trans-unit>
 			<trans-unit id="overview.notification">
 				<source>%s hint</source>
+				<target>%s Hinweis</target>
 			</trans-unit>
 
 			<trans-unit id="notification.affectedElements">
 				<source>Affected content elements</source>
+				<target>Betroffene Content-Elemente</target>
 			</trans-unit>
 
 			<trans-unit id="notification.1.title">
 				<source>No main headline</source>
+				<target>Keine Hauptüberschrift</target>
 			</trans-unit>
 			<trans-unit id="notification.1.description">
 				<source>There's currently no main headline present. For a correct headline structure a main headline (type 'H1') is needed.</source>
+				<target>Für diese Seite ist aktuell keine Hauptüberschrift vorhanden. Für einen korrekten Aufbau der Überschriften wird eine Hauptüberschrift (Typ: "H1") benötigt.</target>
 			</trans-unit>
 
 			<trans-unit id="notification.2.title">
 				<source>Multiple main headlines</source>
+				<target>Mehrere Hauptüberschriften</target>
 			</trans-unit>
 			<trans-unit id="notification.2.description">
 				<source>It's recommended to only use one main headline (type 'H1') per page.</source>
+				<target>Es wird empfohlen nur eine Hauptüberschrift (Typ: "H1") pro Seite zu verwenden.</target>
 			</trans-unit>
 
 			<trans-unit id="notification.3.title">
 				<source>Positioning of main headline</source>
+				<target>Positionierung der Hauptüberschrift</target>
 			</trans-unit>
 			<trans-unit id="notification.3.description">
 				<source>It's recommended to mark the first headline of a page as the main headline (type 'H1'). Currently it's at the wrong position.</source>
+				<target>Es wird empfohlen die erste Überschrift der Seite als die Hauptüberschrift (Typ: "H1") auszuzeichnen. Aktuell steht diese an falscher Stelle.</target>
 			</trans-unit>
 
 			<trans-unit id="notification.4.title">
 				<source>Invalid headline hierarchy</source>
+				<target>Ungültige Überschriften-Hierarchie</target>
 			</trans-unit>
 			<trans-unit id="notification.4.description">
 				<source>An error in the headline hierarchy has been detected. For a correct semantic distinction of the page, a H1 should be followed by a H2, a H2 should be followed by a H3 and so on.</source>
+				<target>Es wurde ein Fehler in der Hierarchie der Überschriften festgestellt. Für eine korrekte semantische Auszeichnung einer Seite soll auf eine H1 eine H2 folgen, nach einer H2 eine H3 usw.</target>
 			</trans-unit>
 		</body>
 	</file>

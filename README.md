@@ -1,6 +1,6 @@
 # The semantilizer
 
-This extension will detach the semantic definition from the field `header_layout` for the headlines of the content elements. Further you will get a semantic overview of your headline structure in the backend which also validate some mistakes.
+This extension will detach the semantic definition from the field `header_layout` for the headlines of the content elements. Further you will get a semantic overview of your headline structure in the backend which also validates some mistakes.
 
 ## Installation
 
@@ -35,5 +35,4 @@ tx_semantilizer.disableOnPages = 42,84
 
 ## Todo's
 
-* Translate the locallang files
 * There is currently no support or concept for multi language pages
