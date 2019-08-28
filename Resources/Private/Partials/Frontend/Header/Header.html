@@ -3,7 +3,7 @@
         <f:variable name="tagName" value="{f:if(condition:type, then:'h{type}', else:'span')}" />
         <f:variable name="baseClassName" value="{f:if(condition:class, then:'{class}', else:'ce-header')}" />
 
-        <{tagName} class="{baseClassName}{f:if(condition:layout, then:'--layout{layout}')}{f:if(condition:position, then:' {baseClassName}--{position}')}">
+        <{tagName} class="{baseClassName}{f:if(condition:layout, then:'--{layout}')}{f:if(condition:position, then:' {baseClassName}--{position}')}">
           <f:link.typolink parameter="{link}">{header}</f:link.typolink>
         </{tagName}>
     </f:if>
