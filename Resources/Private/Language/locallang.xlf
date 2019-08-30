@@ -24,7 +24,7 @@
 			<trans-unit id="overview.notification">
 				<source>%s hint</source>
 			</trans-unit>
-			<trans-unit id="overview.reload">
+			<trans-unit id="overview.refresh">
 				<source>Reload the overview</source>
 			</trans-unit>
 

@@ -24,7 +24,7 @@
 			<trans-unit id="overview.notification">
 				<target>%s Hinweis</target>
 			</trans-unit>
-			<trans-unit id="overview.reload">
+			<trans-unit id="overview.refresh">
 				<target>Übersicht aktualisieren</target>
 			</trans-unit>
 

@@ -19,21 +19,12 @@ define(["jquery", 'TYPO3/CMS/Backend/Icons'], function($, Icons) {
   };
 
   Semantilizer.watchSorting = function() {
-    console.log(Semantilizer.element);
-    $('.t3js-sortable').on( 'drop', Semantilizer.addOverlay );
+    $('.t3js-sortable').one( 'drop', Semantilizer.addRefreshButton );
   };
 
-  Semantilizer.addOverlay = function() {
+  Semantilizer.addRefreshButton = function() {
     Icons.getIcon('actions-system-refresh', Icons.sizes.small).done(function(icon) {
-      $('.js-semantilzer')
-        .closest('.callout')
-        .css('position', 'relative')
-        .append('<div class="ui-block"></div>')
-        .append(
-          '<div style="position: absolute; top: 50%; left: 50%; transform: translate3d(-50%, -50%, 0); z-index: 5000;">' +
-            '<a class="btn btn-default" href="' + window.location.href + '">' + icon + '&nbsp;' + TYPO3.lang['overview.reload'] + '</a>' +
-          '</div>'
-        );
+      $('#js-semantilizer-list').css({'background-image': 'none', 'padding': '2em 1em'}).html('<a style="text-decoration: none" href="' + window.location.href + '">' + icon + '&nbsp;' + TYPO3.lang['overview.refresh'] + '</a>');
     });
   };
 
