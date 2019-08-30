@@ -6,7 +6,7 @@
 		iconName="{f:if(condition:notifications, then:'exclamation', else:'check')}"
 		title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
 
-		<div class="semantilzer">
+		<div class="semantilzer js-semantilzer">
 			<f:if condition="{contentElements}">
 				<f:then>
 					<p>{f:translate(key:'overview.description', extensionName: 'z7_semantilizer')}</p>
@@ -23,18 +23,13 @@
 							<f:for each="{contentElements}" as="contentElement">
 								<f:if condition="{contentElement.headerType}">
 									<li class="semantilzer__item--h{contentElement.headerType}">
-										<semantilizer:selectType class="semantilzer__select-type" selected="{contentElement.headerType}" uid="{contentElement.uid}" onchange="var v=this.value;v&&(window.location=v)&&(document.getElementById('js-semantilizer-loader').style.display='block');" />
+										<semantilizer:selectType class="semantilzer__select-type" selected="{contentElement.headerType}" uid="{contentElement.uid}" onchange="TYPO3.Semantilizer.update(this.value)" />
 										<a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:contentElement.error, then:'--error')}">{contentElement.header}</a>
 									</li>
 								</f:if>
 							</f:for>
 						</ul>
 					</f:spaceless>
-				</div>
-
-				<!-- The loader -->
-				<div class="ui-block" id="js-semantilizer-loader" style="/*This will be removed by JavaScript*/display: none;">
-					<core:icon identifier="spinner-circle-light" size="large" />
 				</div>
 			</f:if>
 

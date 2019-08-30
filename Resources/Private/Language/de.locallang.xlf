@@ -24,6 +24,9 @@
 			<trans-unit id="overview.notification">
 				<target>%s Hinweis</target>
 			</trans-unit>
+			<trans-unit id="overview.reload">
+				<target>Übersicht aktualisieren</target>
+			</trans-unit>
 
 			<trans-unit id="notification.affectedElements">
 				<target>Betroffene Content-Elemente</target>

@@ -24,6 +24,9 @@
 			<trans-unit id="overview.notification">
 				<source>%s hint</source>
 			</trans-unit>
+			<trans-unit id="overview.reload">
+				<source>Reload the overview</source>
+			</trans-unit>
 
 			<trans-unit id="notification.affectedElements">
 				<source>Affected content elements</source>
