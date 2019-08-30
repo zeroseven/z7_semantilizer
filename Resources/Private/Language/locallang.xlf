@@ -27,9 +27,15 @@
 			<trans-unit id="overview.refresh">
 				<source>Reload the overview</source>
 			</trans-unit>
+			<trans-unit id="overview.fixIt">
+				<source>Fix it</source>
+			</trans-unit>
 
 			<trans-unit id="notification.affectedElements">
 				<source>Affected content elements</source>
+			</trans-unit>
+			<trans-unit id="notification.fixIt">
+				<source>Fix it</source>
 			</trans-unit>
 
 			<trans-unit id="notification.1.title">

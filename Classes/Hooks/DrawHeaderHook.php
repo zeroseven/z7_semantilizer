@@ -5,7 +5,6 @@ namespace Zeroseven\Semantilizer\Hooks;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
@@ -14,10 +13,10 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
+use Zeroseven\Semantilizer\Services\NotificationService;
 
 class DrawHeaderHook
 {
-
 
     /** @var array */
     protected $tsconfig = [];
@@ -40,34 +39,11 @@ class DrawHeaderHook
     /** @var bool */
     protected $hideNotifications = true;
 
-    /** @var array */
-    protected $notifications = [];
-
-    /** @var int */
-    protected $strongestNotificationLevel = FlashMessage::NOTICE;
-
     /** @var string */
     private const VALIDATION_PARAMETER = 'semantilizer_hide_notifications';
 
     /** @var string */
     private const TABLE = 'tt_content';
-
-    /** @var array */
-    private const STATES = [
-        'notice' => FlashMessage::NOTICE,
-        'info' => FlashMessage::INFO,
-        'ok' => FlashMessage::OK,
-        'warning' => FlashMessage::WARNING,
-        'error' => FlashMessage::ERROR
-    ];
-
-    /** @var array */
-    private const ERROR_CODES = [
-        'missing_h1' => 1,
-        'double_h1' => 2,
-        'wrong_ordered_h1' => 3,
-        'unexpected_heading' => 4,
-    ];
 
     public function __construct()
     {
@@ -162,69 +138,6 @@ class DrawHeaderHook
         $this->contentElements = $contentElements;
     }
 
-    protected function registerNotification(string $errorCode, array $contentElements = null, string $state = 'warning'): void
-    {
-        $this->notifications[] = [
-            'key' => self::ERROR_CODES[$errorCode],
-            'state' => self::STATES[$state],
-            'contentElements' => $contentElements
-        ];
-
-        if(is_array($contentElements)) {
-            foreach ($contentElements as $index => $contentElement) {
-                $this->contentElements[$index]['error'] = true;
-            }
-        }
-
-        // Set the strongest notification
-        $this->strongestNotificationLevel = max(self::STATES[$state], $this->strongestNotificationLevel);
-    }
-
-    protected function setErrorNotifications(): void
-    {
-
-        $mainHeadingContents = [];
-        $unexpectedHeadingContents = [];
-        $lastHeadingType = 0;
-
-        foreach ($this->contentElements as $index => $contentElement) {
-
-            // Get the header_type
-            $type = (int)$contentElement['headerType'];
-
-            if($type > 0) {
-
-                // Check for the h1
-                if ($type === 1) {
-                    $mainHeadingContents[$index] = $contentElement;
-                }
-
-                // Check if the headlines are nested in the right way
-                if ($lastHeadingType > 0 && $type > $lastHeadingType + 1) {
-                    $unexpectedHeadingContents[$index] = $contentElement;
-                }
-
-                // Store the last headline type
-                $lastHeadingType = $type;
-            }
-        }
-
-        // Check the length of the main heading(s)
-        if(count($mainHeadingContents) === 0) {
-            $this->registerNotification('missing_h1', $this->contentElements, count($this->contentElements) ? 'error' : 'info');
-        } elseif (count($mainHeadingContents) > 1) {
-            $this->registerNotification('double_h1', $mainHeadingContents);
-        } elseif (array_key_first($mainHeadingContents) !== $firstKey = array_key_first($this->contentElements)) {
-            $this->registerNotification('wrong_ordered_h1', [$firstKey => $this->contentElements[$firstKey]] + $mainHeadingContents);
-        }
-
-        // Add a notification for the unexpected ones
-        if(!empty($unexpectedHeadingContents)) {
-            $this->registerNotification('unexpected_heading', $unexpectedHeadingContents);
-        }
-
-    }
-
     protected function skipSemantilzer(): bool
     {
 
@@ -264,23 +177,22 @@ class DrawHeaderHook
         $this->collectContentElements();
 
         // Validate
-        $this->setErrorNotifications();
+        $notificationService = GeneralUtility::makeInstance(NotificationService::class, $this->contentElements);
 
         // One or more contents are found
         $view = GeneralUtility::makeInstance(StandaloneView::class);
         $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html'));
         $view->setPartialRootPaths([0 => GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Partials/Backend')]);
         $view->assignMultiple([
-            'states' => self::STATES,
-            'strongestNotificationLevel' => $this->strongestNotificationLevel,
-            'strongestNotificationClassname' => BootstrapColorService::getClassnameByFlashMessageState($this->strongestNotificationLevel),
+            'states' => $notificationService->getStates(),
+            'strongestNotificationLevel' => $notificationService->getStrongestLevel(),
+            'notifications' => $notificationService->getNotifications(),
+            'strongestNotificationClassname' => BootstrapColorService::getClassnameByFlashMessageState($notificationService->getStrongestLevel()),
             'contentElements' => $this->contentElements,
             'hideNotifications' => $this->hideNotifications,
-            'notifications' => $this->notifications,
             'toggleValidationLink' => $this->getToggleValidationLink()
         ]);
 
         return $view->render();
     }
-
 }

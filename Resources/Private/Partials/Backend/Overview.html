@@ -1,4 +1,4 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers" xmlns:semantilizer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:semantilizer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" data-namespace-typo3-fluid="true">
 
 	<semantilizer:infobox
 		disableIcon="{f:if(condition:hideNotifications, then:1, else:0)}"
@@ -45,9 +45,18 @@
 										<f:else>({f:translate(key:'overview.notification', extensionName: 'z7_semantilizer', arguments: '{0:"{notifications -> f:count()}"}')})</f:else>
 									</f:if>
 								</a>
+
+                                <f:if condition="{notifications.0.fixLink}">
+                                    <f:then>
+                                        <a class="btn btn-default btn-sm" href="{notifications.0.fixLink}">{f:translate(key:'overview.fixIt', extensionName: 'z7_semantilizer')}</a>
+                                    </f:then>
+                                    <f:else>
+                                        <button class="btn btn-default btn-sm" disabled href="#">{f:translate(key:'overview.fixIt', extensionName: 'z7_semantilizer')}</button>
+                                    </f:else>
+                                </f:if>
 							</f:then>
 							<f:else>
-								<a class="btn btn-info btn-sm" href="{toggleValidationLink}">
+								<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
 									{f:translate(key:'overview.showNotifications', extensionName: 'z7_semantilizer')}
 								</a>
 							</f:else>

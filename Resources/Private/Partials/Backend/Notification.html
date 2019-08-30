@@ -16,6 +16,10 @@
 					</ul>
 				</div>
 			</f:if>
+
+            <f:if condition="{notification.fixLink}">
+                <a class="semantilizer-notification__fixit" href="{notification.fixLink}">{f:translate(key:'notification.fixIt', extensionName: 'z7_semantilizer')}</a>
+            </f:if>
 		</div>
 	</f:be.infobox>
 </html>

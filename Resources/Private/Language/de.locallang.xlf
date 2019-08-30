@@ -27,9 +27,15 @@
 			<trans-unit id="overview.refresh">
 				<target>Übersicht aktualisieren</target>
 			</trans-unit>
+			<trans-unit id="overview.fixIt">
+				<target>Fehler beheben</target>
+			</trans-unit>
 
 			<trans-unit id="notification.affectedElements">
 				<target>Betroffene Content-Elemente</target>
+			</trans-unit>
+			<trans-unit id="notification.fixIt">
+				<target>Fehler beheben</target>
 			</trans-unit>
 
 			<trans-unit id="notification.1.title">
