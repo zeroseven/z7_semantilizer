@@ -139,6 +139,7 @@ class DrawHeaderHook
                 $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->notIn('CType', array_map(function($value) use ($queryBuilder) {return $queryBuilder->createNamedParameter($value, \PDO::PARAM_STR);}, (array)GeneralUtility::trimExplode(',', $this->tsconfig['ignoreCTypes'])))
             )
+            ->orderBy('sorting')
             ->execute()
             ->fetchAll() ?: [];
 
