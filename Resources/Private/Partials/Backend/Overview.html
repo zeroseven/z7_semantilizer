@@ -6,7 +6,7 @@
 		iconName="{f:if(condition:notifications, then:'exclamation', else:'check')}"
 		title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
 
-		<div class="semantilzer js-semantilzer">
+		<div class="semantilzer">
 			<f:if condition="{contentElements}">
 				<f:then>
 					<p>{f:translate(key:'overview.description', extensionName: 'z7_semantilizer')}</p>
@@ -33,7 +33,7 @@
 				</div>
 			</f:if>
 
-			<div class="semantilzer__control">
+			<div class="semantilzer__control" id="js-semantilizer-control">
 				<f:if condition="{hideNotifications}">
 					<f:then>
 						<f:if condition="{notifications}">
