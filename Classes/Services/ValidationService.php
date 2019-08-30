@@ -119,7 +119,7 @@ class ValidationService
 
         // Check the length of the main heading(s)
         if (count($mainHeadingContents) === 0) {
-            $fix = [$firstKey => 1];
+            $fix = count($contentElements) ? [$firstKey => 1] : null;
             $this->addNotification('missing_h1', $contentElements, $fix,count($contentElements) ? 'error' : 'info');
         } elseif (count($mainHeadingContents) > 1) {
             $fix = [];

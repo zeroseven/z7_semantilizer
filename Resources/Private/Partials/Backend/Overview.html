@@ -55,7 +55,7 @@
 						</a>
 					</f:else>
 				</f:if>
-                <f:if condition="{notifications}">
+                <f:if condition="{notifications} && {contentElements}">
                     <f:if condition="{notifications.0.fixLink}">
                         <f:then>
                             <a class="btn btn-default btn-sm" href="{notifications.0.fixLink}">{f:translate(key:'overview.fixIt', extensionName: 'z7_semantilizer')}</a>
