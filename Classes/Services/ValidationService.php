@@ -74,9 +74,17 @@ class ValidationService
         $this->strongestLevel = max($level, $this->getStrongestLevel());
     }
 
-    public function getStates(): array
+    public function getAffectedContentElements(): array
     {
-        return self::STATES;
+        $affected = [];
+
+        foreach ($this->getNotifications() as $notification) {
+            foreach ($notification['contentElements'] as $uid => $contentElement) {
+                $affected[$uid] = $uid;
+            }
+        }
+
+        return $affected;
     }
 
     protected function validate(array $contentElements): void
@@ -133,11 +141,7 @@ class ValidationService
 
         // Add a notification for the unexpected ones
         if (!empty($unexpectedHeadingContents)) {
-            $fix = [];
-            foreach ($unexpectedHeadingContents as $uid => $row) {
-                $fix[$uid] = 2;
-            }
-            $this->addNotification('unexpected_heading', $unexpectedHeadingContents, $fix);
+            $this->addNotification('unexpected_heading', $unexpectedHeadingContents);
         }
     }
 

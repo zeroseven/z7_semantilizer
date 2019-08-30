@@ -2,7 +2,7 @@
 
 	<semantilizer:infobox
 		disableIcon="{f:if(condition:hideNotifications, then:1, else:0)}"
-		iconColor="{f:if(condition:notifications, then:strongestNotificationLevel, else:states.ok)}"
+		iconColor="{f:if(condition:notifications, then:strongestNotificationLevel, else:0)}"
 		iconName="{f:if(condition:notifications, then:'exclamation', else:'check')}"
 		title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
 
@@ -39,21 +39,8 @@
 						<f:if condition="{notifications}">
 							<f:then>
 								<a class="btn btn-{strongestNotificationClassname} btn-sm" href="{toggleValidationLink}">
-									{f:translate(key:'overview.showNotifications', extensionName: 'z7_semantilizer')}
-									<f:if condition="{notifications -> f:count()} > 1">
-										<f:then>({f:translate(key:'overview.notifications', extensionName: 'z7_semantilizer', arguments: '{0:"{notifications -> f:count()}"}')})</f:then>
-										<f:else>({f:translate(key:'overview.notification', extensionName: 'z7_semantilizer', arguments: '{0:"{notifications -> f:count()}"}')})</f:else>
-									</f:if>
+									{f:translate(key:'overview.showNotifications', extensionName: 'z7_semantilizer')} ({notifications -> f:count()})
 								</a>
-
-                                <f:if condition="{notifications.0.fixLink}">
-                                    <f:then>
-                                        <a class="btn btn-default btn-sm" href="{notifications.0.fixLink}">{f:translate(key:'overview.fixIt', extensionName: 'z7_semantilizer')}</a>
-                                    </f:then>
-                                    <f:else>
-                                        <button class="btn btn-default btn-sm" disabled href="#">{f:translate(key:'overview.fixIt', extensionName: 'z7_semantilizer')}</button>
-                                    </f:else>
-                                </f:if>
 							</f:then>
 							<f:else>
 								<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
@@ -68,6 +55,16 @@
 						</a>
 					</f:else>
 				</f:if>
+                <f:if condition="{notifications}">
+                    <f:if condition="{notifications.0.fixLink}">
+                        <f:then>
+                            <a class="btn btn-default btn-sm" href="{notifications.0.fixLink}">{f:translate(key:'overview.fixIt', extensionName: 'z7_semantilizer')}</a>
+                        </f:then>
+                        <f:else>
+                            <button class="btn btn-default btn-sm" disabled href="#">{f:translate(key:'overview.fixIt', extensionName: 'z7_semantilizer')}</button>
+                        </f:else>
+                    </f:if>
+                </f:if>
 			</div>
 		</div>
 	</semantilizer:infobox>

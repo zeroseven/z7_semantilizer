@@ -13,16 +13,10 @@
 				<source>This is a semantic overview of all the used headlines on the current page:</source>
 			</trans-unit>
 			<trans-unit id="overview.showNotifications">
-				<source>Activate headline check</source>
+				<source>Show notifications</source>
 			</trans-unit>
 			<trans-unit id="overview.hideNotifications">
-				<source>Deactivate headline check</source>
-			</trans-unit>
-			<trans-unit id="overview.notifications">
-				<source>%s hints</source>
-			</trans-unit>
-			<trans-unit id="overview.notification">
-				<source>%s hint</source>
+				<source>Hide notifications</source>
 			</trans-unit>
 			<trans-unit id="overview.refresh">
 				<source>Reload the overview</source>

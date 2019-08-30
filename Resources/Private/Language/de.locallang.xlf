@@ -13,16 +13,10 @@
 				<target>Dies ist eine semantische Übersicht der verwendeten Überschriften auf der aktuellen Seite:</target>
 			</trans-unit>
 			<trans-unit id="overview.showNotifications">
-				<target>Headline-Check aktivieren</target>
+				<target>Hinweise einblenden</target>
 			</trans-unit>
 			<trans-unit id="overview.hideNotifications">
-				<target>Headline-Check deaktivieren</target>
-			</trans-unit>
-			<trans-unit id="overview.notifications">
-				<target>%s Hinweise</target>
-			</trans-unit>
-			<trans-unit id="overview.notification">
-				<target>%s Hinweis</target>
+				<target>Hinweise ausblenden</target>
 			</trans-unit>
 			<trans-unit id="overview.refresh">
 				<target>Übersicht aktualisieren</target>

@@ -179,12 +179,16 @@ class DrawHeaderHook
         // Validate
         $validationService = GeneralUtility::makeInstance(ValidationService::class, $this->contentElements);
 
+        // Set error state
+        foreach ($validationService->getAffectedContentElements() as $affected) {
+            $this->contentElements[$affected]['error'] = true;
+        }
+
         // One or more contents are found
         $view = GeneralUtility::makeInstance(StandaloneView::class);
         $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html'));
         $view->setPartialRootPaths([0 => GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Partials/Backend')]);
         $view->assignMultiple([
-            'states' => $validationService->getStates(),
             'strongestNotificationLevel' => $validationService->getStrongestLevel(),
             'notifications' => $validationService->getNotifications(),
             'strongestNotificationClassname' => BootstrapColorService::getClassnameByFlashMessageState($validationService->getStrongestLevel()),
