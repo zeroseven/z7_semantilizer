@@ -13,7 +13,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
-use Zeroseven\Semantilizer\Services\NotificationService;
+use Zeroseven\Semantilizer\Services\ValidationService;
 
 class DrawHeaderHook
 {
@@ -177,17 +177,17 @@ class DrawHeaderHook
         $this->collectContentElements();
 
         // Validate
-        $notificationService = GeneralUtility::makeInstance(NotificationService::class, $this->contentElements);
+        $validationService = GeneralUtility::makeInstance(ValidationService::class, $this->contentElements);
 
         // One or more contents are found
         $view = GeneralUtility::makeInstance(StandaloneView::class);
         $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html'));
         $view->setPartialRootPaths([0 => GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Partials/Backend')]);
         $view->assignMultiple([
-            'states' => $notificationService->getStates(),
-            'strongestNotificationLevel' => $notificationService->getStrongestLevel(),
-            'notifications' => $notificationService->getNotifications(),
-            'strongestNotificationClassname' => BootstrapColorService::getClassnameByFlashMessageState($notificationService->getStrongestLevel()),
+            'states' => $validationService->getStates(),
+            'strongestNotificationLevel' => $validationService->getStrongestLevel(),
+            'notifications' => $validationService->getNotifications(),
+            'strongestNotificationClassname' => BootstrapColorService::getClassnameByFlashMessageState($validationService->getStrongestLevel()),
             'contentElements' => $this->contentElements,
             'hideNotifications' => $this->hideNotifications,
             'toggleValidationLink' => $this->getToggleValidationLink()
