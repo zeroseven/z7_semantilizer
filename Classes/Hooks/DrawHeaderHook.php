@@ -6,6 +6,7 @@ use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -16,6 +17,10 @@ use Zeroseven\Semantilizer\Services\HideNotificationStateService;
 
 class DrawHeaderHook
 {
+
+
+    /** @var array */
+    protected $tsconfig = [];
 
     /** @var array */
     protected $pageInfo;
@@ -70,6 +75,17 @@ class DrawHeaderHook
         $this->pageInfo = BackendUtility::readPageAccess((int)GeneralUtility::_GP('id'), true);
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $this->hideNotifications = $this->setValidationCookie();
+        $this->tsconfig = $this->getTsConfig();
+    }
+
+    private function getTsConfig(string $key = 'tx_semantilizer'): array
+    {
+        // Check the TSconfig
+        $pageId = (int)$this->pageInfo['uid'];
+        $pagesTsConfig = BackendUtility::getPagesTSconfig($pageId);
+        $typoScriptService = GeneralUtility::makeInstance(TypoScriptService::class);
+
+        return $typoScriptService->convertTypoScriptArrayToPlainArray($pagesTsConfig[$key . '.']);
     }
 
     private function setValidationCookie(): bool
@@ -106,7 +122,6 @@ class DrawHeaderHook
 
     protected function collectContentElements(): void
     {
-
         // The retuning array
         $contentElements = [];
 
@@ -121,7 +136,8 @@ class DrawHeaderHook
                 $queryBuilder->expr()->lt('header_layout', $queryBuilder->createNamedParameter(100, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->neq('header', $queryBuilder->createNamedParameter('')),
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($this->pageInfo['uid'], \PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
+                $queryBuilder->expr()->notIn('CType', array_map(function($value) use ($queryBuilder) {return $queryBuilder->createNamedParameter($value, \PDO::PARAM_STR);}, (array)GeneralUtility::trimExplode(',', $this->tsconfig['ignoreCTypes'])))
             )
             ->execute()
             ->fetchAll() ?: [];
@@ -225,11 +241,8 @@ class DrawHeaderHook
         }
 
         // Check the TSconfig
-        $pageId = (int)GeneralUtility::_GP('id');
-        $pagesTsConfig = BackendUtility::getPagesTSconfig($pageId);
-
-        if ($disableOnPages = $pagesTsConfig['tx_semantilizer.']['disableOnPages']) {
-            return in_array($pageId, GeneralUtility::intExplode(',', $disableOnPages), true);
+        if ($disableOnPages = $this->tsconfig['disableOnPages']) {
+            return in_array((int)$this->pageInfo['uid'], GeneralUtility::intExplode(',', $disableOnPages), true);
         }
 
         return false;
