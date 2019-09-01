@@ -25,7 +25,10 @@ define(["jquery", 'TYPO3/CMS/Backend/Icons'], function($, Icons) {
   Semantilizer.addRefreshButton = function() {
     Icons.getIcon('actions-system-refresh', Icons.sizes.small).done(function(icon) {
       $('#js-semantilizer-control').hide();
-      $('#js-semantilizer-list').css({'background-image': 'none', 'padding': '2em 1em'}).html('<a style="text-decoration: none" href="' + window.location.href + '">' + icon + '&nbsp;' + TYPO3.lang['overview.refresh'] + '</a>');
+      $('#js-semantilizer-list').css({'background-image': 'none', 'padding': '2em 1em'}).html(
+        '<p role="alert" style="opacity: 0.5">' + TYPO3.lang['overview.orderChanged'] + '</p>' +
+         '<a href="' + window.location.href + '">' + TYPO3.lang['overview.refresh'] + '</a> ' + icon
+      );
     });
   };
 

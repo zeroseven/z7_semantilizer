@@ -18,6 +18,9 @@
 			<trans-unit id="overview.hideNotifications">
 				<source>Hide notifications</source>
 			</trans-unit>
+			<trans-unit id="overview.orderChanged">
+				<source>The order has been changed.</source>
+			</trans-unit>
 			<trans-unit id="overview.refresh">
 				<source>Reload the overview</source>
 			</trans-unit>

@@ -18,6 +18,9 @@
 			<trans-unit id="overview.hideNotifications">
 				<target>Hinweise ausblenden</target>
 			</trans-unit>
+			<trans-unit id="overview.orderChanged">
+				<target>Die Reihenfolge wurde verändert.</target>
+			</trans-unit>
 			<trans-unit id="overview.refresh">
 				<target>Übersicht aktualisieren</target>
 			</trans-unit>
