@@ -5,12 +5,16 @@ define(["jquery", 'TYPO3/CMS/Backend/Icons'], function($, Icons) {
 
   var Semantilizer = {};
 
-  Semantilizer.update = function(url) {
-    if(url) {
-      window.location = url;
-      Semantilizer.addLoader();
-    }
-  };
+  Semantilizer.updateSelects = function() {
+    $('.js-semantilizer-select').change(function () {
+      var url = this.value;
+
+      if(url) {
+        window.location = url;
+        Semantilizer.addLoader();
+      }
+    });
+  }
 
   Semantilizer.addLoader = function() {
     Icons.getIcon('spinner-circle-light', Icons.sizes.large).done(function(spinner) {
@@ -33,6 +37,7 @@ define(["jquery", 'TYPO3/CMS/Backend/Icons'], function($, Icons) {
   };
 
   $(document).ready(Semantilizer.watchSorting);
+  $(document).ready(Semantilizer.updateSelects);
 
   TYPO3 = TYPO3 || {};
   TYPO3.Semantilizer = Semantilizer;

@@ -23,7 +23,7 @@
 							<f:for each="{contentElements}" as="contentElement">
 								<f:if condition="{contentElement.headerType}">
 									<li class="semantilzer__item--h{contentElement.headerType}">
-										<semantilizer:selectType class="semantilzer__select-type" selected="{contentElement.headerType}" uid="{contentElement.uid}" onchange="TYPO3.Semantilizer.update(this.value)" />
+										<semantilizer:selectType class="semantilzer__select-type js-semantilizer-select" selected="{contentElement.headerType}" uid="{contentElement.uid}" />
 										<a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:contentElement.error, then:'--error')}">{contentElement.header}</a>
 									</li>
 								</f:if>
@@ -55,7 +55,7 @@
 						</a>
 					</f:else>
 				</f:if>
-                
+
                 <f:if condition="{notifications.0.fixLink} && {contentElements}">
                     <a class="btn btn-default btn-sm" href="{notifications.0.fixLink}">{f:translate(key:'overview.fixIt', extensionName: 'z7_semantilizer')}</a>
                 </f:if>
