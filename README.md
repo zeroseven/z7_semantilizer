@@ -1,12 +1,15 @@
-# The semantilizer
+# The Semantilizer
 
-This extension will detach the semantic definition from the field `header_layout` for the headlines of the content elements. Further you will get a semantic overview of your headline structure in the backend which also validates some mistakes.
+## :question: What is it?
 
-## Installation
+The Semantilizer is a TYPO3 extension, that adds more functionality to the TYPO3 own headlines of content elements. This extension will detach the semantic definition from the field `header_layout` for the headlines of the content elements. It also adds an overview over all currently used headlines in content elements across the current page. This will display also potential errors in the structuring of headlines and gives easy fixing options.
 
-Install the extension and include the typoscript setup **after** the configuration of `fluid_styled_content` to override their partials for the headlines.
+## :wrench: Installation
 
-## How to use
+* Get the extension via composer: `composer require zeroseven/z7-semantilizer`
+* Include the typoscript setup **after** the configuration of fluid_styled_content to override their partials for the headlines
+
+## :roller_coaster: How to use
 
 Now, if you want, you can simply overwrite the labels of the `header_layouts` to make them more understandable.
 
