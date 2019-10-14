@@ -151,7 +151,7 @@ class DrawHeaderHook
             PageRepository::DOKTYPE_SYSFOLDER,
             PageRepository::DOKTYPE_RECYCLER
         ], true)) {
-            return false;
+            return true;
         }
 
         // Check the TSconfig
