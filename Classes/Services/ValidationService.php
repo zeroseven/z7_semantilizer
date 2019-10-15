@@ -118,21 +118,22 @@ class ValidationService
         }
 
         // Check the length of the main heading(s)
+        // Todo: respect "protected" elementes
         if (count($mainHeadingContents) === 0) {
             $fix = count($contentElements) ? [$firstKey => 1] : null;
-            $this->addNotification('missing_h1', $contentElements, $fix,count($contentElements) ? 'error' : 'info');
+            $this->addNotification('missing_h1', $contentElements, $fix, count($contentElements) ? 'error' : 'info');
         } elseif (count($mainHeadingContents) > 1) {
             $fix = [];
-            foreach($contentElements as $uid => $row) {
-                if($uid !== array_key_first($contentElements) && (int)$row['headerType'] === 1 ) {
+            foreach ($contentElements as $uid => $row) {
+                if ((int)$row['headerType'] === 1 && $uid !== $firstKey) {
                     $fix[$uid] = 2;
                 }
             }
             $this->addNotification('double_h1', $mainHeadingContents, $fix);
         } elseif (array_key_first($mainHeadingContents) !== $firstKey) {
             $fix[array_key_first($contentElements)] = 1;
-            foreach($contentElements as $uid => $row) {
-                if((int)$row['headerType'] === 1 ) {
+            foreach ($contentElements as $uid => $row) {
+                if ((int)$row['headerType'] === 1) {
                     $fix[$uid] = 2;
                 }
             }
