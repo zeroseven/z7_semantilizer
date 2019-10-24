@@ -16,15 +16,25 @@ The Semantilizer is a TYPO3 extension, that adds more functionality to the TYPO3
 You will find an understandable info box at the top of each page overview in the page module. This info box helps you figure out the current headline structure of the page and make necessary fixes right away.
 
 For content elements you will find the before mentioned detachment of semantic meaning from the headlines.
+
 ![detachment](./Resources/Public/Images/detachment.png)
 
-If you have everything configured correctly and notifications enabled, your content will look like this:
+---
+
+**If you have everything configured correctly and notifications enabled, your content will look like this:**
+
 ![all good](./Resources/Public/Images/allgood.png)
 
-If there are errors in your site configurations it is helpful, to turn on notifications:
+---
+
+**If there are errors in your site configurations it is helpful, to turn on notifications:**
+
 ![notifications](./Resources/Public/Images/showNotifications.png)
 
-The extension then show's you what's wrong with the current configuration and offers easy "Fix it"-Buttons that will fix your configuration and directly edit the ``header_type``.
+---
+
+**The extension then show's you what's wrong with the current configuration and offers easy "Fix it"-Buttons that will fix your configuration and directly edit the ``header_type``.**
+
 ![multiH1](./Resources/Public/Images/multiH1.png)
 
 ![invalid](./Resources/Public/Images/invalid.png)
