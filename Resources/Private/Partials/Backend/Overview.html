@@ -23,7 +23,11 @@
 							<f:for each="{contentElements}" as="contentElement">
 								<f:if condition="{contentElement.headerType}">
 									<li class="semantilzer__item--h{contentElement.headerType}">
-										<semantilizer:selectType class="semantilzer__select-type js-semantilizer-select" selected="{contentElement.headerType}" uid="{contentElement.uid}" />
+										<semantilizer:selectType
+                                            class="semantilzer__select-type"
+                                            selected="{contentElement.headerType}"
+                                            uid="{contentElement.uid}"
+                                            onchange="var url = this.value; require(['TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer'], function (Semantilizer) {Semantilizer.update(url)});" />
 										<a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:contentElement.error, then:'--error')}">{contentElement.header}</a>
 									</li>
 								</f:if>
@@ -32,6 +36,7 @@
 					</f:spaceless>
 				</div>
 			</f:if>
+
 
 			<div class="semantilzer__control" id="js-semantilizer-control">
 				<f:if condition="{hideNotifications}">
@@ -61,5 +66,6 @@
                 </f:if>
 			</div>
 		</div>
+
 	</semantilizer:infobox>
 </html>
