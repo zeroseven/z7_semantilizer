@@ -19,17 +19,29 @@ For content elements you will find the before mentioned detachment of semantic m
 
 ![detachment](./Resources/Public/Images/detachment.png)
 
+<br /> 
+<br /> 
+<br /> 
+
 ---
 
 **If you have everything configured correctly and notifications enabled, your content will look like this:**
 
 ![all good](./Resources/Public/Images/allgood.png)
 
+<br /> 
+<br /> 
+<br /> 
+
 ---
 
 **If there are errors in your site configurations it is helpful, to turn on notifications:**
 
 ![notifications](./Resources/Public/Images/showNotifications.png)
+
+<br /> 
+<br /> 
+<br /> 
 
 ---
 
@@ -56,7 +68,7 @@ TCEFORM.tt_content {
 ```
 
 
-## Options 
+## :gear: Options 
 
 You can disable the preview of the headlines on some pages. To achieve this, add this to your PageTSConfig;
 
@@ -70,7 +82,7 @@ You can also disable the headline checking for specific content elements, like s
 tx_semantilizer.ignoreCTypes = div, html
 ```
 
-## Todo's
+## :exclamation: TODO's
 
 * There is currently no support or concept for multi language pages
-* It's currently not properly working for pages where the H1 headline is coming from site properties
+* It's currently not properly working for pages where the H1 headline is coming from site properties (it is WIP from our side though)
