@@ -11,26 +11,21 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
+        parent::registerUniversalTagAttributes();
 
+        // Register some arguments
         $this->registerArgument('selected', 'string', 'The element type', true);
         $this->registerArgument('uid', 'int', 'The id of the content element', true);
-        $this->registerArgument('onchange', 'string', 'Add JavaScript for a "onchange" event');
         $this->registerArgument('section', 'string', 'An anchor to a section');
 
-        $this->registerUniversalTagAttributes();
+        // Apply arguments
+        $this->registerTagAttribute('onchange', 'string', 'Add JavaScript for a "onchange" event');
     }
 
     public function render(): string
     {
 
         $this->tag->setTagName('select');
-
-        // Add some attributes @see parent::registerUniversalTagAttributes()
-        foreach (['class', 'dir', 'id', 'lang', 'style', 'title', 'accesskey', 'tabindex', 'onclick', 'onchange'] as $attribute) {
-            if(!empty($this->arguments[$attribute])) {
-                $this->tag->addAttribute($attribute, $this->arguments[$attribute]);
-            }
-        }
 
         $this->tag->setContent($this->generateOptions());
 
