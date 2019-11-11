@@ -7,7 +7,7 @@ call_user_func(function (string $_EXTKEY) {
     TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
         tx_semantilizer {
             disableOnPages = 0 
-            ignoreCTypes = div, html
+            ignoreCTypes := addToList(div,html)
         }
     ');
 
