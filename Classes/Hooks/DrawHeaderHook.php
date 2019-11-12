@@ -14,6 +14,8 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
 use Zeroseven\Semantilizer\Services\ValidationService;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class DrawHeaderHook
 {
@@ -139,7 +141,26 @@ class DrawHeaderHook
 
     protected function prependTitle(): void
     {
-        $this->contentElements = [['header' => 'Whooop', 'headerType' => 1]] + $this->contentElements;
+        $typoScriptFrontendController = GeneralUtility::makeInstance(
+            TypoScriptFrontendController::class,
+            $GLOBALS['TYPO3_CONF_VARS'], GeneralUtility::_GP('id'), GeneralUtility::_GP('type')
+        );
+
+        $contentObjectRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)->get(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class, $typoScriptFrontendController);
+        $title = $contentObjectRenderer->cObjGetSingle('TEXT', [
+            'value' => 'foo',
+            'override' => 'bar',
+            'override.' => [
+                'if.' => [
+                    'isTrue' => 0
+                ]
+            ],
+            'stdWrap.' => [
+                'wrap' => '---|---',
+            ]
+        ]);
+
+        $this->contentElements = [['header' => $title, 'headerType' => 1]] + $this->contentElements;
     }
 
     protected function skipSemantilzer(): bool
