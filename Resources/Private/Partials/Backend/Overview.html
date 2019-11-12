@@ -26,14 +26,15 @@
                                         <f:if condition="{key}">
                                             <f:then>
                                                 <semantilizer:selectType class="semantilzer__select-type js-semantilizer-select" selected="{contentElement.headerType}" uid="{contentElement.uid}" />
+                                                <a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:contentElement.error, then:'--error')}">{contentElement.header}</a>
                                             </f:then>
                                             <f:else>
                                                 <select class="semantilzer__select-type" disabled>
                                                     <option>H{contentElement.headerType}</option>
                                                 </select>
+                                                <span class="semantilzer__link">LOL</span>
                                             </f:else>
                                         </f:if>
-                                        <a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:contentElement.error, then:'--error')}">{contentElement.header}</a>
 									</li>
 								</f:if>
 							</f:for>

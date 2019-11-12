@@ -134,42 +134,12 @@ class DrawHeaderHook
             }
         }
 
-        // Add the page title of the page properties
-        // TODO: get the page title of the page properties by a configuration setup
-        if($preferPageFields = 'title') {
-
-//            $config = [
-//                0 => [
-//                    'data' => 'page:title'
-//                ]
-//            ];
-//
-//            $contentObject = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class);
-//            $value = $contentObject->stdWrapValue(0, $config);
-//
-//            $config = [
-//                'value' => 'page:title'
-//            ];
-//
-//            // Render a raw typoscript configuration. This seems to be the only way that respect the "params" configuration
-//            $x =  GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class)->cObjGetSingle('TEXT', $config);
-//            die($x);
-
-            $prepend[0] = $this->pageInfo;
-
-            foreach(GeneralUtility::trimExplode(',', $preferPageFields, true) as $field) {
-                if($value = $prepend[0][$field]) {
-                    $prepend[0]['header'] = $prepend[0][$field];
-                    $prepend[0]['headerType'] = 1;
-                    $prepend[0]['error'] = false;
-
-                    $contentElements = $prepend + $contentElements;
-                    break;
-                }
-            }
-        }
-
         $this->contentElements = $contentElements;
+    }
+
+    protected function prependTitle(): void
+    {
+        $this->contentElements = [['header' => 'Whooop', 'headerType' => 1]] + $this->contentElements;
     }
 
     protected function skipSemantilzer(): bool
@@ -209,6 +179,9 @@ class DrawHeaderHook
 
         // Collect the content elements
         $this->collectContentElements();
+
+        // Add prepend title
+        $this->prependTitle();
 
         // Validate
         $validationService = GeneralUtility::makeInstance(ValidationService::class, $this->contentElements);
