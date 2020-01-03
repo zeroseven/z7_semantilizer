@@ -3,12 +3,9 @@ defined('TYPO3_MODE') || die('Access denied.');
 
 call_user_func(function (string $_EXTKEY) {
 
-    // Add page ts-config
+    // Add page ts configuration
     TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
-        tx_semantilizer {
-            disableOnPages = 0 
-            ignoreCTypes := addToList(div,html)
-        }
+        <INCLUDE_TYPOSCRIPT: source="FILE:EXT:' . $_EXTKEY . '/Configuration/PageTS/TceForm.tsconfig">
     ');
 
 }, $_EXTKEY);
