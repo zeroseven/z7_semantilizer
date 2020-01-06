@@ -54,7 +54,7 @@ class DrawHeaderHook
         $this->tsconfig = $this->getTsConfig();
     }
 
-    private function getTsConfig(string $key = 'tx_semantilizer'): array
+    private function getTsConfig(string $key = 'tx_semantilizer'): ?array
     {
         // Check the TSconfig
         $pageId = (int)$this->pageInfo['uid'];
