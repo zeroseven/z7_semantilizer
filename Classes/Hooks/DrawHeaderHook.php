@@ -5,7 +5,6 @@ namespace Zeroseven\Semantilizer\Hooks;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -14,7 +13,6 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
 use Zeroseven\Semantilizer\Services\ValidationService;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class DrawHeaderHook
@@ -56,14 +54,28 @@ class DrawHeaderHook
         $this->tsconfig = $this->getTsConfig();
     }
 
+    private function simulateFrontend(): TypoScriptFrontendController
+    {
+
+        $TSFE = GeneralUtility::makeInstance(TypoScriptFrontendController::class, $GLOBALS['TYPO3_CONF_VARS'], (int)GeneralUtility::_GP('id'), (int)GeneralUtility::_GP('type'));
+        $TSFE->set_no_cache();
+        $TSFE->initFEuser();
+        $TSFE->fetch_the_id();
+        $TSFE->checkAlternativeIdMethods();
+        $TSFE->determineId();
+        $TSFE->newCObj();
+        $TSFE->settingLanguage();
+        $TSFE->settingLocale();
+
+        return $TSFE;
+    }
+
     private function getTsConfig(string $key = 'tx_semantilizer'): array
     {
-        // Check the TSconfig
         $pageId = (int)$this->pageInfo['uid'];
         $pagesTsConfig = BackendUtility::getPagesTSconfig($pageId);
-        $typoScriptService = GeneralUtility::makeInstance(TypoScriptService::class);
 
-        return $typoScriptService->convertTypoScriptArrayToPlainArray($pagesTsConfig[$key . '.']);
+        return $pagesTsConfig[$key . '.'];
     }
 
     private function setValidationCookie(): bool
@@ -141,26 +153,9 @@ class DrawHeaderHook
 
     protected function prependTitle(): void
     {
-        $typoScriptFrontendController = GeneralUtility::makeInstance(
-            TypoScriptFrontendController::class,
-            $GLOBALS['TYPO3_CONF_VARS'], GeneralUtility::_GP('id'), GeneralUtility::_GP('type')
-        );
-
-        $contentObjectRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ObjectManager::class)->get(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class, $typoScriptFrontendController);
-        $title = $contentObjectRenderer->cObjGetSingle('TEXT', [
-            'value' => 'foo',
-            'override' => 'bar',
-            'override.' => [
-                'if.' => [
-                    'isTrue' => 0
-                ]
-            ],
-            'stdWrap.' => [
-                'wrap' => '---|---',
-            ]
-        ]);
-
-        $this->contentElements = [['header' => $title, 'headerType' => 1]] + $this->contentElements;
+        if(($renderType = $this->tsconfig['staticTitle']) && ($config = $this->tsconfig['staticTitle.']) && ($title = $this->simulateFrontend()->cObj->cObjGetSingle($renderType, $config))) {
+            $this->contentElements = [['header' => $title, 'headerType' => 1]] + $this->contentElements;
+        }
     }
 
     protected function skipSemantilzer(): bool
