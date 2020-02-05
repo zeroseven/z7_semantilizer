@@ -67,7 +67,6 @@ TCEFORM.tt_content {
 }
 ```
 
-
 ## :gear: Options 
 
 You can disable the preview of the headlines on some pages. To achieve this, add this to your PageTSConfig;
@@ -82,7 +81,15 @@ You can also disable the headline checking for specific content elements, like s
 tx_semantilizer.ignoreCTypes = div, html
 ```
 
+If the page headline is fixed via page properties, you can use any typoscript cObject to adapt to this in the semantilizer. Maybe that's cool? Yes, it is! 
+
+```
+tx_semantilizer.fixedPageTitle = TEXT
+tx_semantilizer.fixedPageTitle {
+    data = page:title
+}
+```
+
 ## :exclamation: TODO's
 
 * There is currently no support or concept for multi language pages
-* It's currently not properly working for pages where the H1 headline is coming from site properties (it is WIP from our side though)
