@@ -39,8 +39,12 @@ class DrawHeaderHook
     /** @var bool */
     protected $hideNotifications = true;
 
+    /** @var array */
+    protected $modulData = [];
+
     /** @var string */
     private const VALIDATION_PARAMETER = 'semantilizer_hide_notifications';
+
 
     /** @var string */
     private const TABLE = 'tt_content';
@@ -52,6 +56,7 @@ class DrawHeaderHook
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $this->hideNotifications = $this->setValidationCookie();
         $this->tsconfig = $this->getTsConfig();
+        $this->modulData = BackendUtility::getModuleData([], null, 'web_layout');
     }
 
     private function simulateFrontend(): TypoScriptFrontendController
@@ -122,11 +127,11 @@ class DrawHeaderHook
         $results = $queryBuilder->select('uid', 'header', 'header_type')
             ->from(self::TABLE)
             ->where(
-                // $queryBuilder->expr()->gt('header_type', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
+                $queryBuilder->expr()->gt('header_type', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->lt('header_layout', $queryBuilder->createNamedParameter(100, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->neq('header', $queryBuilder->createNamedParameter('')),
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($this->pageInfo['uid'], \PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter((int)$this->modulData['language'], \PDO::PARAM_INT)),
                 $queryBuilder->expr()->notIn('CType', array_map(function($value) use ($queryBuilder) {return $queryBuilder->createNamedParameter($value, \PDO::PARAM_STR);}, (array)GeneralUtility::trimExplode(',', $this->tsconfig['ignoreCTypes'])))
             )
             ->orderBy('sorting')
