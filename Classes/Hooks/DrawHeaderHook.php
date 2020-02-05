@@ -153,7 +153,7 @@ class DrawHeaderHook
 
     protected function prependTitle(): void
     {
-        if(($renderType = $this->tsconfig['staticTitle']) && ($config = $this->tsconfig['staticTitle.']) && ($title = $this->simulateFrontend()->cObj->cObjGetSingle($renderType, $config))) {
+        if(($renderType = $this->tsconfig['fixedPageTitle']) && ($config = $this->tsconfig['fixedPageTitle.']) && ($title = $this->simulateFrontend()->cObj->cObjGetSingle($renderType, $config))) {
             $this->contentElements = [['header' => $title, 'headerType' => 1]] + $this->contentElements;
         }
     }
