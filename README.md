@@ -7,13 +7,53 @@ The Semantilizer is a TYPO3 extension, that adds more functionality to the TYPO3
 ## :wrench: Installation
 
 * Get the extension via composer: `composer require zeroseven/z7-semantilizer`
-* Include the typoscript setup **after** the configuration of fluid_styled_content to override their partials for the headlines
+* Make sure the typoscript setup gets included **after** the configuration of fluid_styled_content to override their partials for the headlines
+* Make sure you enable the extension in the backend
+* That's it!
 
 ## :roller_coaster: How to use
 
-Now, if you want, you can simply overwrite the labels of the `header_layouts` to make them more understandable.
+You will find an understandable info box at the top of each page overview in the page module. This info box helps you figure out the current headline structure of the page and make necessary fixes right away.
 
-**Example:**
+For content elements you will find the before mentioned detachment of semantic meaning from the headlines.
+
+![detachment](./Resources/Public/Images/detachment.png)
+
+<br /> 
+<br /> 
+<br /> 
+
+---
+
+**If you have everything configured correctly and notifications enabled, your content will look like this:**
+
+![all good](./Resources/Public/Images/allgood.png)
+
+<br /> 
+<br /> 
+<br /> 
+
+---
+
+**If there are errors in your site configurations it is helpful, to turn on notifications:**
+
+![notifications](./Resources/Public/Images/showNotifications.png)
+
+<br /> 
+<br /> 
+<br /> 
+
+---
+
+**The extension then show's you what's wrong with the current configuration and offers easy "Fix it"-Buttons that will fix your configuration and directly edit the ``header_type``.**
+
+![multiH1](./Resources/Public/Images/multiH1.png)
+
+![invalid](./Resources/Public/Images/invalid.png)
+
+## :point_right: Tips
+
+If you want to make the labels of `header_layouts` more understandable, overwrite them like so:
 
 ```tsconfig
 TCEFORM.tt_content {
@@ -28,14 +68,21 @@ TCEFORM.tt_content {
 ```
 
 
-## Options 
+## :gear: Options 
 
-You can disable the preview of the headlines on some pages. Just configure the following line in your TSconfig;
+You can disable the preview of the headlines on some pages. To achieve this, add this to your PageTSConfig;
 
 ```
 tx_semantilizer.disableOnPages = 42,84
 ```
 
-## Todo's
+You can also disable the headline checking for specific content elements, like so
+
+```
+tx_semantilizer.ignoreCTypes = div, html
+```
+
+## :exclamation: TODO's
 
 * There is currently no support or concept for multi language pages
+* It's currently not properly working for pages where the H1 headline is coming from site properties (it is WIP from our side though)

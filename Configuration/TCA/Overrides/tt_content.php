@@ -31,6 +31,3 @@ call_user_func(static function () {
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('tt_content', 'headers','header_type', 'after:header_layout');
 
 });
-
-// Change the label of the field "header_layout"
-$GLOBALS['TCA']['tt_content']['columns']['header_layout']['label'] = 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_layout';

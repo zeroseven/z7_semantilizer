@@ -1,0 +1,6 @@
+TCEFORM.tt_content.header_layout.label = LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_layout
+
+tx_semantilizer {
+  disableOnPages = 0
+  ignoreCTypes := addToList(div,html)
+}

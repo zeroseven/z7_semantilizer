@@ -70,7 +70,7 @@ class DrawHeaderHook
         return $TSFE;
     }
 
-    private function getTsConfig(string $key = 'tx_semantilizer'): array
+    private function getTsConfig(string $key = 'tx_semantilizer'): ?array
     {
         $pageId = (int)$this->pageInfo['uid'];
         $pagesTsConfig = BackendUtility::getPagesTSconfig($pageId);
