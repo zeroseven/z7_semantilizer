@@ -91,9 +91,9 @@ class DrawHeaderHook
         $TSFE = GeneralUtility::makeInstance(TypoScriptFrontendController::class, $GLOBALS['TYPO3_CONF_VARS'], $pageUid, (int)GeneralUtility::_GP('type'));
         $TSFE->set_no_cache();
         $TSFE->initFEuser();
+        $TSFE->determineId();
         $TSFE->fetch_the_id();
         $TSFE->checkAlternativeIdMethods();
-        $TSFE->determineId();
         $TSFE->newCObj();
         $TSFE->settingLanguage();
         $TSFE->settingLocale();
