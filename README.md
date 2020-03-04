@@ -81,7 +81,30 @@ You can also disable the headline checking for specific content elements, like s
 tx_semantilizer.ignoreCTypes = div, html
 ```
 
-If the page headline is fixed via page properties, you can … 
+If the page headline is fixed via page properties, you can implement your own functions to adapt to this in the semantilizer. Register one or more classes implements the `FixedTitleInterface` like the following example:
+
+**ext_localconf.php**
+```php
+$GLOBALS['TYPO3_CONF_VARS']['EXT']['z7_semantilizer']['fixedPageTitle'][0] = \Vendor\Extension\Hooks\RootPageTitleHook::class;
+$GLOBALS['TYPO3_CONF_VARS']['EXT']['z7_semantilizer']['fixedPageTitle'][1] = \Zeroseven\Semantilizer\FixedTitle\PageTitle::class;
+``` 
+
+**PageTitleHook.php**
+```php
+<?php
+
+namespace Vendor\Extension\Hooks;
+
+class RootPageTitleHook implements FixedTitleInterface
+{
+    public function get($params, $parent)
+    {
+        return $params['uid'] === 1 ? 'fixed title' : '';
+    }
+}
+
+``` 
+ 
 TODO: Describe!
 
 ## :exclamation: TODO's
