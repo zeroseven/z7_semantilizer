@@ -10,7 +10,6 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\FixedTitle\FixedTitleInterface;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
-use Zeroseven\Semantilizer\Services\FrontendSimulatorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
 use Zeroseven\Semantilizer\Services\ValidationService;
 
@@ -18,22 +17,22 @@ class DrawHeaderHook
 {
 
     /** @var array */
-    private $tsconfig = [];
+    private $tsconfig;
 
     /** @var array */
     private $pageInfo;
 
+    /** @var array */
+    private $modulData;
+
+    /** @var array */
+    private $contentElements;
+
     /** @var UriBuilder */
     private $uriBuilder;
 
-    /** @var array */
-    private $contentElements = [];
-
     /** @var bool */
-    private $hideNotifications = true;
-
-    /** @var array */
-    private $modulData = [];
+    private $hideNotifications;
 
     /** @var string */
     private const VALIDATION_PARAMETER = 'semantilizer_hide_notifications';
@@ -43,19 +42,32 @@ class DrawHeaderHook
 
     public function __construct()
     {
-        $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        $this->pageInfo = BackendUtility::readPageAccess((int)GeneralUtility::_GP('id'), true);
-        $this->hideNotifications = $this->setValidationCookie();
+        $this->pageInfo = $this->getPageInfo();
         $this->tsconfig = $this->getTsConfig();
+        $this->hideNotifications = $this->setValidationCookie();
         $this->modulData = BackendUtility::getModuleData([], null, 'web_layout');
+        $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
     }
 
-    private function getTsConfig(string $key = 'tx_semantilizer'): ?array
+    public function getPageInfo(): array
     {
-        $pageId = (int)$this->pageInfo['uid'];
-        $pagesTsConfig = BackendUtility::getPagesTSconfig($pageId);
+        if(empty($this->pageInfo)) {
+            return $this->pageInfo = BackendUtility::readPageAccess((int)GeneralUtility::_GP('id'), true);
+        }
 
-        return $pagesTsConfig[$key . '.'] ?? null;
+        return $this->pageInfo;
+    }
+
+    public function getTsConfig(): array
+    {
+        if (empty($this->tsconfig)) {
+            $pageId = (int)$this->pageInfo['uid'];
+            $pagesTsConfig = BackendUtility::getPagesTSconfig($pageId);
+
+            return $this->tsconfig = $pagesTsConfig['tx_semantilizer.'] ?? [];
+        }
+
+        return $this->tsconfig;
     }
 
     private function setValidationCookie(): bool
@@ -223,8 +235,4 @@ class DrawHeaderHook
         return $view->render();
     }
 
-    public function getPageInfo(): array
-    {
-        return $this->pageInfo;
-    }
 }
