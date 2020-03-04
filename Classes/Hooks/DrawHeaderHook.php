@@ -4,8 +4,6 @@ namespace Zeroseven\Semantilizer\Hooks;
 
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
@@ -13,9 +11,9 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
+use Zeroseven\Semantilizer\Services\FrontendSimulatorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
 use Zeroseven\Semantilizer\Services\ValidationService;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class DrawHeaderHook
 {
@@ -59,46 +57,6 @@ class DrawHeaderHook
         $this->hideNotifications = $this->setValidationCookie();
         $this->tsconfig = $this->getTsConfig();
         $this->modulData = BackendUtility::getModuleData([], null, 'web_layout');
-    }
-
-    private function simulateFrontend(): TypoScriptFrontendController
-    {
-
-        $pageUid = (int)GeneralUtility::_GP('id');
-
-        // Get the translated page uid
-        if($this->modulData['language']) {
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
-
-            // Remove 'AND (hidden = 0)' from the query
-            $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
-
-            // Create query
-            $pageUid = (int)$queryBuilder
-                ->select('uid')
-                ->from('pages')
-                ->where($queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->eq('l10n_parent', $queryBuilder->createNamedParameter($pageUid, \PDO::PARAM_INT)),
-                    $queryBuilder->expr()->in('sys_language_uid', $queryBuilder->createNamedParameter($this->modulData['language'], Connection::PARAM_INT))
-                ))
-                ->setMaxResults(1)
-                ->execute()
-                ->fetchColumn(0) ?: $pageUid;
-        }
-
-        // Hi Kasper Skaarhoj, if you read this:
-        // I'm not sure anymore. This is really the best way to render typoscript by this hook?
-        $TSFE = GeneralUtility::makeInstance(TypoScriptFrontendController::class, $GLOBALS['TYPO3_CONF_VARS'], $pageUid, (int)GeneralUtility::_GP('type'));
-        $TSFE->set_no_cache();
-        $TSFE->initFEuser();
-        $TSFE->determineId();
-        $TSFE->fetch_the_id();
-        $TSFE->checkAlternativeIdMethods();
-        $TSFE->newCObj();
-        $TSFE->settingLanguage();
-        $TSFE->settingLocale();
-
-        return $TSFE;
     }
 
     private function getTsConfig(string $key = 'tx_semantilizer'): ?array
@@ -184,8 +142,10 @@ class DrawHeaderHook
 
     protected function prependTitle(): void
     {
-        if(($renderType = $this->tsconfig['fixedPageTitle']) && ($config = $this->tsconfig['fixedPageTitle.']) && ($title = $this->simulateFrontend()->cObj->cObjGetSingle($renderType, $config))) {
-            $this->contentElements = [['header' => $title, 'headerType' => 1]] + $this->contentElements;
+        if(($renderType = $this->tsconfig['fixedPageTitle']) && ($config = $this->tsconfig['fixedPageTitle.']) && ($sfe = FrontendSimulatorService::simulate((int)GeneralUtility::_GP('id'), (int)$this->modulData['language']))) {
+            if($title = $sfe->cObj->cObjGetSingle($renderType, $config)) {
+                $this->contentElements = [['header' => $title, 'headerType' => 1]] + $this->contentElements;
+            }
         }
     }
 
