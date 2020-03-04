@@ -3,13 +3,12 @@
 namespace Zeroseven\Semantilizer\Hooks;
 
 use TYPO3\CMS\Backend\Routing\UriBuilder;
-use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\Page\PageRepository;
+use Zeroseven\Semantilizer\FixedTitle\FixedTitleInterface;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
 use Zeroseven\Semantilizer\Services\FrontendSimulatorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
@@ -19,32 +18,25 @@ class DrawHeaderHook
 {
 
     /** @var array */
-    protected $tsconfig = [];
+    private $tsconfig = [];
 
     /** @var array */
-    protected $pageInfo;
+    private $pageInfo;
 
     /** @var UriBuilder */
-    protected $uriBuilder;
-
-    /** @var IconFactory */
-    protected $iconFactory;
+    private $uriBuilder;
 
     /** @var array */
-    protected $contentElements = [];
-
-    /**  @var BackendUserAuthentication */
-    protected $backendUser;
+    private $contentElements = [];
 
     /** @var bool */
-    protected $hideNotifications = true;
+    private $hideNotifications = true;
 
     /** @var array */
-    protected $modulData = [];
+    private $modulData = [];
 
     /** @var string */
     private const VALIDATION_PARAMETER = 'semantilizer_hide_notifications';
-
 
     /** @var string */
     private const TABLE = 'tt_content';
@@ -53,7 +45,6 @@ class DrawHeaderHook
     {
         $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $this->pageInfo = BackendUtility::readPageAccess((int)GeneralUtility::_GP('id'), true);
-        $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $this->hideNotifications = $this->setValidationCookie();
         $this->tsconfig = $this->getTsConfig();
         $this->modulData = BackendUtility::getModuleData([], null, 'web_layout');
@@ -64,7 +55,7 @@ class DrawHeaderHook
         $pageId = (int)$this->pageInfo['uid'];
         $pagesTsConfig = BackendUtility::getPagesTSconfig($pageId);
 
-        return $pagesTsConfig[$key . '.'];
+        return $pagesTsConfig[$key . '.'] ?? null;
     }
 
     private function setValidationCookie(): bool
@@ -72,7 +63,7 @@ class DrawHeaderHook
 
         $validate = GeneralUtility::_GP(self::VALIDATION_PARAMETER);
 
-        if($validate === null) {
+        if ($validate === null) {
             return HideNotificationStateService::getState();
         }
 
@@ -99,7 +90,7 @@ class DrawHeaderHook
         ]);
     }
 
-    protected function collectContentElements(): void
+    private function collectContentElements(): void
     {
         // The retuning array
         $contentElements = [];
@@ -116,7 +107,9 @@ class DrawHeaderHook
                 $queryBuilder->expr()->neq('header', $queryBuilder->createNamedParameter('')),
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($this->pageInfo['uid'], \PDO::PARAM_INT)),
                 $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter((int)$this->modulData['language'], \PDO::PARAM_INT)),
-                $queryBuilder->expr()->notIn('CType', array_map(function($value) use ($queryBuilder) {return $queryBuilder->createNamedParameter($value, \PDO::PARAM_STR);}, (array)GeneralUtility::trimExplode(',', $this->tsconfig['ignoreCTypes'])))
+                $queryBuilder->expr()->notIn('CType', array_map(function ($value) use ($queryBuilder) {
+                    return $queryBuilder->createNamedParameter($value, \PDO::PARAM_STR);
+                }, (array)GeneralUtility::trimExplode(',', $this->tsconfig['ignoreCTypes'])))
             )
             ->orderBy('sorting')
             ->execute()
@@ -140,20 +133,39 @@ class DrawHeaderHook
         $this->contentElements = $contentElements;
     }
 
-    protected function prependTitle(): void
+    private function setFixedTitle(): void
     {
-        if(($renderType = $this->tsconfig['fixedPageTitle']) && ($config = $this->tsconfig['fixedPageTitle.']) && ($sfe = FrontendSimulatorService::simulate((int)GeneralUtility::_GP('id'), (int)$this->modulData['language']))) {
-            if($title = $sfe->cObj->cObjGetSingle($renderType, $config)) {
-                $this->contentElements = [['header' => $title, 'headerType' => 1]] + $this->contentElements;
+        $fixedTitle = null;
+        $hookParameter = [
+            'uid' => (int)GeneralUtility::_GP('id'),
+            'sys_language_uid' => (int)$this->modulData['language']
+        ];
+
+        if ($hooks = $GLOBALS['TYPO3_CONF_VARS']['EXT']['z7_semantilizer']['fixedPageTitle'] ?? null) {
+
+            // Sort them by their keys
+            ksort($hooks);
+
+            // Loop them
+            foreach ($hooks as $className) {
+                if (empty($fixedTitle) && class_exists($className) && is_subclass_of($className, FixedTitleInterface::class)) {
+                    if ($overrideTitle = GeneralUtility::callUserFunction($className . '->get', array_merge(['title' => $fixedTitle], $hookParameter), $this)) {
+                        $fixedTitle = $overrideTitle;
+                    }
+                }
             }
+        }
+
+        if ($fixedTitle) {
+            $this->contentElements = [['header' => $fixedTitle, 'headerType' => 1]] + $this->contentElements;
         }
     }
 
-    protected function skipSemantilzer(): bool
+    private function skipSemantilzer(): bool
     {
 
         // Skip on some doktypes
-        if(in_array((int)$this->pageInfo['doktype'], [
+        if (in_array((int)$this->pageInfo['doktype'], [
             PageRepository::DOKTYPE_LINK,
             PageRepository::DOKTYPE_SHORTCUT,
             PageRepository::DOKTYPE_BE_USER_SECTION,
@@ -173,14 +185,11 @@ class DrawHeaderHook
         return false;
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
 
         // Abort on some doktypes
-        if($this->skipSemantilzer()) {
+        if ($this->skipSemantilzer()) {
             return '';
         }
 
@@ -188,7 +197,7 @@ class DrawHeaderHook
         $this->collectContentElements();
 
         // Add prepend title
-        $this->prependTitle();
+        $this->setFixedTitle();
 
         // Validate
         $validationService = GeneralUtility::makeInstance(ValidationService::class, $this->contentElements);
@@ -212,5 +221,10 @@ class DrawHeaderHook
         ]);
 
         return $view->render();
+    }
+
+    public function getPageInfo(): array
+    {
+        return $this->pageInfo;
     }
 }

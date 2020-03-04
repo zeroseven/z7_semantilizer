@@ -81,14 +81,8 @@ You can also disable the headline checking for specific content elements, like s
 tx_semantilizer.ignoreCTypes = div, html
 ```
 
-If the page headline is fixed via page properties, you can use any typoscript cObject to adapt to this in the semantilizer. Maybe that's cool? Yes, it is! 
-
-```
-tx_semantilizer.fixedPageTitle = TEXT
-tx_semantilizer.fixedPageTitle {
-    data = page:title
-}
-```
+If the page headline is fixed via page properties, you can … 
+TODO: Describe!
 
 ## :exclamation: TODO's
 
