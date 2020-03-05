@@ -2,7 +2,7 @@
 defined('TYPO3_MODE') || die('Access denied.');
 
 
-call_user_func(function (string $_EXTKEY) {
+call_user_func(function () {
 
     if (TYPO3_MODE === 'BE') {
 
@@ -15,12 +15,12 @@ call_user_func(function (string $_EXTKEY) {
     }
 
 
-}, $_EXTKEY);
+});
 
 // Add styles to the backend
-$GLOBALS['TBE_STYLES']['skins'][$_EXTKEY] = [
-    'name' => $_EXTKEY,
+$GLOBALS['TBE_STYLES']['skins']['z7_semantilizer'] = [
+    'name' => 'z7_semantilizer',
     'stylesheetDirectories' => [
-        'css' => 'EXT:' . $_EXTKEY . '/Resources/Public/Css/Backend/'
+        'css' => 'EXT:z7_semantilizer/Resources/Public/Css/Backend/'
     ]
 ];
