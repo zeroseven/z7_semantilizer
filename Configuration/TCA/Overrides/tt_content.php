@@ -26,8 +26,8 @@ call_user_func(static function () {
         ]
     ]);
 
-    // Add field to the palettes
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('tt_content', 'header','header_type', 'after:header_layout');
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('tt_content', 'headers','header_type', 'after:header_layout');
+    // Add fields to the palettes
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('tt_content', 'header', 'header_type', 'after:header_layout');
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('tt_content', 'headers', 'header_type', 'after:header_layout');
 
 });

@@ -51,7 +51,7 @@ class DrawHeaderHook
 
     public function getPageInfo(): array
     {
-        if(empty($this->pageInfo)) {
+        if (empty($this->pageInfo)) {
             return $this->pageInfo = BackendUtility::readPageAccess((int)GeneralUtility::_GP('id'), true);
         }
 
@@ -173,7 +173,7 @@ class DrawHeaderHook
         }
     }
 
-    private function skipSemantilzer(): bool
+    private function skipSemantilizer(): bool
     {
 
         // Skip on some doktypes
@@ -201,7 +201,7 @@ class DrawHeaderHook
     {
 
         // Abort on some doktypes
-        if ($this->skipSemantilzer()) {
+        if ($this->skipSemantilizer()) {
             return '';
         }
 

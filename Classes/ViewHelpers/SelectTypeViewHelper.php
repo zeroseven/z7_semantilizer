@@ -1,4 +1,5 @@
 <?php
+
 namespace Zeroseven\Semantilizer\ViewHelpers;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -11,7 +12,7 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        parent::registerUniversalTagAttributes();
+        $this->registerUniversalTagAttributes();
 
         // Register some arguments
         $this->registerArgument('selected', 'string', 'The element type', true);
@@ -45,16 +46,16 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
         $headerTypeConfig = $pagesTsConfig['TCEFORM.']['tt_content.']['header_type.'] ?: [];
 
         // Remove Items
-        if($removeItems = $headerTypeConfig['removeItems']) {
+        if ($removeItems = $headerTypeConfig['removeItems']) {
             foreach (GeneralUtility::intExplode(',', $removeItems) as $key) {
-                if($headerTypes[$key]) {
+                if ($headerTypes[$key]) {
                     unset($headerTypes[$key]);
                 }
             }
         }
 
         // Add items
-        if($addItems = $headerTypeConfig['addItems.']) {
+        if ($addItems = $headerTypeConfig['addItems.']) {
             foreach ($addItems as $key => $value) {
                 $headerTypes[$key] = true;
             }
@@ -68,12 +69,13 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
     protected function generateOptions(): string
     {
         $content = '';
-        $requestUrl = GeneralUtility::getIndpEnv('REQUEST_URI') . ($this->arguments['section'] ? sprintf('#%s', htmlspecialchars($this->arguments['section'])) : '');
+        $requestUrl = GeneralUtility::getIndpEnv('REQUEST_URI') . ($this->arguments['section'] ? sprintf('#%s',
+                htmlspecialchars($this->arguments['section'])) : '');
         $types = $this->getHeaderTypes();
 
-        foreach($types as $key => $type) {
+        foreach ($types as $key => $type) {
 
-            if($type > 0) {
+            if ($type > 0) {
                 $selected = $type === $this->arguments['selected'] ? 'selected' : '';
 
                 $actionUrl = $selected ? '' : BackendUtility::getLinkToDataHandlerAction(
@@ -85,7 +87,7 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
             }
         }
 
-        if(!in_array((int)$this->arguments['selected'], $types)) {
+        if (!in_array((int)$this->arguments['selected'], $types, true)) {
             $content .= '<option selected value="">⚠️</option>';
         }
 

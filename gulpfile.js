@@ -9,28 +9,28 @@ const cleancss = require('gulp-clean-css');
 
 gulp.task('Scss', function (done) {
 
-	// Build the task chain
-	gulp.src(['./Resources/Private/Scss/**/*.scss'])
+  // Build the task chain
+  gulp.src(['./Resources/Private/Scss/**/*.scss'])
 
-		// Render scss
-		.pipe(sass().on('error', sass.logError))
-		.pipe(autoprefixer())
+    // Render scss
+    .pipe(sass().on('error', sass.logError))
+    .pipe(autoprefixer())
 
-		// Create a uncompressed version
-		.pipe(cleancss({format: 'beautify'}))
-		.pipe(rename({suffix: '.dist'}))
-		.pipe(gulp.dest('./Resources/Public/Css'))
+    // Create a uncompressed version
+    .pipe(cleancss({format: 'beautify'}))
+    .pipe(rename({suffix: '.dist'}))
+    .pipe(gulp.dest('./Resources/Public/Css'))
 
-		// Create a compressed version
-		.pipe(cleancss())
-		.pipe(rename({suffix: '.min'}))
-		.pipe(gulp.dest('./Resources/Public/Css'));
+    // Create a compressed version
+    .pipe(cleancss())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(gulp.dest('./Resources/Public/Css'));
 
-	done();
+  done();
 });
 
-gulp.task('watch', function() {
-	gulp.watch(['./Resources/Private/Scss/**/*.scss'], gulp.series('build'));
+gulp.task('watch', function () {
+  gulp.watch(['./Resources/Private/Scss/**/*.scss'], gulp.series('build'));
 });
 
 gulp.task('build', gulp.series(['Scss']));

@@ -1,16 +1,40 @@
 {
   "name": "zeroseven/z7-semantilizer",
+  "license": "GPL-2.0-only",
   "type": "typo3-cms-extension",
   "description": "Gives more semantic control for the headlines of the content elements.",
   "authors": [
     {
+      "name": "zeroseven design studios GmbH",
+      "email": "typo3@zeroseven.de",
+      "homepage": "https://www.zeroseven.de/",
+      "role": "Company"
+    },
+    {
       "name": "Raphael Thanner",
+      "role": "Developer"
+    },
+    {
+      "name": "Sebastian Rosskopf",
       "role": "Developer"
     }
   ],
+  "support": {
+    "issues": "https://github.com/zeroseven/z7_semantilizer/issues",
+    "docs": "https://github.com/zeroseven/z7_semantilizer/blob/master/README.md"
+  },
+  "require": {
+    "typo3/cms-core": "^9.5 || ^10.3"
+  },
+  "suggest": {
+    "typo3/cms-fluid-styled-content": "*"
+  },
   "autoload": {
     "psr-4": {
       "Zeroseven\\Semantilizer\\": "Classes"
     }
+  },
+  "replace": {
+    "z7_semantilizer": "self.version"
   }
 }

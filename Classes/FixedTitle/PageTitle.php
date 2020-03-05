@@ -14,7 +14,7 @@ class PageTitle implements FixedTitleInterface
     public function get(array $params, DrawHeaderHook $parent): string
     {
 
-        if($params['sys_language_uid']) {
+        if ($params['sys_language_uid']) {
             $row = BackendUtility::getRecordLocalization(self::TABLE, (int)$params['uid'], (int)$params['sys_language_uid'])[0];
         } else {
             $row = BackendUtility::getRecord(self::TABLE, (int)$params['uid'], self::FIELD);

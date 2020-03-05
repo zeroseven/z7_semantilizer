@@ -34,11 +34,11 @@ class InfoboxViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Be\InfoboxViewHelpe
         $infoBox = parent::renderStatic($arguments, $renderChildrenClosure, $renderingContext);
 
         // Wrap the box and add CSS to the page
-        if($arguments['iconColor'] !== null && empty($arguments['disableIcon'])) {
+        if ($arguments['iconColor'] !== null && empty($arguments['disableIcon'])) {
             $uniqueId = 'b' . md5(uniqid('box', true));
             $infoBox = sprintf('<div id="%s">%s</div>', $uniqueId, $infoBox);
 
-            if($color = BootstrapColorService::getColorByFlashMessageState($arguments['iconColor'])) {
+            if ($color = BootstrapColorService::getColorByFlashMessageState($arguments['iconColor'])) {
                 GeneralUtility::makeInstance(PageRenderer::class)->addCssInlineBlock($uniqueId, sprintf('
                     #%s .media-left .fa-circle:before {
                         color: %s;
