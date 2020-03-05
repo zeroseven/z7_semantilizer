@@ -81,7 +81,7 @@ You can also disable the headline checking for specific content elements, like s
 tx_semantilizer.ignoreCTypes = div, html
 ```
 
-If the page headline is fixed via page properties, you can implement your own functions to adapt to this in the semantilizer. Register one or more classes implements the `FixedTitleInterface` like the following example:
+If the page headline is set via page properties, you can implement your own functions to adapt to this in the semantilizer. Register one or more classes implements the `FixedTitleInterface` like the following example:
 
 **ext_localconf.php**
 ```php
@@ -102,11 +102,4 @@ class RootPageTitleHook implements FixedTitleInterface
         return $params['uid'] === 1 ? 'fixed title' : '';
     }
 }
-
 ``` 
- 
-TODO: Describe!
-
-## :exclamation: TODO's
-
-* There is currently no support or concept for multi language pages
