@@ -12,7 +12,7 @@ class HideNotificationStateService
 
     private const FIELD = 'semantilizer_hide_notifications';
 
-    public static function getState(): ?bool
+    public static function getState(): bool
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE);
 

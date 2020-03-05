@@ -26,7 +26,6 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
     {
 
         $this->tag->setTagName('select');
-
         $this->tag->setContent($this->generateOptions());
 
         return $this->tag->render();

@@ -10,9 +10,6 @@ class ValidationService
 {
 
     /** @var array */
-    protected $contentElements = [];
-
-    /** @var array */
     protected $notifications = [];
 
     /** @var int */
@@ -37,59 +34,6 @@ class ValidationService
 
     public function __construct(array $contentElements)
     {
-        $this->validate($contentElements);
-    }
-
-    public function getNotifications(): array
-    {
-        return $this->notifications;
-    }
-
-    protected function addNotification(string $errorCode, array $contentElements = null, array $fix = null, string $state = 'warning'): void
-    {
-
-        $this->notifications[] = [
-            'key' => self::ERROR_CODES[$errorCode],
-            'state' => self::STATES[$state],
-            'contentElements' => $contentElements,
-            'fixLink' => !is_array($fix) ? null : BackendUtility::getLinkToDataHandlerAction(
-                implode(',', array_map(function ($type, $uid) {
-                    return sprintf('&data[tt_content][%d][header_type]=%d', $uid, $type);
-                }, $fix, array_keys($fix))),
-                GeneralUtility::getIndpEnv('REQUEST_URI')
-            )
-        ];
-
-        // Set the strongest notification
-        $this->setStrongestLevel(self::STATES[$state]);
-    }
-
-    public function getStrongestLevel()
-    {
-        return $this->strongestLevel;
-    }
-
-    protected function setStrongestLevel($level)
-    {
-        $this->strongestLevel = max($level, $this->getStrongestLevel());
-    }
-
-    public function getAffectedContentElements(): array
-    {
-        $affected = [];
-
-        foreach ($this->getNotifications() as $notification) {
-            foreach ($notification['contentElements'] as $uid => $contentElement) {
-                $affected[$uid] = $uid;
-            }
-        }
-
-        return $affected;
-    }
-
-    protected function validate(array $contentElements): void
-    {
-
         $mainHeadingContents = [];
         $unexpectedHeadingContents = [];
         $lastHeadingType = 0;
@@ -144,6 +88,53 @@ class ValidationService
         if (!empty($unexpectedHeadingContents)) {
             $this->addNotification('unexpected_heading', $unexpectedHeadingContents);
         }
+    }
+
+    public function getNotifications(): array
+    {
+        return $this->notifications;
+    }
+
+    protected function addNotification(string $errorCode, array $contentElements = null, array $fix = null, string $state = 'warning'): void
+    {
+
+        $this->notifications[] = [
+            'key' => self::ERROR_CODES[$errorCode],
+            'state' => self::STATES[$state],
+            'contentElements' => $contentElements,
+            'fixLink' => !is_array($fix) ? null : BackendUtility::getLinkToDataHandlerAction(
+                implode(',', array_map(function ($type, $uid) {
+                    return sprintf('&data[tt_content][%d][header_type]=%d', $uid, $type);
+                }, $fix, array_keys($fix))),
+                GeneralUtility::getIndpEnv('REQUEST_URI')
+            )
+        ];
+
+        // Set the strongest notification
+        $this->setStrongestLevel(self::STATES[$state]);
+    }
+
+    public function getStrongestLevel(): int
+    {
+        return $this->strongestLevel;
+    }
+
+    protected function setStrongestLevel(int $level): int
+    {
+        return $this->strongestLevel = max($level, $this->getStrongestLevel());
+    }
+
+    public function getAffectedContentElements(): array
+    {
+        $affected = [];
+
+        foreach ($this->getNotifications() as $notification) {
+            foreach ($notification['contentElements'] as $uid => $contentElement) {
+                $affected[$uid] = $uid;
+            }
+        }
+
+        return $affected;
     }
 
 }
