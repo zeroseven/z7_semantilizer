@@ -161,7 +161,7 @@ class DrawHeaderHook
             // Loop them
             foreach ($hooks as $className) {
                 if (empty($fixedTitle) && class_exists($className) && is_subclass_of($className, FixedTitleInterface::class)) {
-                    if ($overrideTitle = GeneralUtility::callUserFunction($className . '->get', array_merge(['title' => $fixedTitle], $hookParameter), $this)) {
+                    if ($overrideTitle = GeneralUtility::callUserFunction($className . '->get', $hookParameter, $this)) {
                         $fixedTitle = $overrideTitle;
                     }
                 }
