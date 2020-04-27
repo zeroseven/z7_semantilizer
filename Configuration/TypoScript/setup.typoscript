@@ -4,3 +4,12 @@
 # after the setup of the fluid_styled_content.
 ##################################################
 lib.contentElement.partialRootPaths.156587902 = EXT:z7_semantilizer/Resources/Private/Partials/Frontend
+
+##################################################
+# Add default class names
+##################################################
+lib.contentElement.settings {
+  defaultHeaderClass = {$styles.content.defaultHeaderClass}
+  defaultSubHeaderClass = {$styles.content.defaultSubHeaderClass}
+  defaultHeaderDateClass = {$styles.content.defaultHeaderDateClass}
+}

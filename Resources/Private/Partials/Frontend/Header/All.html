@@ -8,18 +8,20 @@
                     layout: data.header_layout,
                     type: data.header_type,
                     position: data.header_position,
-                    link: data.header_link}"/>
+                    link: data.header_link,
+                    class: settings.defaultHeaderClass}"/>
                 <f:render partial="Header/Header" arguments="{
                     header: data.subheader,
                     layout: data.header_layout,
                     position: data.header_position,
-                    class: 'ce-subheader'}"/>
+                    class: settings.defaultSubHeaderClass}"/>
                 <f:render partial="Header/Date" arguments="{
                     date: data.date,
                     layout: data.header_layout,
                     type: data.header_type,
                     position: data.header_position,
-                    link: data.header_link}"/>
+                    link: data.header_link,
+                    class: settings.defaultHeaderDateClass}"/>
             </header>
         </f:spaceless>
     </f:if>

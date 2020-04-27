@@ -4,3 +4,10 @@
 # idea to use a typoscript variable inside the TCA as a default.
 ###############################################################
 styles.content.defaultHeaderType >
+
+##################################################
+# Add default class names
+##################################################
+styles.content.defaultHeaderClass = ce-header
+styles.content.defaultSubHeaderClass = ce-subheader
+styles.content.defaultHeaderDateClass = ce-headerdate

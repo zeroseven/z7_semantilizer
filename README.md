@@ -19,9 +19,9 @@ For content elements you will find the before mentioned detachment of semantic m
 
 ![detachment](./Resources/Public/Images/detachment.png)
 
-<br /> 
-<br /> 
-<br /> 
+<br />
+<br />
+<br />
 
 ---
 
@@ -29,9 +29,9 @@ For content elements you will find the before mentioned detachment of semantic m
 
 ![all good](./Resources/Public/Images/allgood.png)
 
-<br /> 
-<br /> 
-<br /> 
+<br />
+<br />
+<br />
 
 ---
 
@@ -39,9 +39,9 @@ For content elements you will find the before mentioned detachment of semantic m
 
 ![notifications](./Resources/Public/Images/showNotifications.png)
 
-<br /> 
-<br /> 
-<br /> 
+<br />
+<br />
+<br />
 
 ---
 
@@ -67,7 +67,14 @@ TCEFORM.tt_content {
 }
 ```
 
-## :gear: Options 
+If you want to use custom css classes you can override them in the typoscript constants:
+```typo3_typoscript
+styles.content.defaultHeaderClass = headline
+styles.content.defaultSubHeaderClass = subheadline
+styles.content.defaultHeaderDateClass = headerdate
+```
+
+## :gear: Options
 
 You can disable the preview of the headlines on some pages. To achieve this, add this to your PageTSConfig;
 
@@ -87,7 +94,7 @@ If the page headline is set via page properties, you can implement your own func
 ```php
 $GLOBALS['TYPO3_CONF_VARS']['EXT']['z7_semantilizer']['fixedPageTitle'][0] = \Vendor\Extension\Hooks\RootPageTitleHook::class;
 $GLOBALS['TYPO3_CONF_VARS']['EXT']['z7_semantilizer']['fixedPageTitle'][1] = \Zeroseven\Semantilizer\FixedTitle\PageTitle::class;
-``` 
+```
 
 **PageTitleHook.php**
 ```php
@@ -102,4 +109,4 @@ class RootPageTitleHook implements FixedTitleInterface
         return $params['uid'] === 1 ? 'fixed title' : '';
     }
 }
-``` 
+```
