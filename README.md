@@ -67,11 +67,13 @@ TCEFORM.tt_content {
 }
 ```
 
-If you want to use custom css classes you can override them in the typoscript constants:
+If you want to use custom css classes you can override them in typoscript:
 ```typo3_typoscript
-styles.content.defaultHeaderClass = headline
-styles.content.defaultSubHeaderClass = subheadline
-styles.content.defaultHeaderDateClass = headerdate
+lib.contentElement.settings {
+  defaultHeaderClass = ce-header
+  defaultSubHeaderClass = ce-subheader
+  defaultHeaderDateClass = ce-headerdate
+}
 ```
 
 ## :gear: Options
