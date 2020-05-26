@@ -11,13 +11,15 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\FixedTitle\FixedTitleInterface;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
-use Zeroseven\Semantilizer\Services\ValidationService;
+use Zeroseven\Semantilizer\Services\PageInfoService;
+use Zeroseven\Semantilizer\Services\TsConfigService;
+use Zeroseven\Semantilizer\Utilities\ValidationUtility;
 
 class DrawHeaderHook
 {
 
     /** @var array */
-    private $tsconfig;
+    private $tsConfig;
 
     /** @var array */
     private $pageInfo;
@@ -34,6 +36,17 @@ class DrawHeaderHook
     /** @var bool */
     private $hideNotifications;
 
+    /** @var array */
+    public $ignoreDoktypes = [
+        PageRepository::DOKTYPE_LINK,
+        PageRepository::DOKTYPE_SHORTCUT,
+        PageRepository::DOKTYPE_BE_USER_SECTION,
+        PageRepository::DOKTYPE_MOUNTPOINT,
+        PageRepository::DOKTYPE_SPACER,
+        PageRepository::DOKTYPE_SYSFOLDER,
+        PageRepository::DOKTYPE_RECYCLER
+    ];
+
     /** @var string */
     private const VALIDATION_PARAMETER = 'semantilizer_hide_notifications';
 
@@ -42,32 +55,11 @@ class DrawHeaderHook
 
     public function __construct()
     {
-        $this->pageInfo = $this->getPageInfo();
-        $this->tsconfig = $this->getTsConfig();
-        $this->hideNotifications = $this->setValidationCookie();
+        $this->pageInfo = PageInfoService::getPageInfo();
+        $this->tsConfig = TsConfigService::getTsConfig((int)$this->pageInfo['uid']);
         $this->modulData = BackendUtility::getModuleData([], null, 'web_layout');
         $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-    }
-
-    public function getPageInfo(): array
-    {
-        if (empty($this->pageInfo)) {
-            return $this->pageInfo = BackendUtility::readPageAccess((int)GeneralUtility::_GP('id'), true);
-        }
-
-        return $this->pageInfo;
-    }
-
-    public function getTsConfig(): array
-    {
-        if (empty($this->tsconfig)) {
-            $pageId = (int)$this->pageInfo['uid'];
-            $pagesTsConfig = BackendUtility::getPagesTSconfig($pageId);
-
-            return $this->tsconfig = $pagesTsConfig['tx_semantilizer.'] ?? [];
-        }
-
-        return $this->tsconfig;
+        $this->hideNotifications = $this->setValidationCookie();
     }
 
     private function setValidationCookie(): bool
@@ -121,7 +113,7 @@ class DrawHeaderHook
                 $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter((int)$this->modulData['language'], \PDO::PARAM_INT)),
                 $queryBuilder->expr()->notIn('CType', array_map(function ($value) use ($queryBuilder) {
                     return $queryBuilder->createNamedParameter($value, \PDO::PARAM_STR);
-                }, (array)GeneralUtility::trimExplode(',', $this->tsconfig['ignoreCTypes'])))
+                }, (array)GeneralUtility::trimExplode(',', $this->tsConfig['ignoreCTypes'])))
             )
             ->orderBy('sorting')
             ->execute()
@@ -150,7 +142,9 @@ class DrawHeaderHook
         $fixedTitle = null;
         $hookParameter = [
             'uid' => (int)GeneralUtility::_GP('id'),
-            'sys_language_uid' => (int)$this->modulData['language']
+            'sys_language_uid' => (int)$this->modulData['language'],
+            'row' => $this->pageInfo,
+            'tsConfig' => $this->tsConfig
         ];
 
         if ($hooks = $GLOBALS['TYPO3_CONF_VARS']['EXT']['z7_semantilizer']['fixedPageTitle'] ?? null) {
@@ -177,20 +171,12 @@ class DrawHeaderHook
     {
 
         // Skip on some doktypes
-        if (in_array((int)$this->pageInfo['doktype'], [
-            PageRepository::DOKTYPE_LINK,
-            PageRepository::DOKTYPE_SHORTCUT,
-            PageRepository::DOKTYPE_BE_USER_SECTION,
-            PageRepository::DOKTYPE_MOUNTPOINT,
-            PageRepository::DOKTYPE_SPACER,
-            PageRepository::DOKTYPE_SYSFOLDER,
-            PageRepository::DOKTYPE_RECYCLER
-        ], true)) {
+        if (in_array((int)$this->pageInfo['doktype'], $this->ignoreDoktypes, true)) {
             return true;
         }
 
         // Check the TSconfig
-        if ($disableOnPages = $this->tsconfig['disableOnPages']) {
+        if ($disableOnPages = $this->tsConfig['disableOnPages']) {
             return in_array((int)$this->pageInfo['uid'], GeneralUtility::intExplode(',', $disableOnPages), true);
         }
 
@@ -212,10 +198,10 @@ class DrawHeaderHook
         $this->setFixedTitle();
 
         // Validate
-        $validationService = GeneralUtility::makeInstance(ValidationService::class, $this->contentElements);
+        $validationUtility = GeneralUtility::makeInstance(ValidationUtility::class, $this->contentElements);
 
         // Set error state
-        foreach ($validationService->getAffectedContentElements() as $affected) {
+        foreach ($validationUtility->getAffectedContentElements() as $affected) {
             $this->contentElements[$affected]['error'] = true;
         }
 
@@ -224,9 +210,9 @@ class DrawHeaderHook
         $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html'));
         $view->setPartialRootPaths([0 => GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Partials/Backend')]);
         $view->assignMultiple([
-            'strongestNotificationLevel' => $validationService->getStrongestLevel(),
-            'notifications' => $validationService->getNotifications(),
-            'strongestNotificationClassname' => BootstrapColorService::getClassnameByFlashMessageState($validationService->getStrongestLevel()),
+            'strongestNotificationLevel' => $validationUtility->getStrongestLevel(),
+            'notifications' => $validationUtility->getNotifications(),
+            'strongestNotificationClassname' => BootstrapColorService::getClassnameByFlashMessageState($validationUtility->getStrongestLevel()),
             'contentElements' => $this->contentElements,
             'hideNotifications' => $this->hideNotifications,
             'toggleValidationLink' => $this->getToggleValidationLink()

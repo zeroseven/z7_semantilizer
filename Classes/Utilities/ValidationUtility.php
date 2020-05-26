@@ -1,12 +1,12 @@
 <?php
 
-namespace Zeroseven\Semantilizer\Services;
+namespace Zeroseven\Semantilizer\Utilities;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ValidationService
+class ValidationUtility
 {
 
     /** @var array */
