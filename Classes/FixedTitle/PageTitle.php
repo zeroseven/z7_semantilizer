@@ -11,13 +11,13 @@ class PageTitle implements FixedTitleInterface
 
     protected const FIELD = 'title';
 
-    public function get(array $params, DrawHeaderHook $parent): string
+    public function get(array $params): string
     {
 
         if ($params['sys_language_uid']) {
-            $row = BackendUtility::getRecordLocalization(self::TABLE, (int)$params['uid'], (int)$params['sys_language_uid'])[0];
+            $row = BackendUtility::getRecordLocalization(self::TABLE, $params['uid'], $params['sys_language_uid'])[0];
         } else {
-            $row = BackendUtility::getRecord(self::TABLE, (int)$params['uid'], self::FIELD);
+            $row = BackendUtility::getRecord(self::TABLE, $params['uid'], self::FIELD);
         }
 
         return $row[self::FIELD] ?? '';

@@ -14,6 +14,7 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
 use Zeroseven\Semantilizer\FixedTitle\FixedTitleInterface;
 use Zeroseven\Semantilizer\Services\PageInfoService;
 use Zeroseven\Semantilizer\Services\TsConfigService;
+use Zeroseven\Semantilizer\Utilities\PageData;
 use Zeroseven\Semantilizer\Utilities\ValidationUtility;
 
 class FaultyHeadingsWidget implements WidgetInterface
@@ -127,6 +128,8 @@ class FaultyHeadingsWidget implements WidgetInterface
 
     public function renderWidgetContent(): string
     {
+
+        var_dump(PageData::makeInstance(1));
         $this->view->setTemplatePathAndFilename('EXT:z7_semantilizer/Resources/Private/Templates/Widget/FaultyHeadings.html');
 
         foreach ($this->getPages() ?? [] as $uid => $contentElements) {
@@ -141,6 +144,7 @@ class FaultyHeadingsWidget implements WidgetInterface
             'options' => $this->options,
             'configuration' => $this->configuration,
         ]);
+
         return $this->view->render();
     }
 }

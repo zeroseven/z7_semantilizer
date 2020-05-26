@@ -5,6 +5,7 @@ namespace Zeroseven\Semantilizer\Utilities;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Zeroseven\Semantilizer\Models\ContentCollection;
 
 class ValidationUtility
 {
@@ -32,56 +33,52 @@ class ValidationUtility
         'error' => FlashMessage::ERROR
     ];
 
-    public function __construct(array $contentElements)
+    public function __construct(ContentCollection $contentCollection)
     {
         $mainHeadingContents = [];
         $unexpectedHeadingContents = [];
         $lastHeadingType = 0;
-        $firstKey = array_key_first($contentElements);
+        $contentElements = $contentCollection->getElements();
+        $firstKey = $contentCollection->getFirstKey();
 
-        foreach ($contentElements as $index => $contentElement) {
-
-            // Get the header_type
-            $type = (int)$contentElement['headerType'];
-
-            if ($type > 0) {
+        foreach ($contentElements as $contentElement) {
+            if ($contentElement->getHeaderType() > 0) {
 
                 // Check for the h1
-                if ($type === 1) {
-                    $mainHeadingContents[$index] = $contentElement;
+                if ($contentElement->getHeaderType() === 1) {
+                    $mainHeadingContents[$contentElement->getUid()] = $contentElement;
                 }
 
                 // Check if the headlines are nested in the right way
-                if ($lastHeadingType > 0 && $type > $lastHeadingType + 1) {
-                    $unexpectedHeadingContents[$index] = $contentElement;
+                if ($lastHeadingType > 0 && $contentElement->getHeaderType() > $lastHeadingType + 1) {
+                    $unexpectedHeadingContents[$contentElement->getUid()] = $contentElement;
                 }
 
                 // Store the last headline type
-                $lastHeadingType = $type;
+                $lastHeadingType = $contentElement->getHeaderType();
             }
         }
 
         // Check the length of the main heading(s)
-        // Todo: respect "protected" elementes
         if (count($mainHeadingContents) === 0) {
-            $fix = count($contentElements) ? [$firstKey => 1] : null;
-            $this->addNotification('missing_h1', $contentElements, $fix, count($contentElements) ? 'error' : 'info');
+            $fix = $contentCollection->count() ? [$firstKey => 1] : null;
+            $this->addNotification('missing_h1', [$contentCollection->getFirstElement()], $fix, $contentCollection->count() ? 'error' : 'info');
         } elseif (count($mainHeadingContents) > 1) {
             $fix = [];
-            foreach ($contentElements as $uid => $row) {
-                if ((int)$row['headerType'] === 1 && $uid !== $firstKey) {
-                    $fix[$uid] = 2;
+            foreach ($contentElements as $contentElement) {
+                if ($contentElement->getHeaderType() === 1 && $contentElement->getUid() !== $firstKey) {
+                    $fix[$contentElement->getUid()] = 2;
                 }
             }
             $this->addNotification('double_h1', $mainHeadingContents, $fix);
         } elseif (array_key_first($mainHeadingContents) !== $firstKey) {
-            $fix[array_key_first($contentElements)] = 1;
-            foreach ($contentElements as $uid => $row) {
-                if ((int)$row['headerType'] === 1) {
-                    $fix[$uid] = 2;
+            $fix[$contentCollection->getFirstKey()] = 1;
+            foreach ($contentElements as $contentElement) {
+                if ($contentElement->getHeaderType() === 1) {
+                    $fix[$contentElement->getUid()] = 2;
                 }
             }
-            $this->addNotification('wrong_ordered_h1', [$firstKey => $contentElements[$firstKey]] + $mainHeadingContents, $fix);
+            $this->addNotification('wrong_ordered_h1', [$contentCollection->getFirstElement()] + $mainHeadingContents, $fix);
         }
 
         // Add a notification for the unexpected ones
@@ -97,6 +94,10 @@ class ValidationUtility
 
     protected function addNotification(string $errorCode, array $contentElements = null, array $fix = null, string $state = 'warning'): void
     {
+
+        foreach ($contentElements ?? [] as $contentElement) {
+            $contentElement->setError(true);
+        }
 
         $this->notifications[] = [
             'key' => self::ERROR_CODES[$errorCode],
@@ -124,17 +125,18 @@ class ValidationUtility
         return $this->strongestLevel = max($level, $this->getStrongestLevel());
     }
 
-    public function getAffectedContentElements(): array
+    public function getAffectedContentElements(): ContentCollection
     {
-        $affected = [];
+        $contentCollection = GeneralUtility::makeInstance(ContentCollection::class);
 
         foreach ($this->getNotifications() as $notification) {
-            foreach ($notification['contentElements'] as $uid => $contentElement) {
-                $affected[$uid] = $uid;
+            foreach ($notification['contentElements'] as $contentElement) {
+                $contentCollection->append($contentElement);
             }
         }
 
-        return $affected;
+        return $contentCollection;
     }
+
 
 }

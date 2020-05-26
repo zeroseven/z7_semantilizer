@@ -7,12 +7,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\FixedTitle\FixedTitleInterface;
+use Zeroseven\Semantilizer\Models\ContentCollection;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
-use Zeroseven\Semantilizer\Services\PageInfoService;
 use Zeroseven\Semantilizer\Services\TsConfigService;
+use Zeroseven\Semantilizer\Models\ContentData;
+use Zeroseven\Semantilizer\Models\PageData;
 use Zeroseven\Semantilizer\Utilities\ValidationUtility;
 
 class DrawHeaderHook
@@ -21,31 +22,17 @@ class DrawHeaderHook
     /** @var array */
     private $tsConfig;
 
-    /** @var array */
-    private $pageInfo;
+    /** @var PageData */
+    private $page;
 
     /** @var array */
-    private $modulData;
+    private $moduleData;
 
-    /** @var array */
-    private $contentElements;
-
-    /** @var UriBuilder */
-    private $uriBuilder;
+    /** @var ContentCollection */
+    private $contentCollection;
 
     /** @var bool */
     private $hideNotifications;
-
-    /** @var array */
-    public $ignoreDoktypes = [
-        PageRepository::DOKTYPE_LINK,
-        PageRepository::DOKTYPE_SHORTCUT,
-        PageRepository::DOKTYPE_BE_USER_SECTION,
-        PageRepository::DOKTYPE_MOUNTPOINT,
-        PageRepository::DOKTYPE_SPACER,
-        PageRepository::DOKTYPE_SYSFOLDER,
-        PageRepository::DOKTYPE_RECYCLER
-    ];
 
     /** @var string */
     private const VALIDATION_PARAMETER = 'semantilizer_hide_notifications';
@@ -55,10 +42,10 @@ class DrawHeaderHook
 
     public function __construct()
     {
-        $this->pageInfo = PageInfoService::getPageInfo();
-        $this->tsConfig = TsConfigService::getTsConfig((int)$this->pageInfo['uid']);
-        $this->modulData = BackendUtility::getModuleData([], null, 'web_layout');
-        $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        $this->page = PageData::makeInstance();
+        $this->tsConfig = TsConfigService::getTsConfig($this->page->getUid());
+        $this->moduleData = BackendUtility::getModuleData([], null, 'web_layout');
+        $this->contentCollection = GeneralUtility::makeInstance(ContentCollection::class);
         $this->hideNotifications = $this->setValidationCookie();
     }
 
@@ -76,41 +63,27 @@ class DrawHeaderHook
 
     private function getToggleValidationLink(): string
     {
-        return $this->uriBuilder->buildUriFromRoute('web_layout', [
+        return GeneralUtility::makeInstance(UriBuilder::class)->buildUriFromRoute('web_layout', [
             self::VALIDATION_PARAMETER => (int)!$this->hideNotifications,
-            'id' => $this->pageInfo['uid'],
-        ]);
-    }
-
-    private function getEditRecordUrl(int $uid, string $table = null): string
-    {
-        return $this->uriBuilder->buildUriFromRoute('record_edit', [
-            'edit' => [
-                $table ?: self::TABLE => [
-                    $uid => 'edit'
-                ]
-            ],
-            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+            'id' => $this->page->getUid(),
         ]);
     }
 
     private function collectContentElements(): void
     {
-        // The retuning array
-        $contentElements = [];
 
         // Get instance of the query builder
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE);
 
         // Get results from the database
-        $results = $queryBuilder->select('uid', 'header', 'header_type')
+        $results = $queryBuilder->select('uid', 'header', 'header_type', 'cType')
             ->from(self::TABLE)
             ->where(
                 $queryBuilder->expr()->gt('header_type', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->lt('header_layout', $queryBuilder->createNamedParameter(100, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->neq('header', $queryBuilder->createNamedParameter('')),
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($this->pageInfo['uid'], \PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter((int)$this->modulData['language'], \PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($this->page->getUid(), \PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter((int)$this->moduleData['language'], \PDO::PARAM_INT)),
                 $queryBuilder->expr()->notIn('CType', array_map(function ($value) use ($queryBuilder) {
                     return $queryBuilder->createNamedParameter($value, \PDO::PARAM_STR);
                 }, (array)GeneralUtility::trimExplode(',', $this->tsConfig['ignoreCTypes'])))
@@ -120,30 +93,19 @@ class DrawHeaderHook
             ->fetchAll() ?: [];
 
         // Add some links and attributes to the content elements
-        foreach ($results as $i => $row) {
-
-            $uid = $row['uid'];
-
-            // Add some additional stuff
-            $contentElements[$uid]['error'] = false;
-            $contentElements[$uid]['editLink'] = $this->getEditRecordUrl($uid);
-
-            // Convert the keys to lowerCamelCase
-            foreach ($row as $key => $value) {
-                $contentElements[$uid][GeneralUtility::underscoredToLowerCamelCase($key)] = $value;
-            }
+        foreach ($results as $row) {
+            $contentElement = GeneralUtility::makeInstance(ContentData::class, $row);
+            $this->contentCollection->append($contentElement);
         }
-
-        $this->contentElements = $contentElements;
     }
 
     private function setFixedTitle(): void
     {
         $fixedTitle = null;
         $hookParameter = [
-            'uid' => (int)GeneralUtility::_GP('id'),
-            'sys_language_uid' => (int)$this->modulData['language'],
-            'row' => $this->pageInfo,
+            'uid' => $this->page->getUid(),
+            'sys_language_uid' => (int)$this->moduleData['language'],
+            'page' => $this->page,
             'tsConfig' => $this->tsConfig
         ];
 
@@ -163,7 +125,8 @@ class DrawHeaderHook
         }
 
         if ($fixedTitle) {
-            $this->contentElements = [['header' => $fixedTitle, 'headerType' => 1]] + $this->contentElements;
+            $contentElement = GeneralUtility::makeInstance(ContentData::class, ['header' => $fixedTitle, 'headerType' => 1, '__fixed' => true]);
+            $this->contentCollection->prepend($contentElement);
         }
     }
 
@@ -171,13 +134,13 @@ class DrawHeaderHook
     {
 
         // Skip on some doktypes
-        if (in_array((int)$this->pageInfo['doktype'], $this->ignoreDoktypes, true)) {
+        if ($this->page->isIgnoredDoktype()) {
             return true;
         }
 
         // Check the TSconfig
         if ($disableOnPages = $this->tsConfig['disableOnPages']) {
-            return in_array((int)$this->pageInfo['uid'], GeneralUtility::intExplode(',', $disableOnPages), true);
+            return in_array($this->page->getUid(), GeneralUtility::intExplode(',', $disableOnPages), true);
         }
 
         return false;
@@ -186,7 +149,7 @@ class DrawHeaderHook
     public function render(): string
     {
 
-        // Abort on some doktypes
+        // Skip rendering
         if ($this->skipSemantilizer()) {
             return '';
         }
@@ -198,11 +161,11 @@ class DrawHeaderHook
         $this->setFixedTitle();
 
         // Validate
-        $validationUtility = GeneralUtility::makeInstance(ValidationUtility::class, $this->contentElements);
+        $validationUtility = GeneralUtility::makeInstance(ValidationUtility::class, $this->contentCollection);
 
         // Set error state
         foreach ($validationUtility->getAffectedContentElements() as $affected) {
-            $this->contentElements[$affected]['error'] = true;
+            $this->contentCollection->overrideElement($affected);
         }
 
         // One or more contents are found
@@ -213,7 +176,7 @@ class DrawHeaderHook
             'strongestNotificationLevel' => $validationUtility->getStrongestLevel(),
             'notifications' => $validationUtility->getNotifications(),
             'strongestNotificationClassname' => BootstrapColorService::getClassnameByFlashMessageState($validationUtility->getStrongestLevel()),
-            'contentElements' => $this->contentElements,
+            'contentElements' => $this->contentCollection->getElements(),
             'hideNotifications' => $this->hideNotifications,
             'toggleValidationLink' => $this->getToggleValidationLink()
         ]);
