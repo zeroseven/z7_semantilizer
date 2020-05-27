@@ -15,6 +15,7 @@ class PageData
     /** @var array */
     protected $requiredFields = [
         'uid',
+        'title',
         'doktype',
     ];
 
@@ -50,6 +51,11 @@ class PageData
     public function getUid(): int
     {
         return (int)$this->data['uid'];
+    }
+
+    public function getTitle(): string
+    {
+        return $this->data['title'];
     }
 
     public function getDoktype(): int

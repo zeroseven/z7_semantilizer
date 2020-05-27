@@ -85,9 +85,11 @@ class CollectContentUtility
                 $queryBuilder->expr()->neq('header', $queryBuilder->createNamedParameter('')),
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($this->pid, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter($this->language, \PDO::PARAM_INT)),
+
+                // Todo: Add condition around this query
                 $queryBuilder->expr()->notIn('CType', array_map(static function ($value) use ($queryBuilder) {
                     return $queryBuilder->createNamedParameter($value, \PDO::PARAM_STR);
-                }, $this->tsConfig['ignoreCTypes'] ? GeneralUtility::trimExplode(',', $this->tsConfig['ignoreCTypes']) : []))
+                }, $this->tsConfig['ignoreCTypes'] ? GeneralUtility::trimExplode(',', $this->tsConfig['ignoreCTypes']) : ['__']))
             )
             ->orderBy('sorting')
             ->execute()

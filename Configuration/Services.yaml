@@ -19,4 +19,4 @@ services:
         description: 'LLL:EXT:widgets/Resources/Private/Language/locallang.xlf:widgets.dashboard.widget.statusReport.description'
         iconIdentifier: 'content-widget-list'
         height: 'medium'
-        width: 'medium'
+        width: 'small'

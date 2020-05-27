@@ -33,8 +33,14 @@ class ValidationUtility
         'error' => FlashMessage::ERROR
     ];
 
-    public function __construct(ContentCollection $contentCollection)
+    /** @var string */
+    protected $requestUri;
+
+    public function __construct(ContentCollection $contentCollection, string $requestUri = null)
     {
+
+        $this->requestUri = $requestUri ?: GeneralUtility::getIndpEnv('REQUEST_URI');
+
         $mainHeadingContents = [];
         $unexpectedHeadingContents = [];
         $lastHeadingType = 0;
@@ -104,10 +110,10 @@ class ValidationUtility
             'state' => self::STATES[$state],
             'contentElements' => $contentElements,
             'fixLink' => !is_array($fix) ? null : BackendUtility::getLinkToDataHandlerAction(
-                implode(',', array_map(function ($type, $uid) {
+                implode(',', array_map(static function ($type, $uid) {
                     return sprintf('&data[tt_content][%d][header_type]=%d', $uid, $type);
-                }, $fix, array_keys($fix))),
-                GeneralUtility::getIndpEnv('REQUEST_URI')
+                }, $fix, array_keys($fix))), $this->requestUri
+
             )
         ];
 

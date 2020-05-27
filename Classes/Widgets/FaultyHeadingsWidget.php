@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Zeroseven\Semantilizer\Widgets;
 
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -36,6 +37,9 @@ class FaultyHeadingsWidget implements WidgetInterface
     /** @var array */
     private $options;
 
+    /** @var string */
+    private $moduleLink;
+
     public function __construct(WidgetConfigurationInterface $configuration, ListDataProviderInterface $dataProvider = null, StandaloneView $view, $buttonProvider = null, array $options = [])
     {
         $this->configuration = $configuration;
@@ -43,6 +47,7 @@ class FaultyHeadingsWidget implements WidgetInterface
         $this->options = $options;
         $this->buttonProvider = $buttonProvider;
         $this->dataProvider = $dataProvider;
+        $this->moduleLink = GeneralUtility::makeInstance(UriBuilder::class)->buildUriFromRoute('dashboard');
     }
 
     protected function validatePage(int $pageId): ?array
@@ -51,7 +56,7 @@ class FaultyHeadingsWidget implements WidgetInterface
         $tsConfig = TsConfigService::getTsConfig($pageId);
 
         // Semantilizer is disabled on given page
-        if (($disableOnPages = $tsConfig['disableOnPages']) && in_array($pageId, GeneralUtility::intExplode(',', $disableOnPages), true)) {
+        if (($disableOnPages = $tsConfig['disableOnPages'] ?? null) && in_array($pageId, GeneralUtility::intExplode(',', $disableOnPages), true)) {
             return null;
         }
 
@@ -68,7 +73,7 @@ class FaultyHeadingsWidget implements WidgetInterface
         $contentCollection = $collectContentUtility->getCollection();
 
         // Validate
-        $validationUtility = GeneralUtility::makeInstance(ValidationUtility::class, $contentCollection);
+        $validationUtility = GeneralUtility::makeInstance(ValidationUtility::class, $contentCollection, $this->moduleLink);
 
         // Set error state
         foreach ($validationUtility->getAffectedContentElements() as $affected) {
@@ -77,9 +82,9 @@ class FaultyHeadingsWidget implements WidgetInterface
 
         if(($status = $validationUtility->getStrongestLevel()) > FlashMessage::OK) {
             return [
-                'page' => $page,
+                'data' => $page,
                 'status' => $status,
-                'color' => BootstrapColorService::getColorByFlashMessageState($status)
+                'notifications' => $validationUtility->getNotifications()
             ];
         }
 
@@ -113,7 +118,7 @@ class FaultyHeadingsWidget implements WidgetInterface
             // Get the uid of the page
             $uid = (int)$row['pid'];
 
-            if($page = $this->validatePage($uid)) {
+            if(($page = $this->validatePage($uid)) && count($pages) < 5) {
                 $pages[] = $page;
             }
         }
@@ -126,9 +131,8 @@ class FaultyHeadingsWidget implements WidgetInterface
 
         $this->view->setTemplatePathAndFilename('EXT:z7_semantilizer/Resources/Private/Templates/Widget/FaultyHeadings.html');
 
-        var_dump($this->getPages());
-
         $this->view->assignMultiple([
+            'pages' => $this->getPages(),
             'options' => $this->options,
             'configuration' => $this->configuration,
         ]);

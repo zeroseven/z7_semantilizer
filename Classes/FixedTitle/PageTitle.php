@@ -3,7 +3,6 @@
 namespace Zeroseven\Semantilizer\FixedTitle;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use Zeroseven\Semantilizer\Hooks\DrawHeaderHook;
 
 class PageTitle implements FixedTitleInterface
 {
