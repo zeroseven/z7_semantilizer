@@ -17,10 +17,12 @@ class PageData
         'uid',
         'title',
         'doktype',
+        'sys_language_uid',
+        'l10n_parent'
     ];
 
     /** @var array */
-    protected $ignoreDoktypes = [
+    public const IGNORED_DOKTYPES = [
         PageRepository::DOKTYPE_LINK,
         PageRepository::DOKTYPE_SHORTCUT,
         PageRepository::DOKTYPE_BE_USER_SECTION,
@@ -63,9 +65,19 @@ class PageData
         return (int)$this->data['uid'];
     }
 
+    public function getSysLanguageUid(): int
+    {
+        return (int)$this->data['sys_language_uid'];
+    }
+
+    public function getL10nParent(): int
+    {
+        return (int)$this->data['l10n_parent'];
+    }
+
     public function isIgnoredDoktype(): bool
     {
-        return in_array($this->getDoktype(), $this->ignoreDoktypes, true);
+        return in_array($this->getDoktype(), self::IGNORED_DOKTYPES, true);
     }
 
 }

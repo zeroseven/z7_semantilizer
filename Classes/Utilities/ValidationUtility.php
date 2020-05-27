@@ -68,7 +68,7 @@ class ValidationUtility
         // Check the length of the main heading(s)
         if (count($mainHeadingContents) === 0) {
             $fix = $contentCollection->count() ? [$firstKey => 1] : null;
-            $this->addNotification('missing_h1', [$contentCollection->getFirstElement()], $fix, $contentCollection->count() ? 'error' : 'info');
+            $this->addNotification('missing_h1', $contentCollection->count() ? [$contentCollection->getFirstElement()] : null, $fix, $contentCollection->count() ? 'error' : 'info');
         } elseif (count($mainHeadingContents) > 1) {
             $fix = [];
             foreach ($contentElements as $contentElement) {
@@ -136,7 +136,7 @@ class ValidationUtility
         $contentCollection = GeneralUtility::makeInstance(ContentCollection::class);
 
         foreach ($this->getNotifications() as $notification) {
-            foreach ($notification['contentElements'] as $contentElement) {
+            foreach ($notification['contentElements'] ?? [] as $contentElement) {
                 $contentCollection->append($contentElement);
             }
         }

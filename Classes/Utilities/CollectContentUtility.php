@@ -2,6 +2,7 @@
 
 namespace Zeroseven\Semantilizer\Utilities;
 
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Zeroseven\Semantilizer\FixedTitle\FixedTitleInterface;
@@ -84,7 +85,7 @@ class CollectContentUtility
                 $queryBuilder->expr()->lt('header_layout', $queryBuilder->createNamedParameter(100, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->neq('header', $queryBuilder->createNamedParameter('')),
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($this->pid, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter($this->language, \PDO::PARAM_INT)),
+                $queryBuilder->expr()->in('sys_language_uid', $queryBuilder->createNamedParameter([$this->language, '-1'], Connection::PARAM_INT_ARRAY)),
 
                 // Todo: Add condition around this query
                 $queryBuilder->expr()->notIn('CType', array_map(static function ($value) use ($queryBuilder) {

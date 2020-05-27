@@ -14,7 +14,8 @@
 					<f:for each="{pages}" as="page">
 						<tr>
 							<td>
-								<a href="{be:moduleLink(route: 'web_layout', query: 'id={page.data.uid}')}">
+
+								<a href="{be:moduleLink(route: 'web_layout', query: 'id={f:if(condition:page.data.l10nParent, then:page.data.l10nParent, else: page.data.uid)}&SET[language]={page.data.sysLanguageUid}')}">
 									<strong>{page.data.title}:</strong>
 								</a>
 

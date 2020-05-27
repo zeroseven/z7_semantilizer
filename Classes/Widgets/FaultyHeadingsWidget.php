@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Zeroseven\Semantilizer\Widgets;
 
 use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -53,7 +54,8 @@ class FaultyHeadingsWidget implements WidgetInterface
     protected function validatePage(int $pageId): ?array
     {
         // Load the tsConfig
-        $tsConfig = TsConfigService::getTsConfig($pageId);
+//        $tsConfig = TsConfigService::getTsConfig($pageId);
+        $tsConfig = [];
 
         // Semantilizer is disabled on given page
         if (($disableOnPages = $tsConfig['disableOnPages'] ?? null) && in_array($pageId, GeneralUtility::intExplode(',', $disableOnPages), true)) {
@@ -63,13 +65,8 @@ class FaultyHeadingsWidget implements WidgetInterface
         // Page object
         $page = PageData::makeInstance($pageId);
 
-        // Skip some doktypes
-        if ($page->isIgnoredDoktype()) {
-            return null;
-        }
-
         // Get content elements
-        $collectContentUtility = GeneralUtility::makeInstance(CollectContentUtility::class, $pageId, 0, $tsConfig, $page);
+        $collectContentUtility = GeneralUtility::makeInstance(CollectContentUtility::class, $page->getL10nParent() ?: $page->getUid(), $page->getSysLanguageUid(), $tsConfig, $page);
         $contentCollection = $collectContentUtility->getCollection();
 
         // Validate
@@ -94,20 +91,20 @@ class FaultyHeadingsWidget implements WidgetInterface
     protected function getPages(): array
     {
         // Get instance of the query builder
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tt_content');
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
 
         // Get results from the database
-        $pageUids = $queryBuilder->select('pid')
-            ->from('tt_content')
-            ->where(
-                $queryBuilder->expr()->gt('header_type', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->lt('header_layout', $queryBuilder->createNamedParameter(100, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->neq('header', $queryBuilder->createNamedParameter('')),
-                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
-            )
-            ->orderBy('tstamp')
-            ->addOrderBy('sorting')
-            ->groupBy('pid')
+        $pageUids = $queryBuilder->select('pages.uid')
+            ->from('pages')
+//            ->join(
+//                'pages',
+//                'tt_content',
+//                'content',
+//                $queryBuilder->expr()->eq('content.pid', $queryBuilder->quoteIdentifier('pages.uid'))
+//            )
+//            ->groupBy('content.pid')
+            ->where($queryBuilder->expr()->notIn('pages.doktype', $queryBuilder->createNamedParameter(PageData::IGNORED_DOKTYPES, Connection::PARAM_INT_ARRAY)))
+            ->orderBy('pages.SYS_LASTCHANGED')
             ->execute()
             ->fetchAll() ?: [];
 
@@ -116,7 +113,7 @@ class FaultyHeadingsWidget implements WidgetInterface
         foreach ($pageUids as $row) {
 
             // Get the uid of the page
-            $uid = (int)$row['pid'];
+            $uid = (int)$row['uid'];
 
             if(($page = $this->validatePage($uid)) && count($pages) < 5) {
                 $pages[] = $page;
