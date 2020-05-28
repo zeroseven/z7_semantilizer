@@ -1,41 +1,44 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers" xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:semantilizer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+			xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers" data-namespace-typo3-fluid="true">
 
-	<f:layout name="Widget/Widget"/>
+<f:layout name="Widget/Widget"/>
 
-	<f:section name="title">
-		{f:translate(key: configuration.title, default: configuration.title)}
-	</f:section>
+<f:section name="title">
+	{f:translate(key: configuration.title, default: configuration.title)}
+</f:section>
 
-	<f:section name="main">
-		<f:if condition="{pages}">
-			<div class="widget-table-wrapper">
-				<table class="widget-table">
-					<tbody>
-					<f:for each="{pages}" as="page">
-						<tr>
-							<td>
+<f:section name="main">
+	<f:if condition="{pages}">
+		<div class="widget-table-wrapper">
+			<table class="widget-table">
+				<tbody>
+				<f:for each="{pages}" as="page">
+					<tr>
+						<td>
 
-								<a href="{be:moduleLink(route: 'web_layout', query: 'id={f:if(condition:page.data.l10nParent, then:page.data.l10nParent, else: page.data.uid)}&SET[language]={page.data.sysLanguageUid}')}">
-									<strong>{page.data.title}:</strong>
-								</a>
+							<a href="{be:moduleLink(route: 'web_layout', query: 'id={f:if(condition:page.data.l10nParent, then:page.data.l10nParent, else: page.data.uid)}&SET[language]={page.data.sysLanguageUid}')}">
+								<strong>{page.data.title}:</strong>
+								{semantilizer:flag(sysLanguageUid: page.data.sysLanguageUid)}
+							</a>
 
+							<small>
 								<f:for each="{page.notifications}" as="notification">
-									<br />
-									<core:icon identifier="overlay-warning" size="small" />
+									<br/>
 									{f:translate(key:'notification.{notification.key}.title', extensionName: 'z7_semantilizer')}
 									<f:if condition="{notification.fixLink}">
 										<a href="{notification.fixLink}">
-											({f:translate(key:'notification.fixIt', extensionName: 'z7_semantilizer')})
+											[{f:translate(key:'notification.fixIt', extensionName: 'z7_semantilizer')}]
 										</a>
 									</f:if>
 								</f:for>
-							</td>
-						</tr>
-					</f:for>
-					</tbody>
-				</table>
-			</div>
-		</f:if>
-	</f:section>
+							</small>
+						</td>
+					</tr>
+				</f:for>
+				</tbody>
+			</table>
+		</div>
+	</f:if>
+</f:section>
 
 </html>
