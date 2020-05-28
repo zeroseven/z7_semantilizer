@@ -43,11 +43,20 @@ class PageData
         $this->data = $data;
     }
 
-    public static function makeInstance($uid = null): object
+    public static function makeInstance(int $uid = null, int $pageLocalisation = null): ?PageData
     {
-        $row = BackendUtility::readPageAccess((int)($uid ?: GeneralUtility::_GP('id')), true) ?: [];
 
-        return GeneralUtility::makeInstance(__CLASS__, $row);
+        $pageUid = (int)($uid ?: GeneralUtility::_GP('id'));
+
+        if ($pageLocalisation) {
+            $localisation = BackendUtility::getRecordLocalization('pages', $pageUid, $pageLocalisation)[0];
+            $row = BackendUtility::readPageAccess($localisation['uid'], true) ?: [];
+        } else {
+            $row = BackendUtility::readPageAccess($pageUid, true) ?: [];
+        }
+
+
+        return empty($row) ? null : GeneralUtility::makeInstance(__CLASS__, $row);
     }
 
     public function getUid(): int

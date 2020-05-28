@@ -45,39 +45,47 @@ class FaultyHeadingsWidget implements WidgetInterface
     {
         $this->configuration = $configuration;
         $this->view = $view;
-        $this->options = $options;
         $this->buttonProvider = $buttonProvider;
+        $this->options = $options;
         $this->dataProvider = $dataProvider;
         $this->moduleLink = GeneralUtility::makeInstance(UriBuilder::class)->buildUriFromRoute('dashboard');
     }
 
-    protected function validatePage(int $pageId): ?array
+    protected function validatePage(int $uid, int $language = null): ?array
     {
-        // Load the tsConfig
-//        $tsConfig = TsConfigService::getTsConfig($pageId);
-        $tsConfig = [];
 
-        // Semantilizer is disabled on given page
-        if (($disableOnPages = $tsConfig['disableOnPages'] ?? null) && in_array($pageId, GeneralUtility::intExplode(',', $disableOnPages), true)) {
+        // Get the page or stop here
+        if (!$page = PageData::makeInstance($uid, $language)) {
             return null;
         }
 
-        // Page object
-        $page = PageData::makeInstance($pageId);
+        // Load the tsConfig
+        $tsConfig = TsConfigService::getTsConfig($page->getL10nParent() ?: $page->getUid());
+
+        // Check if the Semantilizer is disabled on given page
+        if (($disableOnPages = $tsConfig['disableOnPages'] ?? null) && in_array($page->getL10nParent() ?: $page->getUid(), GeneralUtility::intExplode(',', $disableOnPages), true)) {
+            return null;
+        }
 
         // Get content elements
-        $collectContentUtility = GeneralUtility::makeInstance(CollectContentUtility::class, $page->getL10nParent() ?: $page->getUid(), $page->getSysLanguageUid(), $tsConfig, $page);
+        $collectContentUtility = GeneralUtility::makeInstance(CollectContentUtility::class, $page, $tsConfig);
         $contentCollection = $collectContentUtility->getCollection();
 
-        // Validate
+        // Stop, if no content elements found
+        if ($contentCollection->count() === 0) {
+            return null;
+        }
+
+        // Start validation
         $validationUtility = GeneralUtility::makeInstance(ValidationUtility::class, $contentCollection, $this->moduleLink);
 
         // Set error state
         foreach ($validationUtility->getAffectedContentElements() as $affected) {
-            $this->contentCollection->overrideElement($affected);
+            $contentCollection->overrideElement($affected);
         }
 
-        if(($status = $validationUtility->getStrongestLevel()) > FlashMessage::OK) {
+        // Return data
+        if (($status = $validationUtility->getStrongestLevel()) > FlashMessage::OK) {
             return [
                 'data' => $page,
                 'status' => $status,
@@ -94,33 +102,24 @@ class FaultyHeadingsWidget implements WidgetInterface
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
 
         // Get results from the database
-        $pageUids = $queryBuilder->select('pages.uid')
+        $pages = $queryBuilder->select('uid', 'l10n_parent', 'sys_language_uid')
             ->from('pages')
-//            ->join(
-//                'pages',
-//                'tt_content',
-//                'content',
-//                $queryBuilder->expr()->eq('content.pid', $queryBuilder->quoteIdentifier('pages.uid'))
-//            )
-//            ->groupBy('content.pid')
-            ->where($queryBuilder->expr()->notIn('pages.doktype', $queryBuilder->createNamedParameter(PageData::IGNORED_DOKTYPES, Connection::PARAM_INT_ARRAY)))
-            ->orderBy('pages.SYS_LASTCHANGED')
+            ->where($queryBuilder->expr()->notIn('doktype', $queryBuilder->createNamedParameter(PageData::IGNORED_DOKTYPES, Connection::PARAM_INT_ARRAY)))
+            ->orderBy('SYS_LASTCHANGED')
             ->execute()
             ->fetchAll() ?: [];
 
         // Create pages
-        $pages = [];
-        foreach ($pageUids as $row) {
+        $affectedPages = [];
+        foreach ($pages as $row) {
 
             // Get the uid of the page
-            $uid = (int)$row['uid'];
-
-            if(($page = $this->validatePage($uid)) && count($pages) < 5) {
-                $pages[] = $page;
+            if (($page = $this->validatePage((int)$row['uid'])) && count($affectedPages) < 5) {
+                $affectedPages[] = $page;
             }
         }
 
-        return $pages;
+        return $affectedPages;
     }
 
     public function renderWidgetContent(): string

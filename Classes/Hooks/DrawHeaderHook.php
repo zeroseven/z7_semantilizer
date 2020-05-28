@@ -6,7 +6,6 @@ use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use Zeroseven\Semantilizer\Models\ContentCollection;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
 use Zeroseven\Semantilizer\Services\TsConfigService;
@@ -23,11 +22,8 @@ class DrawHeaderHook
     /** @var PageData */
     private $page;
 
-    /** @var array */
-    private $moduleData;
-
-    /** @var ContentCollection */
-    private $contentCollection;
+    /** @var int */
+    private $language;
 
     /** @var bool */
     private $hideNotifications;
@@ -37,9 +33,13 @@ class DrawHeaderHook
 
     public function __construct()
     {
-        $this->page = PageData::makeInstance();
-        $this->tsConfig = TsConfigService::getTsConfig($this->page->getUid());
-        $this->moduleData = BackendUtility::getModuleData([], null, 'web_layout');
+
+        // Get the language by module data
+        $moduleData = BackendUtility::getModuleData([], null, 'web_layout');
+        $this->language = (int)$moduleData['language'];
+
+        $this->page = PageData::makeInstance(null, $this->language);
+        $this->tsConfig = TsConfigService::getTsConfig($this->page->getL10nParent() ?: $this->page->getUid());
         $this->hideNotifications = $this->setValidationCookie();
     }
 
@@ -88,15 +88,15 @@ class DrawHeaderHook
         }
 
         // Collect the content elements
-        $collectContentUtility = GeneralUtility::makeInstance(CollectContentUtility::class, $this->page->getUid(), (int)$this->moduleData['language'], $this->tsConfig, $this->page);
-        $this->contentCollection = $collectContentUtility->getCollection();
+        $collectContentUtility = GeneralUtility::makeInstance(CollectContentUtility::class, $this->page, $this->tsConfig);
+        $contentCollection = $collectContentUtility->getCollection();
 
         // Validate
-        $validationUtility = GeneralUtility::makeInstance(ValidationUtility::class, $this->contentCollection);
+        $validationUtility = GeneralUtility::makeInstance(ValidationUtility::class, $contentCollection);
 
         // Set error state
         foreach ($validationUtility->getAffectedContentElements() as $affected) {
-            $this->contentCollection->overrideElement($affected);
+            $contentCollection->overrideElement($affected);
         }
 
         // One or more contents are found
@@ -107,7 +107,7 @@ class DrawHeaderHook
             'strongestNotificationLevel' => $validationUtility->getStrongestLevel(),
             'notifications' => $validationUtility->getNotifications(),
             'strongestNotificationClassname' => BootstrapColorService::getClassnameByFlashMessageState($validationUtility->getStrongestLevel()),
-            'contentElements' => $this->contentCollection->getElements(),
+            'contentElements' => $contentCollection->getElements(),
             'hideNotifications' => $this->hideNotifications,
             'toggleValidationLink' => $this->getToggleValidationLink()
         ]);

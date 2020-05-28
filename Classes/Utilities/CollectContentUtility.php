@@ -16,40 +16,33 @@ class CollectContentUtility
     /** @var string */
     private const TABLE = 'tt_content';
 
-    /** @var int */
-    private $pid;
-
-    /** @var int */
-    private $language;
-
     /** @var array */
     private $tsConfig;
 
     /** @var PageData */
     private $page;
 
-    public function __construct(int $pid, int $language, array $tsConfig, PageData $page = null)
+    public function __construct(PageData $page, array $tsConfig)
     {
-        $this->pid = $pid;
-        $this->language = $language;
-        $this->tsConfig = $tsConfig;
         $this->page = $page;
+        $this->tsConfig = $tsConfig;
     }
 
-    protected function getFixedTitle(): ?ContentData
+    protected function getFixedTitle(ContentCollection $contentCollection = null): ?ContentData
     {
         $fixedTitle = null;
-        $hookParameter = [
-            'uid' => $this->page->getUid(),
-            'sys_language_uid' => $this->language,
-            'page' => $this->page,
-            'tsConfig' => $this->tsConfig
-        ];
 
         if ($hooks = $GLOBALS['TYPO3_CONF_VARS']['EXT']['z7_semantilizer']['fixedPageTitle'] ?? null) {
 
             // Sort them by their keys
             ksort($hooks);
+
+            // Set parameter for the hook
+            $hookParameter = [
+                'page' => $this->page,
+                'tsConfig' => $this->tsConfig,
+                'contentCollection' => $contentCollection
+            ];
 
             // Loop them
             foreach ($hooks as $className) {
@@ -62,7 +55,18 @@ class CollectContentUtility
         }
 
         if ($fixedTitle) {
-            return GeneralUtility::makeInstance(ContentData::class, ['header' => $fixedTitle, 'headerType' => 1, '__fixed' => true]);
+
+            $row = [
+                'header' => $fixedTitle,
+                'header_type' => 1,
+                '__fixed' => true
+            ];
+
+            foreach (ContentData::REQUIRED_FIELDS as $key) {
+                $row[$key] = $row[$key] ?? null;
+            }
+
+            return GeneralUtility::makeInstance(ContentData::class, $row);
         }
 
         return null;
@@ -84,8 +88,8 @@ class CollectContentUtility
                 $queryBuilder->expr()->gt('header_type', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->lt('header_layout', $queryBuilder->createNamedParameter(100, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->neq('header', $queryBuilder->createNamedParameter('')),
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($this->pid, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->in('sys_language_uid', $queryBuilder->createNamedParameter([$this->language, '-1'], Connection::PARAM_INT_ARRAY)),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($this->page->getL10nParent() ?: $this->page->getUid(), \PDO::PARAM_INT)),
+                $queryBuilder->expr()->in('sys_language_uid', $queryBuilder->createNamedParameter([(string)$this->page->getSysLanguageUid(), '-1'], Connection::PARAM_INT_ARRAY)),
 
                 // Todo: Add condition around this query
                 $queryBuilder->expr()->notIn('CType', array_map(static function ($value) use ($queryBuilder) {
@@ -103,7 +107,7 @@ class CollectContentUtility
         }
 
         // Prepend Title
-        if($fixedTitle = $this->getFixedTitle()) {
+        if($fixedTitle = $this->getFixedTitle($contentCollection)) {
             $contentCollection->prepend($fixedTitle);
         }
 
