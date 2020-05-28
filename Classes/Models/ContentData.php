@@ -5,30 +5,16 @@ namespace Zeroseven\Semantilizer\Models;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ContentData
+class ContentData extends AbstractData
 {
 
     /** @var array */
-    protected $data = [];
-
-    /** @var array */
-    protected $requiredFields = [
+    public const REQUIRED_FIELDS = [
         'uid',
         'header',
         'header_type',
         'cType',
     ];
-
-    public function __construct(array $data)
-    {
-        foreach ($this->requiredFields as $name) {
-            if (!isset($data[$name])) {
-                throw new \Exception(sprintf('Key "%s" is missing in data array', $name));
-            }
-        }
-
-        $this->data = $data;
-    }
 
     public function getUid(): int
     {
@@ -52,7 +38,7 @@ class ContentData
 
     public function isError(): bool
     {
-        return $this->data['__error'] ?? false;
+        return (bool)$this->data['__error'];
     }
 
     public function setError(bool $error)
@@ -62,7 +48,7 @@ class ContentData
 
     public function isFixed(): bool
     {
-        return $this->data['__fixed'];
+        return (bool)$this->data['__fixed'];
     }
 
     public function setFixed(bool $fixed)

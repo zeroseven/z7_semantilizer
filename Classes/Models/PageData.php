@@ -6,14 +6,11 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 
-class PageData
+class PageData extends AbstractData
 {
 
     /** @var array */
-    protected $data = [];
-
-    /** @var array */
-    protected $requiredFields = [
+    public const REQUIRED_FIELDS = [
         'uid',
         'title',
         'doktype',
@@ -31,17 +28,6 @@ class PageData
         PageRepository::DOKTYPE_SYSFOLDER,
         PageRepository::DOKTYPE_RECYCLER
     ];
-
-    public function __construct(array $data)
-    {
-        foreach ($this->requiredFields as $name) {
-            if(!isset($data[$name])) {
-                throw new \Exception(sprintf('Key "%s" is missing in data array', $name));
-            }
-        }
-
-        $this->data = $data;
-    }
 
     public static function makeInstance(int $uid = null, int $pageLocalisation = null): ?PageData
     {
@@ -71,7 +57,7 @@ class PageData
 
     public function getDoktype(): int
     {
-        return (int)$this->data['uid'];
+        return (int)$this->data['doktype'];
     }
 
     public function getSysLanguageUid(): int
