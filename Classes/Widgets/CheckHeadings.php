@@ -7,6 +7,7 @@ use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
 use TYPO3\CMS\Dashboard\Widgets\ChartDataProviderInterface;
@@ -14,7 +15,7 @@ use TYPO3\CMS\Dashboard\Widgets\ListDataProviderInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use Zeroseven\Semantilizer\Services\BootstrapColorService;
+use Zeroseven\Semantilizer\Services\PermissionService;
 use Zeroseven\Semantilizer\Utilities\CollectContentUtility;
 use Zeroseven\Semantilizer\Services\TsConfigService;
 use Zeroseven\Semantilizer\Models\PageData;
@@ -96,11 +97,28 @@ class CheckHeadings implements WidgetInterface
         return null;
     }
 
+    protected function getAvailableLanguages(): array
+    {
+        $languages = [];
+        foreach (GeneralUtility::makeInstance(SiteFinder::class)->getAllSites() ?? [] as $site) {
+            foreach (PermissionService::visibleLanguages($site) as $language) {
+                $languages[] = $language->getLanguageId();
+            }
+        }
+
+        return $languages;
+    }
+
     protected function findErrors(): array
     {
 
         // Return list of affected pages
         $affectedPages = [];
+
+        // Get avaiable pages
+        if(!$availableLanguages = $this->getAvailableLanguages()) {
+            return [];
+        }
 
         // Get instance of the query builder
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
@@ -109,6 +127,7 @@ class CheckHeadings implements WidgetInterface
         $pages = $queryBuilder->select('uid', 'l10n_parent', 'sys_language_uid')
             ->from('pages')
             ->where($queryBuilder->expr()->notIn('doktype', $queryBuilder->createNamedParameter(PageData::IGNORED_DOKTYPES, Connection::PARAM_INT_ARRAY)))
+            ->andWhere($queryBuilder->expr()->in('sys_language_uid', $queryBuilder->createNamedParameter($availableLanguages, Connection::PARAM_INT_ARRAY)))
             ->orderBy('SYS_LASTCHANGED')
             ->execute()
             ->fetchAll() ?: [];

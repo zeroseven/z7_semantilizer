@@ -4,6 +4,7 @@ namespace Zeroseven\Semantilizer\Models;
 
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Zeroseven\Semantilizer\Services\PermissionService;
 
 class ContentData extends AbstractData
 {
@@ -58,13 +59,13 @@ class ContentData extends AbstractData
 
     public function getEditLink(): string
     {
-        return GeneralUtility::makeInstance(UriBuilder::class)->buildUriFromRoute('record_edit', [
+        return PermissionService::editContent() ? GeneralUtility::makeInstance(UriBuilder::class)->buildUriFromRoute('record_edit', [
             'edit' => [
                 'tt_content' => [
                     $this->getUid() => 'edit'
                 ]
             ],
             'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
-        ]);
+        ]) : '#no-access';
     }
 }

@@ -19,7 +19,7 @@ class HideNotificationStateService
         return $queryBuilder
             ->select(self::FIELD)
             ->from(self::TABLE)
-            ->where($queryBuilder->expr()->eq('uid', self::getBackendUser()))
+            ->where($queryBuilder->expr()->eq('uid', self::getBackendUserId()))
             ->setMaxResults(1)
             ->execute()
             ->fetchColumn(0) ?: false;
@@ -41,16 +41,15 @@ class HideNotificationStateService
 
         $queryBuilder
             ->update(self::TABLE)
-            ->where($queryBuilder->expr()->eq('uid', self::getBackendUser()))
+            ->where($queryBuilder->expr()->eq('uid', self::getBackendUserId()))
             ->set(self::FIELD, (int)$value)
             ->execute();
 
         return $value;
     }
 
-    protected static function getBackendUser(): int
+    protected static function getBackendUserId(): int
     {
-        return (int)$GLOBALS['BE_USER']->user['uid'];
+        return (int)PermissionService::getBackendUser()->user['uid'];
     }
-
 }

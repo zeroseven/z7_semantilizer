@@ -6,15 +6,19 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Zeroseven\Semantilizer\Models\ContentCollection;
+use Zeroseven\Semantilizer\Services\PermissionService;
 
 class ValidationUtility
 {
 
     /** @var array */
-    protected $notifications = [];
+    protected $notifications;
 
     /** @var int */
     protected $strongestLevel = FlashMessage::NOTICE;
+
+    /** @var bool */
+    protected $permissions;
 
     /** @var array */
     protected const ERROR_CODES = [
@@ -40,6 +44,7 @@ class ValidationUtility
     {
 
         $this->requestUri = $requestUri ?: GeneralUtility::getIndpEnv('REQUEST_URI');
+        $this->permissions = PermissionService::editContent();
 
         $mainHeadingContents = [];
         $unexpectedHeadingContents = [];
@@ -95,7 +100,7 @@ class ValidationUtility
 
     public function getNotifications(): array
     {
-        return $this->notifications;
+        return $this->notifications ?: [];
     }
 
     protected function addNotification(string $errorCode, array $contentElements = null, array $fix = null, string $state = 'warning'): void
@@ -109,12 +114,11 @@ class ValidationUtility
             'key' => self::ERROR_CODES[$errorCode],
             'state' => self::STATES[$state],
             'contentElements' => $contentElements,
-            'fixLink' => !is_array($fix) ? null : BackendUtility::getLinkToDataHandlerAction(
+            'fixLink' => is_array($fix) && $this->permissions ? BackendUtility::getLinkToDataHandlerAction(
                 implode(',', array_map(static function ($type, $uid) {
                     return sprintf('&data[tt_content][%d][header_type]=%d', $uid, $type);
                 }, $fix, array_keys($fix))), $this->requestUri
-
-            )
+            ) : null
         ];
 
         // Set the strongest notification

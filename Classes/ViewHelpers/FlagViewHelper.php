@@ -2,13 +2,13 @@
 
 namespace Zeroseven\Semantilizer\ViewHelpers;
 
-use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Zeroseven\Semantilizer\Services\PermissionService;
 
 class FlagViewHelper extends AbstractViewHelper
 {
@@ -21,16 +21,11 @@ class FlagViewHelper extends AbstractViewHelper
         $this->registerArgument('sysLanguageUid', 'int', 'Id of language', true);
     }
 
-    protected function getBackendUser(): BackendUserAuthentication
-    {
-        return $GLOBALS['BE_USER'];
-    }
-
     protected function getAllSiteLanguages(): array
     {
         $languages = [];
         foreach (GeneralUtility::makeInstance(SiteFinder::class)->getAllSites() ?? [] as $site) {
-            foreach ($site->getAvailableLanguages($this->getBackendUser()) ?? [] as $language) {
+            foreach (PermissionService::visibleLanguages($site) as $language) {
                 $languages[$language->getLanguageId()] = $language;
             }
         }
@@ -53,7 +48,9 @@ class FlagViewHelper extends AbstractViewHelper
     public function render(): string
     {
         $siteLanguages = $this->getAllSiteLanguages();
-        return $this->renderLanguageFlag($siteLanguages[(int)$this->arguments['sysLanguageUid']]);
+        $languageUid = (int)$this->arguments['sysLanguageUid'];
+
+        return ($siteLanguage = $siteLanguages[$languageUid] ?? null) ? $this->renderLanguageFlag($siteLanguage) : '';
     }
 
 }

@@ -5,6 +5,7 @@ namespace Zeroseven\Semantilizer\Models;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Page\PageRepository;
+use Zeroseven\Semantilizer\Services\PermissionService;
 
 class PageData extends AbstractData
 {
@@ -32,17 +33,16 @@ class PageData extends AbstractData
     public static function makeInstance(int $uid = null, int $pageLocalisation = null): ?PageData
     {
 
+        /** @var int */
         $pageUid = (int)($uid ?: GeneralUtility::_GP('id'));
 
         if ($pageLocalisation) {
-            $localisation = BackendUtility::getRecordLocalization('pages', $pageUid, $pageLocalisation)[0];
-            $row = BackendUtility::readPageAccess($localisation['uid'], true) ?: [];
+            $row = BackendUtility::getRecordLocalization('pages', $pageUid, $pageLocalisation)[0];
         } else {
             $row = BackendUtility::readPageAccess($pageUid, true) ?: [];
         }
 
-
-        return empty($row) ? null : GeneralUtility::makeInstance(__CLASS__, $row);
+        return PermissionService::showPage($row) ? GeneralUtility::makeInstance(__CLASS__, $row) : null;
     }
 
     public function getUid(): int
