@@ -15,8 +15,8 @@ services:
       - name: dashboard.widget
         identifier: 'faultyHeadings'
         groupNames: 'systemInfo'
-        title: 'faultyHeadings'
-        description: 'LLL:EXT:widgets/Resources/Private/Language/locallang.xlf:widgets.dashboard.widget.statusReport.description'
+        title: 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf:widget.title'
+        description: 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf:widget.description'
         iconIdentifier: 'content-widget-list'
         height: 'medium'
         width: 'small'

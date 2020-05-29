@@ -4,41 +4,48 @@
 <f:layout name="Widget/Widget"/>
 
 <f:section name="title">
-	{f:translate(key: configuration.title, default: configuration.title)}
+	{f:translate(key: 'widget.title', default: configuration.title, extensionName: 'z7_semantilizer')}
 </f:section>
 
 <f:section name="main">
-	<f:if condition="{pages}">
-		<div class="widget-table-wrapper">
-			<table class="widget-table">
-				<tbody>
-				<f:for each="{pages}" as="page">
-					<tr>
-						<td>
+	<f:spaceless>
+		<div class="semantilizer-widget--check-headings">
+			<f:if condition="{pages}">
+				<f:then>
+					<div class="widget-table-wrapper">
+						<table class="widget-table">
+							<f:for each="{pages}" as="page">
+								<tr>
+									<td>
+										{semantilizer:flag(sysLanguageUid: page.data.sysLanguageUid)}
+										<a class="semantilizer-widget__pagelink" href="{be:moduleLink(route: 'web_layout', query: 'id={f:if(condition:page.data.l10nParent, then:page.data.l10nParent, else: page.data.uid)}&SET[language]={page.data.sysLanguageUid}')}">{page.data.title}:</a>
 
-							<a href="{be:moduleLink(route: 'web_layout', query: 'id={f:if(condition:page.data.l10nParent, then:page.data.l10nParent, else: page.data.uid)}&SET[language]={page.data.sysLanguageUid}')}">
-								<strong>{page.data.title}:</strong>
-								{semantilizer:flag(sysLanguageUid: page.data.sysLanguageUid)}
-							</a>
-
-							<small>
-								<f:for each="{page.notifications}" as="notification">
-									<br/>
-									{f:translate(key:'notification.{notification.key}.title', extensionName: 'z7_semantilizer')}
-									<f:if condition="{notification.fixLink}">
-										<a href="{notification.fixLink}">
-											[{f:translate(key:'notification.fixIt', extensionName: 'z7_semantilizer')}]
-										</a>
-									</f:if>
-								</f:for>
-							</small>
-						</td>
-					</tr>
-				</f:for>
-				</tbody>
-			</table>
+										<small>
+											<f:for each="{page.notifications}" as="notification">
+												<br/>
+												{f:translate(key:'notification.{notification.key}.title', extensionName: 'z7_semantilizer')}
+												<f:if condition="{notification.fixLink}">
+													<a href="{notification.fixLink}">
+														[{f:translate(key:'notification.fixIt', extensionName: 'z7_semantilizer')}]
+													</a>
+												</f:if>
+											</f:for>
+										</small>
+									</td>
+								</tr>
+							</f:for>
+						</table>
+					</div>
+				</f:then>
+				<f:else>
+					<div class="semantilizer-widget__congratulation">
+						{core:icon(identifier: 'actions-check', size: 'large')}
+						<p>{f:translate(key: 'widget.congratulation', extensionName: 'z7_semantilizer')}</p>
+					</div>
+				</f:else>
+			</f:if>
 		</div>
-	</f:if>
+	</f:spaceless>
 </f:section>
 
 </html>

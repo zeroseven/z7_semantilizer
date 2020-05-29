@@ -18,11 +18,10 @@ $overview-select-width: 36px;
 
 .semantilzer__list {
     padding: 0;
-    margin: 0;
     list-style: none;
 
     // Eliminate the line on the bottom
-    margin-bottom: $overview-pattern-height / - 2 + $overview-pattern-stroke;
+    margin: 0 0 $overview-pattern-height / - 2 + $overview-pattern-stroke;
 }
 
 %semantilzer__item {
@@ -40,11 +39,8 @@ $overview-select-width: 36px;
 @for $i from 1 through 6 {
     .semantilzer__item--h#{$i} {
         @extend %semantilzer__item;
-        margin-left: $overview-pattern-width * ($i - 1) + $overview-select-width / - 2;
 
-        //.semantilzer__select-type {
-        //    background-color: mix(#8e44ad, #1abc9c, min(100, $i * 25%));
-        //}
+        margin-left: $overview-pattern-width * ($i - 1) + $overview-select-width / - 2;
     }
 }
 
