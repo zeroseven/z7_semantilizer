@@ -10,18 +10,18 @@
 <f:section name="main">
 	<f:spaceless>
 		<div class="semantilizer-widget--check-headings">
-			<f:if condition="{pages}">
+			<f:if condition="{errors}">
 				<f:then>
 					<div class="widget-table-wrapper">
 						<table class="widget-table">
-							<f:for each="{pages}" as="page">
+							<f:for each="{errors}" as="error">
 								<tr>
 									<td>
-										{semantilizer:flag(sysLanguageUid: page.data.sysLanguageUid)}
-										<a class="semantilizer-widget__pagelink" href="{be:moduleLink(route: 'web_layout', query: 'id={f:if(condition:page.data.l10nParent, then:page.data.l10nParent, else: page.data.uid)}&SET[language]={page.data.sysLanguageUid}')}">{page.data.title}:</a>
+										{semantilizer:flag(sysLanguageUid: error.page.sysLanguageUid)}
+										<a class="semantilizer-widget__pagelink" href="{be:moduleLink(route: 'web_layout', query: 'id={f:if(condition:error.page.l10nParent, then:error.page.l10nParent, else: error.page.uid)}&SET[language]={error.page.sysLanguageUid}')}">{error.page.title}:</a>
 
 										<small>
-											<f:for each="{page.notifications}" as="notification">
+											<f:for each="{error.notifications}" as="notification">
 												<br/>
 												{f:translate(key:'notification.{notification.key}.title', extensionName: 'z7_semantilizer')}
 												<f:if condition="{notification.fixLink}">

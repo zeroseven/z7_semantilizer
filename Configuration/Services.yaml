@@ -7,13 +7,13 @@ services:
   Zeroseven\Semantilizer\:
     resource: '../Classes/*'
 
-  dashboard.widget.faultyHeadings:
-    class: 'Zeroseven\Semantilizer\Widgets\FaultyHeadingsWidget'
+  dashboard.widget.checkHeadings:
+    class: 'Zeroseven\Semantilizer\Widgets\CheckHeadings'
     arguments:
       $view: '@dashboard.views.widget'
     tags:
       - name: dashboard.widget
-        identifier: 'faultyHeadings'
+        identifier: 'checkHeadings'
         groupNames: 'systemInfo'
         title: 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf:widget.title'
         description: 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf:widget.description'

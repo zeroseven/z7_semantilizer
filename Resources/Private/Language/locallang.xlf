@@ -64,7 +64,7 @@
 			</trans-unit>
 
 			<trans-unit id="widget.title">
-				<source>Headline structure</source>
+				<source>Check heading structure</source>
 			</trans-unit>
 			<trans-unit id="widget.description">
 				<source>Display potential errors in the structuring of headlines and gives easy fixing options.</source>
@@ -72,7 +72,6 @@
 			<trans-unit id="widget.congratulation">
 				<source>No discrepancies were found in the structure of the headings.</source>
 			</trans-unit>
-
 
 		</body>
 	</file>

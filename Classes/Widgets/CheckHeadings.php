@@ -20,7 +20,7 @@ use Zeroseven\Semantilizer\Services\TsConfigService;
 use Zeroseven\Semantilizer\Models\PageData;
 use Zeroseven\Semantilizer\Utilities\ValidationUtility;
 
-class FaultyHeadingsWidget implements WidgetInterface
+class CheckHeadings implements WidgetInterface
 {
 
     /** @var WidgetConfigurationInterface */
@@ -87,7 +87,7 @@ class FaultyHeadingsWidget implements WidgetInterface
         // Return data
         if (($status = $validationUtility->getStrongestLevel()) > FlashMessage::OK) {
             return [
-                'data' => $page,
+                'page' => $page,
                 'status' => $status,
                 'notifications' => $validationUtility->getNotifications()
             ];
@@ -96,8 +96,12 @@ class FaultyHeadingsWidget implements WidgetInterface
         return null;
     }
 
-    protected function getPages(): array
+    protected function findErrors(): array
     {
+
+        // Return list of affected pages
+        $affectedPages = [];
+
         // Get instance of the query builder
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
 
@@ -110,7 +114,6 @@ class FaultyHeadingsWidget implements WidgetInterface
             ->fetchAll() ?: [];
 
         // Create pages
-        $affectedPages = [];
         foreach ($pages as $row) {
 
             // Get the uid of the page
@@ -125,10 +128,10 @@ class FaultyHeadingsWidget implements WidgetInterface
     public function renderWidgetContent(): string
     {
 
-        $this->view->setTemplatePathAndFilename('EXT:z7_semantilizer/Resources/Private/Templates/Widget/FaultyHeadings.html');
+        $this->view->setTemplatePathAndFilename('EXT:z7_semantilizer/Resources/Private/Templates/Widget/CheckHeadings.html');
 
         $this->view->assignMultiple([
-            'pages' => $this->getPages(),
+            'errors' => $this->findErrors(),
             'options' => $this->options,
             'configuration' => $this->configuration,
         ]);
