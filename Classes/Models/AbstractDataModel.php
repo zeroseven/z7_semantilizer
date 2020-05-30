@@ -2,7 +2,7 @@
 
 namespace Zeroseven\Semantilizer\Models;
 
-abstract class AbstractData
+abstract class AbstractDataModel
 {
 
     /** @var array */

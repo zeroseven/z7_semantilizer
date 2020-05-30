@@ -18,7 +18,7 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
 use Zeroseven\Semantilizer\Services\PermissionService;
 use Zeroseven\Semantilizer\Utilities\CollectContentUtility;
 use Zeroseven\Semantilizer\Services\TsConfigService;
-use Zeroseven\Semantilizer\Models\PageData;
+use Zeroseven\Semantilizer\Models\Page;
 use Zeroseven\Semantilizer\Utilities\ValidationUtility;
 
 class CheckHeadings implements WidgetInterface
@@ -56,7 +56,7 @@ class CheckHeadings implements WidgetInterface
     {
 
         // Get the page or stop here
-        if (!$page = PageData::makeInstance($uid, $language)) {
+        if (!$page = Page::makeInstance($uid, $language)) {
             return null;
         }
 
@@ -126,7 +126,7 @@ class CheckHeadings implements WidgetInterface
         // Get results from the database
         $pages = $queryBuilder->select('uid', 'l10n_parent', 'sys_language_uid')
             ->from('pages')
-            ->where($queryBuilder->expr()->notIn('doktype', $queryBuilder->createNamedParameter(PageData::IGNORED_DOKTYPES, Connection::PARAM_INT_ARRAY)))
+            ->where($queryBuilder->expr()->notIn('doktype', $queryBuilder->createNamedParameter(Page::IGNORED_DOKTYPES, Connection::PARAM_INT_ARRAY)))
             ->andWhere($queryBuilder->expr()->in('sys_language_uid', $queryBuilder->createNamedParameter($availableLanguages, Connection::PARAM_INT_ARRAY)))
             ->orderBy('SYS_LASTCHANGED')
             ->execute()

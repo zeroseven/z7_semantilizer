@@ -8,17 +8,17 @@ class ContentCollection
     /** @var array */
     protected $elements = [];
 
-    public function prepend(ContentData $content): void
+    public function prepend(Content $content): void
     {
         array_unshift($this->elements, $content);
     }
 
-    public function append(ContentData $content): void
+    public function append(Content $content): void
     {
         $this->elements[$content->getUid()] = $content;
     }
 
-    public function override(ContentData $content): void
+    public function override(Content $content): void
     {
         if(!$this->getElement()) {
             throw new \Exception('The element cannot be overwritten because it does not exist');
@@ -32,17 +32,17 @@ class ContentCollection
         return $this->elements;
     }
 
-    public function getElement(ContentData $element): ?ContentData
+    public function getElement(Content $element): ?Content
     {
         return $this->getKey($element->getUid());
     }
 
-    public function getFirstElement(): ?ContentData
+    public function getFirstElement(): ?Content
     {
         return $this->elements[$this->getFirstKey()] ?? null;
     }
 
-    public function getKey(int $key): ?ContentData
+    public function getKey(int $key): ?Content
     {
         return $this->elements[$key] ?? null;
     }

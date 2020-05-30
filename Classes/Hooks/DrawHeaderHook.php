@@ -10,7 +10,7 @@ use Zeroseven\Semantilizer\Services\BootstrapColorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
 use Zeroseven\Semantilizer\Services\TsConfigService;
 use Zeroseven\Semantilizer\Utilities\CollectContentUtility;
-use Zeroseven\Semantilizer\Models\PageData;
+use Zeroseven\Semantilizer\Models\Page;
 use Zeroseven\Semantilizer\Utilities\ValidationUtility;
 
 class DrawHeaderHook
@@ -19,7 +19,7 @@ class DrawHeaderHook
     /** @var array */
     private $tsConfig;
 
-    /** @var PageData */
+    /** @var Page */
     private $page;
 
     /** @var int */
@@ -31,14 +31,17 @@ class DrawHeaderHook
     /** @var string */
     private const VALIDATION_PARAMETER = 'semantilizer_hide_notifications';
 
+    /** @var string */
+    private const MODULE_NAME = 'web_layout';
+
     public function __construct()
     {
 
         // Get the language by module data
-        $moduleData = BackendUtility::getModuleData([], null, 'web_layout');
+        $moduleData = BackendUtility::getModuleData([], null, self::MODULE_NAME);
         $this->language = (int)$moduleData['language'];
 
-        $this->page = PageData::makeInstance(null, $this->language);
+        $this->page = Page::makeInstance(null, $this->language);
         $this->tsConfig = TsConfigService::getTsConfig($this->page->getL10nParent() ?: $this->page->getUid());
         $this->hideNotifications = $this->setValidationCookie();
     }
@@ -57,7 +60,7 @@ class DrawHeaderHook
 
     private function getToggleValidationLink(): string
     {
-        return GeneralUtility::makeInstance(UriBuilder::class)->buildUriFromRoute('web_layout', [
+        return GeneralUtility::makeInstance(UriBuilder::class)->buildUriFromRoute(self::MODULE_NAME, [
             self::VALIDATION_PARAMETER => (int)!$this->hideNotifications,
             'id' => $this->page->getUid(),
         ]);

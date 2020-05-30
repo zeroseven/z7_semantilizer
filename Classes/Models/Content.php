@@ -6,7 +6,7 @@ use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Zeroseven\Semantilizer\Services\PermissionService;
 
-class ContentData extends AbstractData
+class Content extends AbstractDataModel
 {
 
     /** @var array */

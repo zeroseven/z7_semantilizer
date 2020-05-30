@@ -12,6 +12,11 @@ class HideNotificationStateService
 
     private const FIELD = 'semantilizer_hide_notifications';
 
+    protected static function getBackendUserId(): int
+    {
+        return (int)PermissionService::getBackendUser()->user['uid'];
+    }
+
     public static function getState(): bool
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE);
@@ -23,16 +28,6 @@ class HideNotificationStateService
             ->setMaxResults(1)
             ->execute()
             ->fetchColumn(0) ?: false;
-    }
-
-    public static function enable(): bool
-    {
-        return self::setState(true);
-    }
-
-    public static function disable(): bool
-    {
-        return self::setState(false);
     }
 
     public static function setState(bool $value): bool
@@ -48,8 +43,14 @@ class HideNotificationStateService
         return $value;
     }
 
-    protected static function getBackendUserId(): int
+    public static function enable(): bool
     {
-        return (int)PermissionService::getBackendUser()->user['uid'];
+        return self::setState(true);
     }
+
+    public static function disable(): bool
+    {
+        return self::setState(false);
+    }
+
 }

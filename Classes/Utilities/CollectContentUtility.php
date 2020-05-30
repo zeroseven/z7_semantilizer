@@ -7,8 +7,8 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Zeroseven\Semantilizer\FixedTitle\FixedTitleInterface;
 use Zeroseven\Semantilizer\Models\ContentCollection;
-use Zeroseven\Semantilizer\Models\ContentData;
-use Zeroseven\Semantilizer\Models\PageData;
+use Zeroseven\Semantilizer\Models\Content;
+use Zeroseven\Semantilizer\Models\Page;
 
 class CollectContentUtility
 {
@@ -19,16 +19,16 @@ class CollectContentUtility
     /** @var array */
     private $tsConfig;
 
-    /** @var PageData */
+    /** @var Page */
     private $page;
 
-    public function __construct(PageData $page, array $tsConfig)
+    public function __construct(Page $page, array $tsConfig)
     {
         $this->page = $page;
         $this->tsConfig = $tsConfig;
     }
 
-    protected function getFixedTitle(ContentCollection $contentCollection = null): ?ContentData
+    protected function getFixedTitle(ContentCollection $contentCollection = null): ?Content
     {
         $fixedTitle = null;
 
@@ -62,11 +62,11 @@ class CollectContentUtility
                 '__fixed' => true
             ];
 
-            foreach (ContentData::REQUIRED_FIELDS as $key) {
+            foreach (Content::REQUIRED_FIELDS as $key) {
                 $row[$key] = $row[$key] ?? null;
             }
 
-            return GeneralUtility::makeInstance(ContentData::class, $row);
+            return GeneralUtility::makeInstance(Content::class, $row);
         }
 
         return null;
@@ -102,7 +102,7 @@ class CollectContentUtility
 
         // Add some links and attributes to the content elements
         foreach ($results as $row) {
-            $contentElement = GeneralUtility::makeInstance(ContentData::class, $row);
+            $contentElement = GeneralUtility::makeInstance(Content::class, $row);
             $contentCollection->append($contentElement);
         }
 

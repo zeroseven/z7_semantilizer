@@ -7,7 +7,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\Services\PermissionService;
 
-class PageData extends AbstractData
+class Page extends AbstractDataModel
 {
 
     /** @var array */
@@ -30,7 +30,7 @@ class PageData extends AbstractData
         PageRepository::DOKTYPE_RECYCLER
     ];
 
-    public static function makeInstance(int $uid = null, int $pageLocalisation = null): ?PageData
+    public static function makeInstance(int $uid = null, int $pageLocalisation = null): ?Page
     {
 
         /** @var int */
