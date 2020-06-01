@@ -2,6 +2,8 @@
 
 namespace Zeroseven\Semantilizer\Models;
 
+use TYPO3\CMS\Core\Utility\MathUtility;
+
 abstract class AbstractDataModel
 {
 
@@ -36,11 +38,11 @@ abstract class AbstractDataModel
         $value = $this->getData($property);
 
         // Check if the value is an integer
-        if (is_numeric($value)) {
+        if (MathUtility::canBeInterpretedAsInteger($value)) {
             return (int)$value;
         }
 
-        throw new \Exception(sprintf('Property "%s" can not be converted to a number', $property));
+        throw new \Exception(sprintf('Property "%s" can not be interpreted as integer. Value: "%s"', $property, $value));
     }
 
     public function toArray(): array
