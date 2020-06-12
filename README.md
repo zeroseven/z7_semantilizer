@@ -2,7 +2,7 @@
 
 ## :question: What is it?
 
-The Semantilizer is a TYPO3 extension, that adds more functionality to the TYPO3 own headlines of content elements. This extension will detach the semantic definition from the field `header_layout` for the headlines of the content elements. It also adds an overview over all currently used headlines in content elements across the current page. This will display also potential errors in the structuring of headlines and gives easy fixing options.
+The Semantilizer is a TYPO3 extension, that adds more functionality to the TYPO3 own headlines of content elements. This extension will detach the semantic definition from the field `header_layout` for the headlines of the content elements. It also adds an overview over all currently used headlines in content elements across the current page. This will display also potential errors in the structuring of headlines and gives easy fixing options. Installed in TYPO3 10, the semantilizer also offers a widget for your dashboard.
 
 ## :wrench: Installation
 
@@ -112,3 +112,10 @@ class RootPageTitleHook implements FixedTitleInterface
     }
 }
 ```
+
+## Release notes:
+
+### Version 2.0:
+* Refactoring of backend validation on PHP side
+* Introduce dashboard widget for TYPO3 10 :tada: 
+* **Breaking change:** FixedTitleInterface has updated parameters, please adapt
