@@ -107,7 +107,7 @@ class CollectContentUtility
         }
 
         // Prepend Title
-        if($fixedTitle = $this->getFixedTitle($contentCollection)) {
+        if ($fixedTitle = $this->getFixedTitle($contentCollection)) {
             $contentCollection->prepend($fixedTitle);
         }
 

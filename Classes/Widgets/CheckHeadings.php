@@ -116,7 +116,7 @@ class CheckHeadings implements WidgetInterface
         $affectedPages = [];
 
         // Get avaiable pages
-        if(!$availableLanguages = $this->getAvailableLanguages()) {
+        if (!$availableLanguages = $this->getAvailableLanguages()) {
             return [];
         }
 

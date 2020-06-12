@@ -20,7 +20,7 @@ class ContentCollection
 
     public function override(Content $content): void
     {
-        if(!$this->getElement()) {
+        if (!$this->getElement()) {
             throw new \Exception('The element cannot be overwritten because it does not exist');
         }
 

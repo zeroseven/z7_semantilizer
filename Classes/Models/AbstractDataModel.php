@@ -16,7 +16,7 @@ abstract class AbstractDataModel
     public function __construct(array $data)
     {
         foreach (self::REQUIRED_FIELDS as $property) {
-            if(!isset($data[$property])) {
+            if (!isset($data[$property])) {
                 throw new \Exception(sprintf('Key "%s" is missing in data array', $property));
             }
         }
@@ -26,7 +26,7 @@ abstract class AbstractDataModel
 
     public function getData(string $property): ?string
     {
-        if(isset($this->data[$property])) {
+        if (isset($this->data[$property])) {
             return trim((string)$this->data[$property]);
         }
 
