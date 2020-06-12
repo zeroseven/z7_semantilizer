@@ -1,81 +1,81 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:semantilizer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" data-namespace-typo3-fluid="true">
 
 <semantilizer:infobox
-    disableIcon="{f:if(condition:hideNotifications, then:1, else:0)}"
-    iconColor="{f:if(condition:notifications, then:strongestNotificationLevel, else:0)}"
-    iconName="{f:if(condition:notifications, then:'exclamation', else:'check')}"
-    title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
+	disableIcon="{f:if(condition:hideNotifications, then:1, else:0)}"
+	iconColor="{f:if(condition:notifications, then:strongestNotificationLevel, else:0)}"
+	iconName="{f:if(condition:notifications, then:'exclamation', else:'check')}"
+	title="{f:translate(key:'overview.title', extensionName: 'z7_semantilizer')}">
 
-    <div class="semantilzer">
-        <f:if condition="{contentElements}">
-            <f:then>
-                <p>{f:translate(key:'overview.description', extensionName: 'z7_semantilizer')}</p>
-            </f:then>
-            <f:else>
-                <p>{f:translate(key:'overview.empty', extensionName: 'z7_semantilizer')}</p>
-            </f:else>
-        </f:if>
+	<div class="semantilzer">
+		<f:if condition="{contentElements}">
+			<f:then>
+				<p>{f:translate(key:'overview.description', extensionName: 'z7_semantilizer')}</p>
+			</f:then>
+			<f:else>
+				<p>{f:translate(key:'overview.empty', extensionName: 'z7_semantilizer')}</p>
+			</f:else>
+		</f:if>
 
-        <f:if condition="{contentElements}">
-            <f:spaceless>
-                <div class="semantilzer__listwrap" id="js-semantilizer-list">
-                    <ul class="semantilzer__list">
-                        <f:for each="{contentElements}" as="contentElement" key="key">
-                            <f:if condition="{contentElement.headerType}">
-                                <li class="semantilzer__item--h{contentElement.headerType}">
-                                    <f:if condition="{key}">
-                                        <f:then>
-                                            <semantilizer:selectType
-                                                class="semantilzer__select-type"
-                                                selected="{contentElement.headerType}"
-                                                uid="{contentElement.uid}"
-                                                onchange="var url=this.value;require(['TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer'],function(Semantilizer){Semantilizer.update(url)});"/>
-                                            <a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:contentElement.error, then:'--error')}">{contentElement.header}</a>
-                                        </f:then>
-                                        <f:else>
-                                            <select class="semantilzer__select-type" disabled>
-                                                <option>H{contentElement.headerType}</option>
-                                            </select>
-                                            <span class="semantilzer__link">{contentElement.header}</span>
-                                        </f:else>
-                                    </f:if>
-                                </li>
-                            </f:if>
-                        </f:for>
-                    </ul>
-                </div>
-            </f:spaceless>
-        </f:if>
+		<f:if condition="{contentElements}">
+			<f:spaceless>
+				<div class="semantilzer__listwrap" id="js-semantilizer-list">
+					<ul class="semantilzer__list">
+						<f:for each="{contentElements}" as="contentElement">
+							<f:if condition="{contentElement.headerType}">
+								<li class="semantilzer__item--h{contentElement.headerType}">
+									<f:if condition="{contentElement.fixed}">
+										<f:then>
+											<select class="semantilzer__select-type" disabled>
+												<option>H{contentElement.headerType}</option>
+											</select>
+											<span class="semantilzer__link">{contentElement.header}</span>
+										</f:then>
+										<f:else>
+											<semantilizer:selectType
+												class="semantilzer__select-type"
+												selected="{contentElement.headerType}"
+												uid="{contentElement.uid}"
+												onchange="var url=this.value;require(['TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer'],function(Semantilizer){Semantilizer.update(url)});"/>
+											<a href="{contentElement.editLink}" class="semantilzer__link{f:if(condition:contentElement.error, then:'--error')}">{contentElement.header}</a>
+										</f:else>
+									</f:if>
+								</li>
+							</f:if>
+						</f:for>
+					</ul>
+				</div>
+			</f:spaceless>
+		</f:if>
 
 
-        <div class="semantilzer__control" id="js-semantilizer-control">
-            <f:if condition="{hideNotifications}">
-                <f:then>
-                    <f:if condition="{notifications}">
-                        <f:then>
-                            <a class="btn btn-{strongestNotificationClassname} btn-sm" href="{toggleValidationLink}">
-                                {f:translate(key:'overview.showNotifications', extensionName: 'z7_semantilizer')} ({notifications -> f:count()})
-                            </a>
-                        </f:then>
-                        <f:else>
-                            <a class="btn btn-default btn-sm" href="{toggleValidationLink}">
-                                {f:translate(key:'overview.showNotifications', extensionName: 'z7_semantilizer')}
-                            </a>
-                        </f:else>
-                    </f:if>
-                </f:then>
-                <f:else>
-                    <a class="btn btn-default btn-sm" href="{toggleValidationLink}">
-                        {f:translate(key:'overview.hideNotifications', extensionName: 'z7_semantilizer')}
-                    </a>
-                </f:else>
-            </f:if>
+		<div class="semantilzer__control" id="js-semantilizer-control">
+			<f:if condition="{hideNotifications}">
+				<f:then>
+					<f:if condition="{notifications}">
+						<f:then>
+							<a class="btn btn-{strongestNotificationClassname} btn-sm" href="{toggleValidationLink}">
+								{f:translate(key:'overview.showNotifications', extensionName: 'z7_semantilizer')} ({notifications -> f:count()})
+							</a>
+						</f:then>
+						<f:else>
+							<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
+								{f:translate(key:'overview.showNotifications', extensionName: 'z7_semantilizer')}
+							</a>
+						</f:else>
+					</f:if>
+				</f:then>
+				<f:else>
+					<a class="btn btn-default btn-sm" href="{toggleValidationLink}">
+						{f:translate(key:'overview.hideNotifications', extensionName: 'z7_semantilizer')}
+					</a>
+				</f:else>
+			</f:if>
 
-            <f:if condition="{notifications.0.fixLink} && {contentElements}">
-                <a class="btn btn-default btn-sm" href="{notifications.0.fixLink}">{f:translate(key:'overview.fixIt', extensionName: 'z7_semantilizer')}</a>
-            </f:if>
-        </div>
-    </div>
+			<f:if condition="{notifications.0.fixLink} && {contentElements}">
+				<a class="btn btn-default btn-sm" href="{notifications.0.fixLink}">{f:translate(key:'overview.fixIt', extensionName: 'z7_semantilizer')}</a>
+			</f:if>
+		</div>
+	</div>
 
 </semantilizer:infobox>
 </html>

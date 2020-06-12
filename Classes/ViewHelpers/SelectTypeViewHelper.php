@@ -5,6 +5,7 @@ namespace Zeroseven\Semantilizer\ViewHelpers;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use Zeroseven\Semantilizer\Services\PermissionService;
 
 class SelectTypeViewHelper extends AbstractTagBasedViewHelper
 {
@@ -28,6 +29,10 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
 
         $this->tag->setTagName('select');
         $this->tag->setContent($this->generateOptions());
+
+        if (!PermissionService::editContent()) {
+            $this->tag->addAttribute('disabled', 'disabled');
+        }
 
         return $this->tag->render();
     }
@@ -69,8 +74,7 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
     protected function generateOptions(): string
     {
         $content = '';
-        $requestUrl = GeneralUtility::getIndpEnv('REQUEST_URI') . ($this->arguments['section'] ? sprintf('#%s',
-                htmlspecialchars($this->arguments['section'])) : '');
+        $requestUrl = GeneralUtility::getIndpEnv('REQUEST_URI') . ($this->arguments['section'] ? sprintf('#%s', htmlspecialchars($this->arguments['section'])) : '');
         $types = $this->getHeaderTypes();
 
         foreach ($types as $key => $type) {

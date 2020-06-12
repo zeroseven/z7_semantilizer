@@ -62,6 +62,17 @@
 			<trans-unit id="notification.4.description">
 				<source>An error in the headline hierarchy has been detected. For a correct semantic distinction of the page, a H1 should be followed by a H2, a H2 should be followed by a H3 and so on.</source>
 			</trans-unit>
+
+			<trans-unit id="widget.title">
+				<source>Check heading structure</source>
+			</trans-unit>
+			<trans-unit id="widget.description">
+				<source>Display potential errors in the structuring of headlines and gives easy fixing options.</source>
+			</trans-unit>
+			<trans-unit id="widget.congratulation">
+				<source>No discrepancies were found in the structure of the headings.</source>
+			</trans-unit>
+
 		</body>
 	</file>
 </xliff>

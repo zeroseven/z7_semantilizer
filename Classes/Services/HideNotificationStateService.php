@@ -12,6 +12,11 @@ class HideNotificationStateService
 
     private const FIELD = 'semantilizer_hide_notifications';
 
+    protected static function getBackendUserId(): int
+    {
+        return (int)PermissionService::getBackendUser()->user['uid'];
+    }
+
     public static function getState(): bool
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE);
@@ -19,10 +24,23 @@ class HideNotificationStateService
         return $queryBuilder
             ->select(self::FIELD)
             ->from(self::TABLE)
-            ->where($queryBuilder->expr()->eq('uid', self::getBackendUser()))
+            ->where($queryBuilder->expr()->eq('uid', self::getBackendUserId()))
             ->setMaxResults(1)
             ->execute()
             ->fetchColumn(0) ?: false;
+    }
+
+    public static function setState(bool $value): bool
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE);
+
+        $queryBuilder
+            ->update(self::TABLE)
+            ->where($queryBuilder->expr()->eq('uid', self::getBackendUserId()))
+            ->set(self::FIELD, (int)$value)
+            ->execute();
+
+        return $value;
     }
 
     public static function enable(): bool
@@ -33,24 +51,6 @@ class HideNotificationStateService
     public static function disable(): bool
     {
         return self::setState(false);
-    }
-
-    public static function setState(bool $value): bool
-    {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE);
-
-        $queryBuilder
-            ->update(self::TABLE)
-            ->where($queryBuilder->expr()->eq('uid', self::getBackendUser()))
-            ->set(self::FIELD, (int)$value)
-            ->execute();
-
-        return $value;
-    }
-
-    protected static function getBackendUser(): int
-    {
-        return (int)$GLOBALS['BE_USER']->user['uid'];
     }
 
 }

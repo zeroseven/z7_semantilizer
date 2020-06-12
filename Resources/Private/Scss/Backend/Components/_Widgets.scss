@@ -1,0 +1,24 @@
+.semantilizer-widget--check-headings {
+    position: relative;
+    height: 100%;
+    min-height: 200px;
+}
+
+.semantilizer-widget__congratulation {
+    text-align: center;
+    padding: 15% 0;
+
+    @supports (transform: translateY(1%)) {
+        padding: 0 20px;
+        position: absolute;
+        width: 100%;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+    }
+}
+
+.semantilizer-widget__pagelink {
+    margin-left: 0.5em;
+    font-weight: bold;
+}
