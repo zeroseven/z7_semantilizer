@@ -35,6 +35,6 @@
     }
   },
   "replace": {
-    "z7_semantilizer": "self.version"
+    "zeroseven/z7-semantilizer": "self.version"
   }
 }
