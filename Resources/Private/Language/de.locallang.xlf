@@ -62,6 +62,16 @@
 			<trans-unit id="notification.4.description">
 				<target>Es wurde ein Fehler in der Hierarchie der Überschriften festgestellt. Für eine korrekte semantische Auszeichnung einer Seite soll auf eine H1 eine H2 folgen, nach einer H2 eine H3 usw.</target>
 			</trans-unit>
+
+			<trans-unit id="widget.title">
+				<source>Überprüfung der Überschriftenstruktur</source>
+			</trans-unit>
+			<trans-unit id="widget.description">
+				<source>Zeigt potenzielle Fehler in der Überschriftenstruktur und zeigt einfach Möglichkeiten zur Behebung.</source>
+			</trans-unit>
+			<trans-unit id="widget.congratulation">
+				<source>Es wurden keine Fehler in der Struktur der Überschriften entdeckt.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
