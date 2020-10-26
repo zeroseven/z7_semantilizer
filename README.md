@@ -19,9 +19,9 @@ For content elements you will find the before mentioned detachment of semantic m
 
 ![detachment](./Resources/Public/Images/detachment.png)
 
-<br /> 
-<br /> 
-<br /> 
+<br />
+<br />
+<br />
 
 ---
 
@@ -29,9 +29,9 @@ For content elements you will find the before mentioned detachment of semantic m
 
 ![all good](./Resources/Public/Images/allgood.png)
 
-<br /> 
-<br /> 
-<br /> 
+<br />
+<br />
+<br />
 
 ---
 
@@ -39,9 +39,9 @@ For content elements you will find the before mentioned detachment of semantic m
 
 ![notifications](./Resources/Public/Images/showNotifications.png)
 
-<br /> 
-<br /> 
-<br /> 
+<br />
+<br />
+<br />
 
 ---
 
@@ -67,7 +67,7 @@ TCEFORM.tt_content {
 }
 ```
 
-## :gear: Options 
+## :gear: Options
 
 You can disable the preview of the headlines on some pages. To achieve this, add this to your PageTSConfig;
 
@@ -87,7 +87,7 @@ If the page headline is set via page properties, you can implement your own func
 ```php
 $GLOBALS['TYPO3_CONF_VARS']['EXT']['z7_semantilizer']['fixedPageTitle'][0] = \Vendor\Extension\Hooks\RootPageTitleHook::class;
 $GLOBALS['TYPO3_CONF_VARS']['EXT']['z7_semantilizer']['fixedPageTitle'][1] = \Zeroseven\Semantilizer\FixedTitle\PageTitle::class;
-``` 
+```
 
 **PageTitleHook.php**
 ```php
@@ -97,16 +97,16 @@ namespace Vendor\Extension\Hooks;
 
 class RootPageTitleHook implements FixedTitleInterface
 {
-    public function get($params, $parent)
+    public function get(array $params, Page $parent = null, ContentCollection $contentCollection = null): ?string
     {
         return $params['page']->getUid() === 1 ? 'fixed title' : null;
     }
 }
-``` 
+```
 
 ## Release notes:
 
 ### Version 2.0:
 * Refactoring of backend validation on PHP side
-* Introduce dashboard widget for TYPO3 10 :tada: 
+* Introduce dashboard widget for TYPO3 10 :tada:
 * **Breaking change:** FixedTitleInterface has updated parameters, please adapt
