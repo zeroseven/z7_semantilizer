@@ -5,6 +5,7 @@ include:
 
 stages:
   - lint
+  - build
   - release
 
 php-cs-fixer:
