@@ -1,5 +1,21 @@
+include:
+  - project: 'zeroseven/gitlab-ci-templates'
+    ref: master
+    file: '/typo3/zeroseven-extension.gitlab-ci.yml'
+
 stages:
+  - lint
   - release
+
+php-cs-fixer:
+  stage: lint
+  image:
+    name: cytopia/php-cs-fixer:2-php7.4
+    entrypoint: ["/bin/ash", "-c"]
+  before_script:
+    - ''
+  script:
+    - php-cs-fixer fix --dry-run --using-cache false --diff --diff-format=udiff
 
 Upload release to TER:
   stage: release
