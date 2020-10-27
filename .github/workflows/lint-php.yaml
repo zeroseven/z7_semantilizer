@@ -44,3 +44,5 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: "Run php-cs-fixer"
         uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --diff --dry-run --diff-format=udiff

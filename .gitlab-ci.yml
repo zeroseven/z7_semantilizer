@@ -11,12 +11,13 @@ stages:
 php-cs-fixer:
   stage: lint
   image:
-    name: cytopia/php-cs-fixer:2-php7.4
+    name: oskarstark/php-cs-fixer-ga
     entrypoint: ["/bin/ash", "-c"]
   before_script:
     - ''
   script:
-    - php-cs-fixer fix --dry-run --using-cache false --diff --diff-format=udiff
+    - /usr/local/bin/php-cs-fixer --version
+    - /usr/local/bin/php-cs-fixer fix --dry-run --using-cache false --diff --diff-format=udiff
 
 Upload release to TER:
   stage: release
