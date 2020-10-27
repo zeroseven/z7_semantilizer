@@ -74,5 +74,4 @@ class Page extends AbstractDataModel
     {
         return in_array($this->getDoktype(), self::IGNORED_DOKTYPES, true);
     }
-
 }

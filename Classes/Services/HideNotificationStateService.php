@@ -7,7 +7,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class HideNotificationStateService
 {
-
     private const TABLE = 'be_users';
 
     private const FIELD = 'semantilizer_hide_notifications';
@@ -52,5 +51,4 @@ class HideNotificationStateService
     {
         return self::setState(false);
     }
-
 }

@@ -52,5 +52,4 @@ class FlagViewHelper extends AbstractViewHelper
 
         return ($siteLanguage = $siteLanguages[$languageUid] ?? null) ? $this->renderLanguageFlag($siteLanguage) : '';
     }
-
 }

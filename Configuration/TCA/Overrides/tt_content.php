@@ -1,4 +1,5 @@
 <?php
+
 defined('TYPO3_MODE') || die();
 
 call_user_func(static function () {
@@ -29,5 +30,4 @@ call_user_func(static function () {
     // Add fields to the palettes
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('tt_content', 'header', 'header_type', 'after:header_layout');
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('tt_content', 'headers', 'header_type', 'after:header_layout');
-
 });

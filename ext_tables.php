@@ -1,8 +1,8 @@
 <?php
+
 defined('TYPO3_MODE') || die('Access denied.');
 
 call_user_func(static function () {
-
     if (TYPO3_MODE === 'BE') {
 
         // Add JavaScript to the backend
@@ -12,8 +12,6 @@ call_user_func(static function () {
         // Add language translations to the backend
         $pageRenderer->addInlineLanguageLabelFile('EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf');
     }
-
-
 });
 
 // Add styles to the backend

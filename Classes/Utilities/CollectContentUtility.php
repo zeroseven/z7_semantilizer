@@ -8,8 +8,8 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Zeroseven\Semantilizer\FixedTitle\FixedTitleInterface;
-use Zeroseven\Semantilizer\Models\ContentCollection;
 use Zeroseven\Semantilizer\Models\Content;
+use Zeroseven\Semantilizer\Models\ContentCollection;
 use Zeroseven\Semantilizer\Models\Page;
 
 class CollectContentUtility
@@ -57,7 +57,6 @@ class CollectContentUtility
         }
 
         if ($fixedTitle) {
-
             $row = [
                 'header' => $fixedTitle,
                 'header_type' => 1,
