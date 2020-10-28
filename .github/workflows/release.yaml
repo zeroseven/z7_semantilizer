@@ -28,9 +28,9 @@ jobs:
           path: ${{ env.TYPO3_EXTENSION_KEY }}
 
       - uses: shivammathur/setup-php@v2
-          with:
-            php-version: ${{ matrix.php-versions }}
-            extensions: intl, mbstring, xml, soap, zip, curl
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: intl, mbstring, xml, soap, zip, curl
 
       - name: Install TYPO3 TER client
         run: composer global require namelesscoder/typo3-repository-client
