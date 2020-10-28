@@ -8,8 +8,8 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Zeroseven\Semantilizer\FixedTitle\FixedTitleInterface;
-use Zeroseven\Semantilizer\Models\ContentCollection;
 use Zeroseven\Semantilizer\Models\Content;
+use Zeroseven\Semantilizer\Models\ContentCollection;
 use Zeroseven\Semantilizer\Models\Page;
 
 class CollectContentUtility
@@ -57,7 +57,6 @@ class CollectContentUtility
         }
 
         if ($fixedTitle) {
-
             $row = [
                 'header' => $fixedTitle,
                 'header_type' => 1,
@@ -94,8 +93,10 @@ class CollectContentUtility
                 $queryBuilder->expr()->lt('header_layout', $queryBuilder->createNamedParameter(100, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->neq('header', $queryBuilder->createNamedParameter('')),
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($this->page->getL10nParent() ?: $this->page->getUid(), \PDO::PARAM_INT)),
-                $queryBuilder->expr()->in('sys_language_uid',
-                    $queryBuilder->createNamedParameter([(string)$this->page->getSysLanguageUid(), '-1'], Connection::PARAM_INT_ARRAY)),
+                $queryBuilder->expr()->in(
+                    'sys_language_uid',
+                    $queryBuilder->createNamedParameter([(string)$this->page->getSysLanguageUid(), '-1'], Connection::PARAM_INT_ARRAY)
+                ),
                 $queryBuilder->expr()->in('colPos', $queryBuilder->createNamedParameter($colPosOrdering, Connection::PARAM_INT_ARRAY)),
 
                 // Todo: Add condition around this query
@@ -103,7 +104,7 @@ class CollectContentUtility
                     return $queryBuilder->createNamedParameter($value, \PDO::PARAM_STR);
                 }, $this->tsConfig['ignoreCTypes'] ? GeneralUtility::trimExplode(',', $this->tsConfig['ignoreCTypes']) : ['__']))
             )
-            ->add('orderBy', 'FIELD(colPos,' . $queryBuilder->createNamedParameter( $colPosOrdering, Connection::PARAM_INT_ARRAY) . ')')
+            ->add('orderBy', 'FIELD(colPos,' . $queryBuilder->createNamedParameter($colPosOrdering, Connection::PARAM_INT_ARRAY) . ')')
             ->addOrderBy('sorting')
             ->execute()
             ->fetchAll() ?: [];
@@ -138,5 +139,4 @@ class CollectContentUtility
         $backendLayoutView = GeneralUtility::makeInstance(BackendLayoutView::class);
         return $backendLayoutView->getBackendLayoutForPage($this->page->getUid());
     }
-
 }

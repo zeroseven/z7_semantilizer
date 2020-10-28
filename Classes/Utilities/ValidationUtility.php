@@ -42,7 +42,6 @@ class ValidationUtility
 
     public function __construct(ContentCollection $contentCollection, string $requestUri = null)
     {
-
         $this->requestUri = $requestUri ?: GeneralUtility::getIndpEnv('REQUEST_URI');
         $this->permissions = PermissionService::editContent();
 
@@ -105,7 +104,6 @@ class ValidationUtility
 
     protected function addNotification(string $errorCode, array $contentElements = null, array $fix = null, string $state = 'warning'): void
     {
-
         foreach ($contentElements ?? [] as $contentElement) {
             $contentElement->setError(true);
         }
@@ -117,7 +115,8 @@ class ValidationUtility
             'fixLink' => is_array($fix) && $this->permissions ? BackendUtility::getLinkToDataHandlerAction(
                 implode(',', array_map(static function ($type, $uid) {
                     return sprintf('&data[tt_content][%d][header_type]=%d', $uid, $type);
-                }, $fix, array_keys($fix))), $this->requestUri
+                }, $fix, array_keys($fix))),
+                $this->requestUri
             ) : null
         ];
 
@@ -147,6 +146,4 @@ class ValidationUtility
 
         return $contentCollection;
     }
-
-
 }

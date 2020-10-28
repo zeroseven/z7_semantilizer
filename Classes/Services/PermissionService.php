@@ -8,7 +8,6 @@ use TYPO3\CMS\Core\Type\Bitmask\Permission;
 
 class PermissionService
 {
-
     public static function getBackendUser(): BackendUserAuthentication
     {
         return $GLOBALS['BE_USER'];
@@ -28,5 +27,4 @@ class PermissionService
     {
         return $site->getAvailableLanguages(self::getBackendUser()) ?? [];
     }
-
 }
