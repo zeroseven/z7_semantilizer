@@ -33,21 +33,20 @@ jobs:
           extensions: intl, mbstring, xml, soap, zip, curl
 
       - name: Install TYPO3 TER client
-
         run: composer global require namelesscoder/typo3-repository-client
           "^2.0" --prefer-dist --no-progress --no-suggest
-
-      - name: Remove .git folder
-        run: rm -rf ./$TYPO3_EXTENSION_KEY/.git
-
-      - name: List extension folder $TYPO3_EXTENSION_KEY
-        run: ls -liAsh ./$TYPO3_EXTENSION_KEY
 
       - name: Extract tag version
         run: TAG=`echo ${{ github.event.ref }} | sed 's/^.\{10\}//'`
 
       - name: Extract tag message
         run: TAG_MESSAGE=`git tag -n10 -l $TAG | sed 's/^[0-9.]*[ ]*//g'`
+
+      - name: Remove .git folder
+        run: rm -rf ./$TYPO3_EXTENSION_KEY/.git
+
+      - name: List extension folder
+        run: ls -liAsh ./$TYPO3_EXTENSION_KEY
 
       - name: Upload EXT:${{ env.TYPO3_EXTENSION_KEY }}
           as ${{ env.TAG }} to TER
