@@ -6,7 +6,5 @@ use Zeroseven\Semantilizer\Models\ContentCollection;
 
 interface FixedTitleInterface
 {
-
     public function get(array $params, $parent = null, ContentCollection $contentCollection = null): ?string;
-
 }

@@ -1,0 +1,13 @@
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.gitlab-ci.yml export-ignore
+/.github export-ignore
+/.Build export-ignore
+/.nvmrc export-ignore
+/.satisinclude export-ignore
+/gulpfile.js export-ignore
+/package.json export-ignore
+/package-lock.json export-ignore
+/node_modules export-ignore
+/Resources/Private/Scss/Backend export-ignore

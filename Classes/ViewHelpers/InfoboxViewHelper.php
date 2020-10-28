@@ -49,5 +49,4 @@ class InfoboxViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Be\InfoboxViewHelpe
 
         return $infoBox;
     }
-
 }

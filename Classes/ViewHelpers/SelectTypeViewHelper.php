@@ -9,7 +9,6 @@ use Zeroseven\Semantilizer\Services\PermissionService;
 
 class SelectTypeViewHelper extends AbstractTagBasedViewHelper
 {
-
     public function initializeArguments(): void
     {
         parent::initializeArguments();
@@ -26,7 +25,6 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
 
     public function render(): string
     {
-
         $this->tag->setTagName('select');
         $this->tag->setContent($this->generateOptions());
 
@@ -78,7 +76,6 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
         $types = $this->getHeaderTypes();
 
         foreach ($types as $key => $type) {
-
             if ($type > 0) {
                 $selected = $type === $this->arguments['selected'] ? 'selected' : '';
 
@@ -97,5 +94,4 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
 
         return $content;
     }
-
 }

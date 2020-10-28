@@ -26,12 +26,45 @@
   "require": {
     "typo3/cms-core": "^9.5 || ^10.3"
   },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.16",
+    "php-parallel-lint/php-parallel-lint": "^1.2"
+  },
   "suggest": {
     "typo3/cms-fluid-styled-content": "*"
   },
   "autoload": {
     "psr-4": {
       "Zeroseven\\Semantilizer\\": "Classes"
+    }
+  },
+  "config": {
+    "vendor-dir": ".Build/vendor",
+    "bin-dir": ".Build/bin"
+  },
+  "scripts": {
+    "test": [
+      "@test-php-lint",
+      "@test-php-cs-fixer"
+    ],
+    "post-autoload-dump": [
+      "TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
+    ],
+    "test-php-lint": [
+      ".Build/bin/parallel-lint ./Classes/",
+      ".Build/bin/parallel-lint ./Configuration/"
+    ],
+    "test-php-cs-fixer": [
+      "php-cs-fixer fix -v --dry-run --using-cache false --diff --diff-format=udiff"
+    ],
+    "test-php-cs-fixer-fix": [
+      "php-cs-fixer fix -v --using-cache false"
+    ]
+  },
+  "extra": {
+    "typo3/cms": {
+      "web-dir": ".Build",
+      "extension-key": "z7_semantilizer"
     }
   },
   "replace": {

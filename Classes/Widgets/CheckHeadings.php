@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Zeroseven\Semantilizer\Widgets;
@@ -15,10 +16,10 @@ use TYPO3\CMS\Dashboard\Widgets\ListDataProviderInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use Zeroseven\Semantilizer\Services\PermissionService;
-use Zeroseven\Semantilizer\Utilities\CollectContentUtility;
-use Zeroseven\Semantilizer\Services\TsConfigService;
 use Zeroseven\Semantilizer\Models\Page;
+use Zeroseven\Semantilizer\Services\PermissionService;
+use Zeroseven\Semantilizer\Services\TsConfigService;
+use Zeroseven\Semantilizer\Utilities\CollectContentUtility;
 use Zeroseven\Semantilizer\Utilities\ValidationUtility;
 
 class CheckHeadings implements WidgetInterface
@@ -42,8 +43,13 @@ class CheckHeadings implements WidgetInterface
     /** @var string */
     private $moduleLink;
 
-    public function __construct(WidgetConfigurationInterface $configuration, ListDataProviderInterface $dataProvider = null, StandaloneView $view, $buttonProvider = null, array $options = [])
-    {
+    public function __construct(
+        WidgetConfigurationInterface $configuration,
+        ListDataProviderInterface $dataProvider = null,
+        StandaloneView $view,
+        $buttonProvider = null,
+        array $options = []
+    ) {
         $this->configuration = $configuration;
         $this->view = $view;
         $this->buttonProvider = $buttonProvider;
@@ -64,7 +70,11 @@ class CheckHeadings implements WidgetInterface
         $tsConfig = TsConfigService::getTsConfig($page->getL10nParent() ?: $page->getUid());
 
         // Check if the Semantilizer is disabled on given page
-        if (($disableOnPages = $tsConfig['disableOnPages'] ?? null) && in_array($page->getL10nParent() ?: $page->getUid(), GeneralUtility::intExplode(',', $disableOnPages), true)) {
+        if (($disableOnPages = $tsConfig['disableOnPages'] ?? null) && in_array(
+            $page->getL10nParent() ?: $page->getUid(),
+            GeneralUtility::intExplode(',', $disableOnPages),
+            true
+        )) {
             return null;
         }
 
@@ -146,7 +156,6 @@ class CheckHeadings implements WidgetInterface
 
     public function renderWidgetContent(): string
     {
-
         $this->view->setTemplatePathAndFilename('EXT:z7_semantilizer/Resources/Private/Templates/Widget/CheckHeadings.html');
 
         $this->view->assignMultiple([

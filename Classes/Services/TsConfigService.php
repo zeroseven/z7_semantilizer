@@ -6,7 +6,6 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 class TsConfigService
 {
-
     public static function getTsConfig(int $uid): array
     {
         $pagesTsConfig = BackendUtility::getPagesTSconfig($uid);
@@ -20,5 +19,4 @@ class TsConfigService
 
         return $tsConfig[$key] ?? null;
     }
-
 }

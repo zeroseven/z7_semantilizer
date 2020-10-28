@@ -1,3 +1,6 @@
-node_modules
-Resources/Public/Css/**/*.css
-!Resources/Public/Css/**/*min.css
+/node_modules
+/Resources/Public/Css/**/*.css
+!/Resources/Public/Css/**/*min.css
+.php_cs.cache
+/.Build
+/composer.lock

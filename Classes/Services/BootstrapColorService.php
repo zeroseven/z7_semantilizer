@@ -6,7 +6,6 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 
 class BootstrapColorService
 {
-
     public static function getClassnameByFlashMessageState(int $state): string
     {
         $classes = [

@@ -3,14 +3,14 @@
 namespace Zeroseven\Semantilizer\Hooks;
 
 use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+use Zeroseven\Semantilizer\Models\Page;
 use Zeroseven\Semantilizer\Services\BootstrapColorService;
 use Zeroseven\Semantilizer\Services\HideNotificationStateService;
 use Zeroseven\Semantilizer\Services\TsConfigService;
 use Zeroseven\Semantilizer\Utilities\CollectContentUtility;
-use Zeroseven\Semantilizer\Models\Page;
 use Zeroseven\Semantilizer\Utilities\ValidationUtility;
 
 class DrawHeaderHook
@@ -36,7 +36,6 @@ class DrawHeaderHook
 
     public function __construct()
     {
-
         // Get the language by module data
         $moduleData = BackendUtility::getModuleData([], null, self::MODULE_NAME);
         $this->language = (int)$moduleData['language'];
@@ -48,7 +47,6 @@ class DrawHeaderHook
 
     private function setValidationCookie(): bool
     {
-
         $validate = GeneralUtility::_GP(self::VALIDATION_PARAMETER);
 
         if ($validate === null) {
@@ -68,7 +66,6 @@ class DrawHeaderHook
 
     private function skipSemantilizer(): bool
     {
-
         // Skip on some doktypes
         if ($this->page->isIgnoredDoktype()) {
             return true;
@@ -84,7 +81,6 @@ class DrawHeaderHook
 
     public function render(): string
     {
-
         // Skip rendering
         if ($this->skipSemantilizer()) {
             return '';
@@ -117,5 +113,4 @@ class DrawHeaderHook
 
         return $view->render();
     }
-
 }
