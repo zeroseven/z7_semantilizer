@@ -69,17 +69,32 @@ TCEFORM.tt_content {
 
 ## :gear: Options
 
-You can disable the preview of the headlines on some pages. To achieve this, add this to your PageTSConfig;
+You can disable the preview of the headlines on some pages. To achieve this, add this to your PageTSConfig:
 
 ```
 tx_semantilizer.disableOnPages = 42,84
 ```
 
-You can also disable the headline checking for specific content elements, like so
+You can also disable the headline checking for specific content elements, like so:
 
 ```
 tx_semantilizer.ignoreCTypes = div, html
 ```
+
+### colPos ordering for backend layouts
+
+(since v2.1.0)
+
+Per default only content elements with colPos = 0 are shown. You can configure the colPos ordering for each backend layout. The backend layout identifier is the array key here. _Items with a colPos which is not defined there won't be listed._
+
+```
+tx_semantilizer.colPosOrdering {
+  simple = 8,0,9
+  2_columns = 8,0,2,9
+}
+```
+
+### Fixed page title
 
 If the page headline is set via page properties, you can implement your own functions to adapt to this in the semantilizer. Register one or more classes implements the `FixedTitleInterface` like the following example:
 
@@ -108,6 +123,10 @@ class RootPageTitleHook implements FixedTitleInterface
 ```
 
 ## Release notes:
+
+### Version 2.1:
+
+* Support multiple colPos (with ordering) depending on backend_layout
 
 ### Version 2.0:
 * Refactoring of backend validation on PHP side
