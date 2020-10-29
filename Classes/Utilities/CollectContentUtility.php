@@ -29,6 +29,20 @@ class CollectContentUtility
         $this->tsConfig = $tsConfig;
     }
 
+    protected function getColPosOrdering(): array
+    {
+        // Get backendLayout identifier (recursive)
+        $backendLayoutIdentifier = GeneralUtility::makeInstance(BackendLayoutView::class)->getSelectedCombinedIdentifier($this->page->getUid());
+
+        // Get backend layout and the related colPosOrdering
+        if ($backendLayoutIdentifier && $colPosOrdering = $this->tsConfig['colPosOrdering.'][$backendLayoutIdentifier] ?? null) {
+            return GeneralUtility::intExplode(',', $colPosOrdering, true);
+        }
+
+        // Fallback to colPos 0 only
+        return [0];
+    }
+
     protected function getFixedTitle(ContentCollection $contentCollection = null): ?Content
     {
         $fixedTitle = null;
@@ -120,18 +134,5 @@ class CollectContentUtility
         }
 
         return $contentCollection;
-    }
-
-    protected function getColPosOrdering(): array
-    {
-        $backenLayoutIdentifier = GeneralUtility::makeInstance(BackendLayoutView::class)->getSelectedCombinedIdentifier($this->page->getUid());
-
-        // Get backend layout and the related colPosOrdering
-        if ($backenLayoutIdentifier && $colPosOrdering = $this->tsConfig['colPosOrdering.'][$backenLayoutIdentifier] ?? null) {
-            return GeneralUtility::intExplode(',', $colPosOrdering, true);
-        }
-
-        // Fallback to colPos 0 only
-        return [0];
     }
 }
