@@ -2,7 +2,6 @@
 
 namespace Zeroseven\Semantilizer\Utilities;
 
-use TYPO3\CMS\Backend\View\BackendLayout\BackendLayout;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -125,18 +124,14 @@ class CollectContentUtility
 
     protected function getColPosOrdering(): array
     {
+        $backenLayoutIdentifier = GeneralUtility::makeInstance(BackendLayoutView::class)->getSelectedCombinedIdentifier($this->page->getUid());
+
         // Get backend layout and the related colPosOrdering
-        if (($backendLayout = $this->getBackendLayout()) && $colPosOrdering = (string)$this->tsConfig['colPosOrdering.'][$backendLayout->getIdentifier()]) {
+        if ($backenLayoutIdentifier && $colPosOrdering = $this->tsConfig['colPosOrdering.'][$backenLayoutIdentifier] ?? null) {
             return GeneralUtility::intExplode(',', $colPosOrdering, true);
         }
 
         // Fallback to colPos 0 only
         return [0];
-    }
-
-    protected function getBackendLayout(): ?BackendLayout
-    {
-        $backendLayoutView = GeneralUtility::makeInstance(BackendLayoutView::class);
-        return $backendLayoutView->getBackendLayoutForPage($this->page->getUid());
     }
 }

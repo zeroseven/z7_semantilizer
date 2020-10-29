@@ -6,4 +6,3 @@ tx_semantilizer {
   disableOnPages = 0
   ignoreCTypes := addToList(div,html)
 }
-

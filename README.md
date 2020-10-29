@@ -78,7 +78,7 @@ tx_semantilizer.disableOnPages = 42,84
 You can also disable the headline checking for specific content elements, like so:
 
 ```
-tx_semantilizer.ignoreCTypes = div, html
+tx_semantilizer.ignoreCTypes := addToList(div,html)
 ```
 
 ### colPos ordering for backend layouts
@@ -89,8 +89,8 @@ Per default only content elements with colPos = 0 are shown. You can configure t
 
 ```
 tx_semantilizer.colPosOrdering {
-  simple = 8,0,9
-  2_columns = 8,0,2,9
+  pagets__simple = 8,0,9
+  pagets__2_columns = 8,0,2,9
 }
 ```
 
