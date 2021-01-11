@@ -1,17 +1,10 @@
 <?php
-
-defined('TYPO3_MODE') || die('Access denied.');
+defined('TYPO3') or die();
 
 call_user_func(static function () {
-    if (TYPO3_MODE === 'BE') {
-
-        // Add JavaScript to the backend
-        $pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
-        $pageRenderer->loadRequireJsModule('TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer');
-
-        // Add language translations to the backend
-        $pageRenderer->addInlineLanguageLabelFile('EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf');
-    }
+    // Hook to add config to PageRenderer in backend
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][] =
+        \Zeroseven\Semantilizer\Hooks\PageRendererRenderPreProcess::class . '->addPageRendererConfiguration';
 });
 
 // Add styles to the backend
