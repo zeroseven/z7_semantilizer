@@ -17,4 +17,4 @@ php-cs-fixer:
     - ''
   script:
     - /usr/local/bin/php-cs-fixer --version
-    - /usr/local/bin/php-cs-fixer fix --dry-run --using-cache false --diff --diff-format=udiff
+    - /usr/local/bin/php-cs-fixer fix --dry-run --using-cache no --diff
