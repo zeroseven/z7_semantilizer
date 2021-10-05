@@ -3,8 +3,8 @@
 namespace Zeroseven\Semantilizer\Models;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 use Zeroseven\Semantilizer\Services\PermissionService;
 
 class Page extends AbstractDataModel
