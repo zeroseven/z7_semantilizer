@@ -59,6 +59,19 @@
     ],
     "test-php-cs-fixer-fix": [
       "php-cs-fixer fix -v --using-cache false"
+    ],
+    "prepare-release": [
+      "rm .editorconfig",
+      "rm .gitattributes",
+      "rm .gitignore",
+      "rm .gitlab-ci.yml",
+      "rm -rf .github",
+      "rm .nvmrc",
+      "rm .php_cs",
+      "rm .satisinclude",
+      "rm gulpfile.js",
+      "rm package-lock.json",
+      "rm package.json"
     ]
   },
   "extra": {
