@@ -21,7 +21,9 @@ if (PHP_SAPI !== 'cli') {
     die('This script supports command line usage only. Please check your command.');
 }
 
-return PhpCsFixer\Config::create()
+$config = new PhpCsFixer\Config();
+
+return $config
     ->setRiskyAllowed(true)
     ->setRules([
         '@DoctrineAnnotation' => true,
@@ -38,9 +40,9 @@ return PhpCsFixer\Config::create()
 //        'fully_qualified_strict_types' => true,
         'function_typehint_space' => true,
         'general_phpdoc_annotation_remove' => [
-            'author'
+            'annotations' => ['author']
         ],
-        'hash_to_slash_comment' => true,
+        'single_line_comment_style' => true,
         'lowercase_cast' => true,
 //        'method_separation' => true,
         'method_argument_space' => ['on_multiline' => 'ensure_fully_multiline'],
@@ -53,7 +55,7 @@ return PhpCsFixer\Config::create()
 //        'no_empty_comment' => true,
         'no_empty_phpdoc' => true,
         'no_empty_statement' => true,
-        'no_extra_consecutive_blank_lines' => true,
+        'no_extra_blank_lines' => true,
         'no_leading_import_slash' => true,
         'no_leading_namespace_whitespace' => true,
 //        'no_multiline_whitespace_around_double_arrow' => true,
@@ -73,7 +75,10 @@ return PhpCsFixer\Config::create()
         'no_whitespace_in_blank_line' => true,
 //        'normalize_index_brace' => true,
         'ordered_imports' => true,
-        'php_unit_construct' => ['assertEquals', 'assertSame', 'assertNotEquals', 'assertNotSame'],
+        'php_unit_construct' =>
+            ['assertions' =>
+                ['assertEquals', 'assertSame', 'assertNotEquals', 'assertNotSame']
+            ],
         'php_unit_mock_short_will_return' => true,
         'php_unit_test_case_static_method_calls' => ['call_type' => 'self'],
 //        'phpdoc_add_missing_param_annotation' => ['only_untyped' => false],
