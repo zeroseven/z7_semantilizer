@@ -32,7 +32,7 @@ class Content extends AbstractDataModel
         return (int)$this->data['header_type'];
     }
 
-    public function getCTye(): string
+    public function getCType(): string
     {
         return $this->data['cType'];
     }
