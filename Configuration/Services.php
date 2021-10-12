@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Zeroseven\Semantilizer;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Reference;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use Zeroseven\Semantilizer\Widgets\CheckHeadings;
 
-return function (ContainerConfigurator $configurator) {
+return function (ContainerConfigurator $configurator, ContainerBuilder $containerBuilder) {
     $services = $configurator->services();
 
-    if (ExtensionManagementUtility::isLoaded('dashboard')) {
+    if ($containerBuilder->hasDefinition('dashboard')) {
         $services->defaults()
             ->autowire()
             ->autoconfigure()
