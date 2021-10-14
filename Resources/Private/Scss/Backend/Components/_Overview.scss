@@ -6,7 +6,7 @@ $overview-background-color: #fff;
 $overview-select-width: 36px;
 
 .semantilzer__listwrap {
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 #{strip-unit($overview-pattern-width)} #{strip-unit($overview-pattern-height)}' xmlns='http://www.w3.org/2000/svg' width='#{strip-unit($overview-pattern-width)}' height='#{strip-unit($overview-pattern-height)}'%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) / 2}' y1='#{strip-unit($overview-pattern-height) / 2 + strip-unit($overview-pattern-stroke) / 2}' x2='#{strip-unit($overview-pattern-width) - strip-unit($overview-pattern-stroke) / 2}' y2='#{strip-unit($overview-pattern-height) / 2 + strip-unit($overview-pattern-stroke) / 2}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='#{str-replace(quote($overview-pattern-color), '#', '%23')}' /%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) / 2}' y1='1' x2='#{strip-unit($overview-pattern-stroke) / 2}' y2='#{strip-unit($overview-pattern-height)}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='#{str-replace(quote($overview-pattern-color), '#', '%23')}' /%3E%3C/svg%3E%0A") repeat top left $overview-background-color;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 #{strip-unit($overview-pattern-width)} #{strip-unit($overview-pattern-height)}' xmlns='http://www.w3.org/2000/svg' width='#{strip-unit($overview-pattern-width)}' height='#{strip-unit($overview-pattern-height)}'%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' x2='#{strip-unit($overview-pattern-width) - strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='1' x2='#{strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height)}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3C/svg%3E%0A") repeat top left $overview-background-color;
     border-style: solid;
     border-color: $overview-background-color;
     border-width: 1em 1em 2em 3em;
@@ -21,7 +21,7 @@ $overview-select-width: 36px;
     list-style: none;
 
     // Eliminate the line on the bottom
-    margin: 0 0 $overview-pattern-height / - 2 + $overview-pattern-stroke;
+    margin: 0 0 math.div($overview-pattern-height, - 2) + $overview-pattern-stroke;
 }
 
 %semantilzer__item {
@@ -40,7 +40,7 @@ $overview-select-width: 36px;
     .semantilzer__item--h#{$i} {
         @extend %semantilzer__item;
 
-        margin-left: $overview-pattern-width * ($i - 1) + $overview-select-width / - 2;
+        margin-left: $overview-pattern-width * ($i - 1) + math.div($overview-select-width, - 2);
     }
 }
 
