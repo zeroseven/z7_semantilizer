@@ -1,8 +1,2 @@
 # Override backend label for the field "header_layout"
 TCEFORM.tt_content.header_layout.label = LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_layout
-
-# Configure the semantilizer
-tx_semantilizer {
-  disableOnPages = 0
-  ignoreCTypes := addToList(div,html)
-}

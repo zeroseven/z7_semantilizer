@@ -67,61 +67,6 @@ TCEFORM.tt_content {
 }
 ```
 
-## :gear: Options
-
-You can disable the preview of the headlines on some pages. To achieve this, add this to your PageTSConfig:
-
-```
-tx_semantilizer.disableOnPages = 42,84
-```
-
-You can also disable the headline checking for specific content elements, like so:
-
-```
-tx_semantilizer.ignoreCTypes := addToList(div,html)
-```
-
-### colPos ordering for backend layouts
-
-(since v2.1.0)
-
-Per default only content elements with colPos = 0 are shown. You can configure the colPos ordering for each backend layout. The backend layout identifier is the array key here. _Items with a colPos which is not defined there won't be listed._
-
-```
-tx_semantilizer.colPosOrdering {
-  pagets__simple = 8,0,9
-  pagets__2_columns = 8,0,2,9
-}
-```
-
-### Fixed page title
-
-If the page headline is set via page properties, you can implement your own functions to adapt to this in the semantilizer. Register one or more classes implements the `FixedTitleInterface` like the following example:
-
-**ext_localconf.php**
-```php
-$GLOBALS['TYPO3_CONF_VARS']['EXT']['z7_semantilizer']['fixedPageTitle'][0] = \Vendor\Extension\Hooks\RootPageTitleHook::class;
-$GLOBALS['TYPO3_CONF_VARS']['EXT']['z7_semantilizer']['fixedPageTitle'][1] = \Zeroseven\Semantilizer\FixedTitle\PageTitle::class;
-```
-
-**PageTitleHook.php**
-```php
-<?php
-
-namespace Vendor\Extension\Hooks;
-
-use Zeroseven\Semantilizer\FixedTitle\FixedTitleInterface;
-use Zeroseven\Semantilizer\Models\ContentCollection;
-
-class RootPageTitleHook implements FixedTitleInterface
-{
-    public function get(array $params, $parent = null, ContentCollection $contentCollection = null): ?string
-    {
-        return $params['page']->getUid() === 1 ? 'fixed title' : null;
-    }
-}
-```
-
 ## Release notes:
 
 ### Version 2.1:
