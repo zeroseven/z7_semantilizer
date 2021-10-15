@@ -10,7 +10,7 @@ gulp.task('Scss', done => {
   gulp.src(['./Resources/Private/Scss/**/*.scss'])
     .pipe(sass().on('error', sass.logError))
     .pipe(autoprefixer())
-    .pipe(cleancss(process.env.GULP_CONTEXT === 'production' ? null : {
+    .pipe(cleancss(process.env.GULP_CONTEXT !== 'development' ? null : {
       format: 'beautify'
     }))
     .pipe(gulp.dest('./Resources/Public/Css'));
@@ -24,7 +24,7 @@ gulp.task('JavaScript', done => {
       presets: ['@babel/preset-env']
     }))
     .on('error', console.error.bind(console))
-    .pipe(uglify(process.env.GULP_CONTEXT === 'production' ? {} : {
+    .pipe(uglify(process.env.GULP_CONTEXT !== 'development' ? {} : {
       compress: false,
       mangle: false,
       output: {
