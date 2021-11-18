@@ -46,11 +46,11 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
 
         // Get the items by the TCEFORM
         $pagesTsConfig = BackendUtility::getPagesTSconfig(GeneralUtility::_GP('id'));
-        $headerTypeConfig = $pagesTsConfig['TCEFORM.']['tt_content.']['header_type.'] ?: [];
+        $headerTypeConfig = $pagesTsConfig['TCEFORM.']['tt_content.']['header_type.'] ?? [];
 
         // Remove Items
-        if ($removeItems = $headerTypeConfig['removeItems']) {
-            foreach (GeneralUtility::intExplode(',', $removeItems) as $key) {
+        if (empty($headerTypeConfig['removeItems']) === false) {
+            foreach (GeneralUtility::intExplode(',', $headerTypeConfig['removeItems']) as $key) {
                 if ($headerTypes[$key]) {
                     unset($headerTypes[$key]);
                 }
@@ -58,8 +58,8 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
         }
 
         // Add items
-        if ($addItems = $headerTypeConfig['addItems.']) {
-            foreach ($addItems as $key => $value) {
+        if (empty($headerTypeConfig['addItems.']) === false) {
+            foreach ($headerTypeConfig['addItems.'] as $key => $value) {
                 $headerTypes[$key] = true;
             }
         }

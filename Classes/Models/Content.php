@@ -49,7 +49,7 @@ class Content extends AbstractDataModel
 
     public function isFixed(): bool
     {
-        return (bool)$this->data['__fixed'];
+        return (bool)($this->data['__fixed'] ?? false);
     }
 
     public function setFixed(bool $fixed)
