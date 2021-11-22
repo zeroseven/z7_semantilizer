@@ -39,7 +39,7 @@ class Content extends AbstractDataModel
 
     public function isError(): bool
     {
-        return (bool)$this->data['__error'];
+        return (bool)($this->data['__error'] ?? false);
     }
 
     public function setError(bool $error)
