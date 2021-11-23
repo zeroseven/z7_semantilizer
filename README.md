@@ -124,6 +124,11 @@ class RootPageTitleHook implements FixedTitleInterface
 
 ## Release notes:
 
+### Version 2.2
+
+* Compatibility with TYPO3 11
+* Switch from npm to yarn
+
 ### Version 2.1:
 
 * Support multiple colPos (with ordering) depending on backend_layout
