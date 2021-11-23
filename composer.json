@@ -55,7 +55,7 @@
       ".Build/bin/parallel-lint ./Configuration/"
     ],
     "test-php-cs-fixer": [
-      "php-cs-fixer fix -v --dry-run --using-cache no --diff --diff-format=udiff"
+      "php-cs-fixer fix -v --dry-run --using-cache no --diff"
     ],
     "test-php-cs-fixer-fix": [
       "php-cs-fixer fix -v --using-cache false"

@@ -49,7 +49,7 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
         $headerTypeConfig = $pagesTsConfig['TCEFORM.']['tt_content.']['header_type.'] ?? [];
 
         // Remove Items
-        if (empty($headerTypeConfig['removeItems']) === false) {
+        if (!empty($headerTypeConfig['removeItems'])) {
             foreach (GeneralUtility::intExplode(',', $headerTypeConfig['removeItems']) as $key) {
                 if ($headerTypes[$key]) {
                     unset($headerTypes[$key]);
@@ -58,7 +58,7 @@ class SelectTypeViewHelper extends AbstractTagBasedViewHelper
         }
 
         // Add items
-        if (empty($headerTypeConfig['addItems.']) === false) {
+        if (!empty($headerTypeConfig['addItems.'])) {
             foreach ($headerTypeConfig['addItems.'] as $key => $value) {
                 $headerTypes[$key] = true;
             }
