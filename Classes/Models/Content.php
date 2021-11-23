@@ -39,7 +39,7 @@ class Content extends AbstractDataModel
 
     public function isError(): bool
     {
-        return (bool)$this->data['__error'];
+        return (bool)($this->data['__error'] ?? false);
     }
 
     public function setError(bool $error)
@@ -49,7 +49,7 @@ class Content extends AbstractDataModel
 
     public function isFixed(): bool
     {
-        return (bool)$this->data['__fixed'];
+        return (bool)($this->data['__fixed'] ?? false);
     }
 
     public function setFixed(bool $fixed)
