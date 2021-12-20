@@ -15,8 +15,110 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
   }
 
-  class Module {
+  class Node {
+    constructor(nodeType) {
+      this.element = document.createElement(nodeType || 'div');
 
+      return this;
+    }
+
+    setAttribute(attribute, value) {
+      this.element.setAttribute(attribute, value);
+
+      return this;
+    }
+
+    setAttributes(object) {
+      Object.keys(object).forEach(key => this.setAttribute(key, object[key]));
+
+      return this;
+    }
+
+    setStyles(styles) {
+      if (this.element && styles) {
+        Object.keys(styles).forEach(attribute => {
+          this.element.style[attribute] = styles[attribute];
+        });
+      }
+
+      return this;
+    }
+
+    setClassName(className) {
+      this.element.className = className;
+
+      return this;
+    }
+
+    setBemClassName(element, modifier, block) {
+      return this.setClassName((block || 'semantilizer') + (element ? ('__' + element) : '') + (modifier ? ('--' + modifier) : ''));
+    }
+
+    setContent(string) {
+      this.element.innerHTML = string;
+
+      return this;
+    }
+
+    appendTo(parent) {
+      return parent.appendChild(this.render());
+    }
+
+    render() {
+      return this.element;
+    }
+  }
+
+
+  class Module {
+    element = null;
+    headlines = [];
+
+    constructor(element) {
+      this.element = element;
+
+      this.init();
+    }
+
+    setHeadlines(headlines) {
+      this.headlines = headlines;
+    }
+
+    clearContent(node) {
+      let firstChild;
+      while (firstChild = (node || this.element).firstElementChild) {
+        (node || this.element).removeChild(firstChild);
+      }
+    }
+
+    drawList() {
+      const wrap = new Node('div').setBemClassName('listwrap').appendTo(this.element);
+      const list = new Node('ul').setBemClassName('list').appendTo(wrap);
+
+      this.headlines.forEach(headline => {
+        const item = new Node('li').setBemClassName('item', headline.type).appendTo(list);
+        const select = new Node('select').setBemClassName('select').appendTo(item);
+
+        for (let i = 1; i <= 6; i++) {
+          let option = new Node('option').setAttributes({value: 'url'}).setContent('H' + i).appendTo(select);
+
+          if(headline.type === i) {
+            option.selected = true;
+          }
+        }
+
+        const link = new Node('a').setAttribute('href', '#').setContent(headline.text).appendTo(item);
+      });
+    }
+
+    draw() {
+      this.clearContent();
+      this.drawList();
+    }
+
+    init() {
+
+    }
   }
 
   class Error {
@@ -54,14 +156,14 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
 
   class Semantilizer {
     headlines = [];
-    element;
-    #url;
-    #containerSelector;
+    url;
+    containerSelector;
+    module;
 
     constructor(url, elementId, containerSelector) {
-      this.#url = url;
-      this.element = document.getElementById(elementId);
-      this.#containerSelector = containerSelector;
+      this.url = url;
+      this.containerSelector = containerSelector;
+      this.module = new Module(document.getElementById(elementId));
 
       this.init();
     }
@@ -76,7 +178,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
             // Parse document
             const parser = new DOMParser();
             const doc = parser.parseFromString(request.responseText, 'text/html');
-            const container = this.#containerSelector ? doc.querySelector(this.#containerSelector) : null;
+            const container = this.containerSelector ? doc.querySelector(this.containerSelector) : null;
 
             // Find headlines
             this.headlines = Convert.toArray((container || doc).querySelectorAll('h1, h2, h3, h4, h5, h6')).map(node => new Headline(node));
@@ -89,9 +191,9 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
             this.error = {request: request}
           }
         }
-      }
+      };
 
-      request.open('GET', this.#url, true);
+      request.open('GET', this.url, true);
       request.send();
     }
 
@@ -159,7 +261,8 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
           callback();
         }
 
-        this.element.innerHTML = this.headlines.map(headline => 'h' + headline.type + ': ' + headline.text + (headline.error.length ? ' | ERROR-CODE: ' + headline.error.map(error => error.code).join('|') : '')).join('<br />');
+        this.module.setHeadlines(this.headlines);
+        this.module.draw();
 
         this.showNotifications();
       });

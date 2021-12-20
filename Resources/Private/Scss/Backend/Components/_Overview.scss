@@ -5,7 +5,7 @@ $overview-pattern-stroke: 2px;
 $overview-background-color: #fff;
 $overview-select-width: 36px;
 
-.semantilzer__listwrap {
+.semantilizer__listwrap {
     background: url("data:image/svg+xml,%3Csvg viewBox='0 0 #{strip-unit($overview-pattern-width)} #{strip-unit($overview-pattern-height)}' xmlns='http://www.w3.org/2000/svg' width='#{strip-unit($overview-pattern-width)}' height='#{strip-unit($overview-pattern-height)}'%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' x2='#{strip-unit($overview-pattern-width) - strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='1' x2='#{strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height)}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3C/svg%3E%0A") repeat top left $overview-background-color;
     border-style: solid;
     border-color: $overview-background-color;
@@ -16,7 +16,7 @@ $overview-select-width: 36px;
     margin: 1px 1px 2em 1px;
 }
 
-.semantilzer__list {
+.semantilizer__list {
     padding: 0;
     list-style: none;
 
@@ -24,7 +24,7 @@ $overview-select-width: 36px;
     margin: 0 0 math.div($overview-pattern-height, - 2) + $overview-pattern-stroke;
 }
 
-%semantilzer__item {
+%semantilizer__item {
     display: block;
     margin: 0;
     padding: 0 1em 0 0;
@@ -37,14 +37,14 @@ $overview-select-width: 36px;
 }
 
 @for $i from 1 through 6 {
-    .semantilzer__item--h#{$i} {
-        @extend %semantilzer__item;
+    .semantilizer__item--#{$i} {
+        @extend %semantilizer__item;
 
         margin-left: $overview-pattern-width * ($i - 1) + math.div($overview-select-width, - 2);
     }
 }
 
-.semantilzer__select-type {
+.semantilizer__select {
 
     // Remove the arrows https://stackoverflow.com/a/32623650
     -moz-appearance: none;
@@ -79,11 +79,11 @@ $overview-select-width: 36px;
     }
 }
 
-.semantilzer__link {
+.semantilizer__link {
     text-decoration: none;
 }
 
-.semantilzer__link--error {
+.semantilizer__link--error {
     text-decoration: underline dotted red;
 
     &:hover {

@@ -53,9 +53,8 @@ class DrawHeaderHook
     {
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer');
         $this->pageRenderer->addJsFooterInlineCode(self::class, sprintf('
-            require(["TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer"], semantilizer => {
-                window.TYPO3 = window.TYPO3 || {};
-                window.TYPO3.Semantilizer = new semantilizer(%s, %s, %s);
+            require(["TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer"], function(Semantilizer) {
+                Semantilizer = new Semantilizer(%s, %s, %s);
             });
         ', GeneralUtility::quoteJSvalue($this->getPreviewUrl()), GeneralUtility::quoteJSvalue($this->id), GeneralUtility::quoteJSvalue(null)));
     }
