@@ -52,6 +52,8 @@ class DrawHeaderHook
     private function includeJavaScript(): void
     {
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer');
+        $this->pageRenderer->addInlineLanguageLabelFile('EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf', 'overview');
+        $this->pageRenderer->addInlineLanguageLabelFile('EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf', 'notification');
         $this->pageRenderer->addJsFooterInlineCode(self::class, sprintf('
             require(["TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer"], function(Semantilizer) {
                 Semantilizer = new Semantilizer(%s, %s, %s);

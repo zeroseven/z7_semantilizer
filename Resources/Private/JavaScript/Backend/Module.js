@@ -1,4 +1,4 @@
-define(['TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Backend/Icons'], (Node, Icons) => {
+define(['TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate', 'TYPO3/CMS/Backend/Icons'], (Node, translate, Icons) => {
   class Module {
     element;
     headlines = [];
@@ -21,23 +21,28 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Backend/Icons'], (No
     }
 
     drawList() {
-      const wrap = new Node('div').setBemClassName('listwrap').appendTo(this.element);
-      const list = new Node('ul').setBemClassName('list').appendTo(wrap);
+      if(this.headlines.length) {
+        new Node('p').setContent(translate('overview.description')).appendTo(this.element);
+        const wrap = new Node('div').setBemClassName('listwrap').appendTo(this.element);
+        const list = new Node('ul').setBemClassName('list').appendTo(wrap);
 
-      this.headlines.forEach(headline => {
-        const item = new Node('li').setBemClassName('item', headline.type).appendTo(list);
-        const select = new Node('select').setBemClassName('select').appendTo(item);
+        this.headlines.forEach(headline => {
+          const item = new Node('li').setBemClassName('item', headline.type).appendTo(list);
+          const select = new Node('select').setBemClassName('select').appendTo(item);
 
-        for (let i = 1; i <= 6; i++) {
-          let option = new Node('option').setAttributes({value: 'url'}).setContent('H' + i).appendTo(select);
+          for (let i = 1; i <= 6; i++) {
+            let option = new Node('option').setAttributes({value: 'url'}).setContent('H' + i).appendTo(select);
 
-          if(headline.type === i) {
-            option.selected = true;
+            if (headline.type === i) {
+              option.selected = true;
+            }
           }
-        }
 
-        const link = new Node('a').setAttribute('href', '#').setContent(headline.text).appendTo(item);
-      });
+          const link = new Node('a').setAttribute('href', '#').setContent(headline.text).appendTo(item);
+        });
+      } else {
+        return new Node('p').setContent(translate('overview.empty')).appendTo(this.element);
+      }
     }
 
     drawStructure() {
@@ -49,7 +54,7 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Backend/Icons'], (No
       this.clearContent();
 
       Icons.getIcon('spinner-circle', Icons.sizes.small).then(icon => {
-        this.element.insertAdjacentHTML('beforeend', icon + '<span>' + (content || 'Loading') + '</span>');
+        this.element.insertAdjacentHTML('beforeend', icon + '<span style="margin-left: 0.3em">' + (content || translate('overview.loading')) + '</span>');
       });
     }
 

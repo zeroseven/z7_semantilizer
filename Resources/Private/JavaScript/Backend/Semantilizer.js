@@ -1,4 +1,4 @@
-define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/ImmediateAction', 'TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/Backend/Headline', 'TYPO3/CMS/Z7Semantilizer/Backend/Module'], (Notification, ImmediateAction, Converter, Headline, Module) => {
+define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/ImmediateAction', 'TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/Backend/Headline', 'TYPO3/CMS/Z7Semantilizer/Backend/Module', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Notification, ImmediateAction, Converter, Headline, Module, translate) => {
   class Error {
     static mainHeadingRequired(headline, targetType) {
       headline.error.push({code: 'mainHeadingRequired', priority: 4, fix: targetType});
@@ -103,14 +103,18 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     showNotifications() {
-      this.headlines.filter(headline => headline.error.length).forEach(headline => {
-        headline.error.forEach(error => {
-          Notification.warning(error.code, headline.text, 5, [
+      const notificationCodes = [];
+
+      this.headlines.filter(headline => headline.error.length).forEach(headline => headline.error.forEach(error => {
+        if(notificationCodes.indexOf(error.code) < 0) {
+          Notification.warning(translate('notification.' + error.code + '.title'), translate('notification.' + error.code + '.description'), 10, [
             {label: 'Close message', action: new ImmediateAction(() => true)},
             {label: 'Fix error', action: new ImmediateAction(() => Notification.success('fixed!', '', 1))}
           ]);
-        });
-      });
+
+          notificationCodes.push(error.code);
+        }
+      }));
     }
 
     revalidate() {
