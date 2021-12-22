@@ -34,6 +34,8 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     collect(callback) {
       let request = new XMLHttpRequest();
 
+      this.module.loader();
+
       request.onreadystatechange = () => {
         if (request.readyState === 4) {
           if (request.status === 200) {
