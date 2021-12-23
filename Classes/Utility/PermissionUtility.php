@@ -1,12 +1,14 @@
 <?php
 
-namespace Zeroseven\Semantilizer\Services;
+declare(strict_types=1);
+
+namespace Zeroseven\Semantilizer\Utility;
 
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 
-class PermissionService
+class PermissionUtility
 {
     public static function getBackendUser(): BackendUserAuthentication
     {

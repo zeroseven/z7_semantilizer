@@ -18,14 +18,14 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
   }
 
   class Semantilizer {
-    headlines;
+    headlines = [];
     url;
-    containerSelector;
+    contentSelectors;
     module;
 
-    constructor(url, elementId, containerSelector) {
+    constructor(url, elementId, contentSelectors) {
       this.url = url;
-      this.containerSelector = containerSelector;
+      this.contentSelectors = Converter.toArray(contentSelectors);
       this.module = new Module(document.getElementById(elementId));
 
       this.init();
@@ -34,7 +34,11 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     collect(callback) {
       let request = new XMLHttpRequest();
 
+      // Add loader
       this.module.loader();
+
+      // Clear headlines
+      this.headlines.length = 0;
 
       request.onreadystatechange = () => {
         if (request.readyState === 4) {
@@ -43,17 +47,16 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
             // Parse document
             const parser = new DOMParser();
             const doc = parser.parseFromString(request.responseText, 'text/html');
-            const container = this.containerSelector ? doc.querySelector(this.containerSelector) : null;
 
-            // Find headlines
-            this.headlines = Converter.toArray((container || doc).querySelectorAll('h1, h2, h3, h4, h5, h6')).map(node => new Headline(node));
+            // Find headlines in contents
+            this.contentSelectors.map(selector => doc.querySelector(selector)).filter(container => container).forEach(container => {
+              this.headlines.push(...Converter.toArray((container || doc).querySelectorAll('h1, h2, h3, h4, h5, h6')).map(node => new Headline(node)));
+            });
+          }
 
-            // Run callback action
-            if (typeof callback === 'function') {
-              callback(request);
-            }
-          } else {
-            this.error = {request: request};
+          // Run callback function
+          if (typeof callback === 'function') {
+            callback(request);
           }
         }
       };
@@ -98,8 +101,10 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
         });
       };
 
-      validateMainHeadings();
-      validateStructure();
+      if(this.headlines.length) {
+        validateMainHeadings();
+        validateStructure();
+      }
     }
 
     showNotifications() {
@@ -123,7 +128,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     refresh(callback) {
-      this.collect(() => {
+      this.collect(request => {
         this.validate();
 
         if (typeof callback === 'function') {
