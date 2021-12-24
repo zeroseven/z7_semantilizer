@@ -10,14 +10,14 @@ use TYPO3\CMS\Core\Type\Bitmask\Permission;
 
 class PermissionUtility
 {
-    public static function getBackendUser(): BackendUserAuthentication
+    public static function getBackendUser(): ?BackendUserAuthentication
     {
-        return $GLOBALS['BE_USER'];
+        return $GLOBALS['BE_USER'] ?? null;
     }
 
-    public static function editContent(): bool
+    public static function editContent(string $table): bool
     {
-        return self::getBackendUser()->check('tables_modify', 'tt_content');
+        return self::getBackendUser()->check('tables_modify', $table);
     }
 
     public static function showPage(array $row): bool
