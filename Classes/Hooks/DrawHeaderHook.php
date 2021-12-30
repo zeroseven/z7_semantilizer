@@ -49,7 +49,7 @@ class DrawHeaderHook
 
     private function initializeTsConfig(): void
     {
-        if(($pageUid = $this->page['uid'] ?? null) && $tsConfig = TsConfigUtility::getTsConfig((int)$pageUid)) {
+        if (($pageUid = $this->page['uid'] ?? null) && $tsConfig = TsConfigUtility::getTsConfig((int)$pageUid)) {
             $this->tsConfig = $tsConfig;
         }
     }
@@ -102,7 +102,7 @@ class DrawHeaderHook
     {
         // Define JavaScript parameters
         $url = GeneralUtility::quoteJSvalue($this->getPreviewUrl());
-        $id =  GeneralUtility::quoteJSvalue($this->id);
+        $id = GeneralUtility::quoteJSvalue($this->id);
         $contentSelectors = json_encode(GeneralUtility::trimExplode(',', $this->tsConfig['contentSelectors']));
 
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer');

@@ -24,7 +24,7 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
         $setup = [];
         $value = $this->arguments['edit'];
 
-        if(is_array($value)) {
+        if (is_array($value)) {
             $setup['table'] = $value['table'] ?? null;
             $setup['uid'] = $value['uid'] ?? null;
             $setup['field'] = $value['field'] ?? null;
@@ -47,7 +47,7 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
     public function render(): string
     {
         // Set content or remove abort
-        if($content = $this->arguments['content'] ?: $this->renderChildren()) {
+        if ($content = $this->arguments['content'] ?: $this->renderChildren()) {
             $this->tag->setContent($content);
         } else {
             return '';
