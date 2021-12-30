@@ -24,7 +24,7 @@ $overview-select-width: 36px;
     margin: 0 0 math.div($overview-pattern-height, - 2) + $overview-pattern-stroke;
 }
 
-%semantilizer__item {
+.semantilizer__item {
     display: block;
     margin: 0;
     padding: 0 1em 0 0;
@@ -37,9 +37,7 @@ $overview-select-width: 36px;
 }
 
 @for $i from 1 through 6 {
-    .semantilizer__item--#{$i} {
-        @extend %semantilizer__item;
-
+    .semantilizer__item[data-level="#{$i}"] {
         margin-left: $overview-pattern-width * ($i - 1) + math.div($overview-select-width, - 2);
     }
 }

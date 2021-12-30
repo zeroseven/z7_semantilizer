@@ -1,4 +1,4 @@
-define(['TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate', 'TYPO3/CMS/Backend/Icons'], (Node, translate, Icons) => {
+define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Icons, AjaxDataHandler, Node, translate) => {
   class Module {
     element;
     headlines = [];
@@ -20,25 +20,55 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Z7Semantilizer/Backe
       }
     }
 
+    getEditRecordUrl(table, uid) {
+      const returnUrl = encodeURIComponent(top.list_frame.document.location.pathname + top.list_frame.document.location.search);
+
+      return top.TYPO3.settings.FormEngine.moduleUrl + '&edit[' + table + '][' + parseInt(uid) + ']=edit&returnUrl=' + returnUrl;
+    }
+
     drawList() {
-      if(this.headlines.length) {
+      if (this.headlines.length) {
         new Node('p').setContent(translate('overview.description')).appendTo(this.element);
         const wrap = new Node('div').setBemClassName('listwrap').appendTo(this.element);
         const list = new Node('ul').setBemClassName('list').appendTo(wrap);
 
         this.headlines.forEach(headline => {
-          const item = new Node('li').setBemClassName('item', headline.type).appendTo(list);
+          const item = new Node('li').setBemClassName('item').setAttribute('data-level', headline.type).appendTo(list);
           const select = new Node('select').setBemClassName('select').appendTo(item);
 
-          for (let i = 1; i <= 6; i++) {
-            let option = new Node('option').setAttributes({value: 'url'}).setContent('H' + i).appendTo(select);
+          const editTable = headline.edit && headline.edit.table;
+          const editUid = headline.edit && headline.edit.uid;
+          const editField = headline.edit && headline.edit.field;
 
-            if (headline.type === i) {
-              option.selected = true;
+          if (editField) {
+            for (let i = 1; i <= 6; i++) {
+              let option = new Node('option').setAttributes({value:i}).setContent('H' + i).appendTo(select);
+
+              if (headline.type === i) {
+                option.selected = true;
+              }
             }
+
+            let selectedLevel = 0;
+
+            select.addEventListener('change', event => AjaxDataHandler.process((() => {
+              selectedLevel = event.target.options[event.target.selectedIndex].value;
+
+              const parameters = {data: {}};
+
+              parameters.data[editTable] = {};
+              parameters.data[editTable][editUid] = {};
+              parameters.data[editTable][editUid][editField] = selectedLevel;
+
+              return parameters;
+            })()).done(response => !response.hasErrors && (item.dataset.level = selectedLevel)));
+          } else {
+            new Node('option').setAttributes({value: 'url'}).setContent('H' + headline.type).appendTo(select);
+
+            select.disabled = 'disabled';
           }
 
-          const link = new Node('a').setAttribute('href', '#').setContent(headline.text).appendTo(item);
+          (editTable && editUid ? new Node('a').setAttribute('href', this.getEditRecordUrl(editTable, editUid)) : new Node('span')).setContent(headline.text).appendTo(item);
         });
       } else {
         return new Node('p').setContent(translate('overview.empty')).appendTo(this.element);

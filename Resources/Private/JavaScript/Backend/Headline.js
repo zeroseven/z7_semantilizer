@@ -3,14 +3,29 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter'], Converter => {
     type = 0;
     text = '';
     error = [];
-    table = '';
-    id = 0;
+    edit = null;
 
     constructor(node) {
       this.type = Converter.toInteger(node.nodeName);
       this.text = node.innerText.trim();
-      this.table = node.dataset.semantilizerTable;
-      this.id = Converter.toInteger(node.dataset.semantilizerUid);
+
+      const editSetup = node.dataset.semantilizer;
+
+      if(editSetup) {
+        try {
+          this.edit = JSON.parse(editSetup);
+        } catch (e) {
+          typeof console.log === 'function' && console.log(e, 1640904719);
+        }
+      }
+    }
+
+    addError(code, priority, fix) {
+      this.error.push({
+        code: code,
+        priority: priority,
+        fix: fix
+      });
     }
   }
 

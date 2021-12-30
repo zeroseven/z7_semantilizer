@@ -1,19 +1,19 @@
 define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/ImmediateAction', 'TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/Backend/Headline', 'TYPO3/CMS/Z7Semantilizer/Backend/Module', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Notification, ImmediateAction, Converter, Headline, Module, translate) => {
   class Error {
     static mainHeadingRequired(headline, targetType) {
-      headline.error.push({code: 'mainHeadingRequired', priority: 4, fix: targetType});
+      headline.addError('mainHeadingRequired', 4, targetType);
     }
 
     static mainHeadingNumber(headline, targetType) {
-      headline.error.push({code: 'mainHeadingNumber', priority: 2, fix: targetType});
+      headline.addError('mainHeadingNumber', 2, targetType);
     }
 
     static mainHeadingPosition(headline, targetType) {
-      headline.error.push({code: 'mainHeadingPosition', priority: 3, fix: targetType});
+      headline.addError('mainHeadingPosition', 3, targetType);
     }
 
     static headingStructure(headline, targetType) {
-      headline.error.push({code: 'headingStructure', priority: 1, fix: targetType});
+      headline.addError('headingStructure', 1, targetType);
     }
   }
 
@@ -101,7 +101,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
         });
       };
 
-      if(this.headlines.length) {
+      if (this.headlines.length) {
         validateMainHeadings();
         validateStructure();
       }
@@ -111,7 +111,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       const notificationCodes = [];
 
       this.headlines.filter(headline => headline.error.length).forEach(headline => headline.error.forEach(error => {
-        if(notificationCodes.indexOf(error.code) < 0) {
+        if (notificationCodes.indexOf(error.code) < 0) {
           Notification.warning(translate('notification.' + error.code + '.title'), translate('notification.' + error.code + '.description'), 10, [
             {label: 'Close message', action: new ImmediateAction(() => true)},
             {label: 'Fix error', action: new ImmediateAction(() => Notification.success('fixed!', '', 1))}
