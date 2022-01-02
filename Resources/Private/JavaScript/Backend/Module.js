@@ -55,7 +55,6 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/C
 
             select.addEventListener('change', event => AjaxDataHandler.process((() => {
               newHeadlineType = event.target.options[event.target.selectedIndex].value;
-              headline.type = newHeadlineType;
 
               const parameters = {data: {}};
 
@@ -66,8 +65,13 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/C
               return parameters;
             })()).done(response => {
               if (!response.hasErrors) {
+                // Update layout
                 item.dataset.level = newHeadlineType;
 
+                // Update structure
+                headline.setType(newHeadlineType);
+
+                // Revalidate  headings
                 this.parent.revalidate();
                 this.parent.hideAllNotifications();
                 this.parent.showNotifications();

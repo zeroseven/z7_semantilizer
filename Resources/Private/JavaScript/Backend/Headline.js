@@ -6,7 +6,7 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter'], Converter => {
     edit = null;
 
     constructor(node) {
-      this.type = Converter.toInteger(node.nodeName);
+      this.setType(node.nodeName);
       this.text = node.innerText.trim();
 
       const editSetup = node.dataset.semantilizer;
@@ -18,6 +18,10 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter'], Converter => {
           typeof console.log === 'function' && console.log(e, 1640904719);
         }
       }
+    }
+
+    setType(type) {
+      return (this.type = Math.max(Math.min(Converter.toInteger(type), 6), 1));
     }
 
     addError(code, priority, fix) {
