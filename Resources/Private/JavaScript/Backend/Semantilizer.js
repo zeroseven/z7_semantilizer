@@ -26,7 +26,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     constructor(url, elementId, contentSelectors) {
       this.url = url;
       this.contentSelectors = Converter.toArray(contentSelectors);
-      this.module = new Module(document.getElementById(elementId));
+      this.module = new Module(document.getElementById(elementId), this);
 
       this.init();
     }
@@ -120,6 +120,11 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
           notificationCodes.push(error.code);
         }
       }));
+    }
+
+    hideAllNotifications() {
+      const container = top.TYPO3.Notification.messageContainer;
+      container && Converter.toArray(container.childNodes).forEach(message => container.removeChild(message));
     }
 
     revalidate() {

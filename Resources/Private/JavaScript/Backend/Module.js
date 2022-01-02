@@ -1,10 +1,12 @@
 define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Icons, AjaxDataHandler, Node, translate) => {
   class Module {
     element;
+    parent;
     headlines = [];
 
-    constructor(element) {
+    constructor(element, parent) {
       this.element = element;
+      this.parent = parent;
 
       this.init();
     }
@@ -42,26 +44,35 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/C
 
           if (editField) {
             for (let i = 1; i <= 6; i++) {
-              let option = new Node('option').setAttributes({value:i}).setContent('H' + i).appendTo(select);
+              let option = new Node('option').setAttributes({value: i}).setContent('H' + i).appendTo(select);
 
               if (headline.type === i) {
                 option.selected = true;
               }
             }
 
-            let selectedLevel = 0;
+            let newHeadlineType = 0;
 
             select.addEventListener('change', event => AjaxDataHandler.process((() => {
-              selectedLevel = event.target.options[event.target.selectedIndex].value;
+              newHeadlineType = event.target.options[event.target.selectedIndex].value;
+              headline.type = newHeadlineType;
 
               const parameters = {data: {}};
 
               parameters.data[editTable] = {};
               parameters.data[editTable][editUid] = {};
-              parameters.data[editTable][editUid][editField] = selectedLevel;
+              parameters.data[editTable][editUid][editField] = newHeadlineType;
 
               return parameters;
-            })()).done(response => !response.hasErrors && (item.dataset.level = selectedLevel)));
+            })()).done(response => {
+              if (!response.hasErrors) {
+                item.dataset.level = newHeadlineType;
+
+                this.parent.revalidate();
+                this.parent.hideAllNotifications();
+                this.parent.showNotifications();
+              }
+            }));
           } else {
             new Node('option').setAttributes({value: 'url'}).setContent('H' + headline.type).appendTo(select);
 
