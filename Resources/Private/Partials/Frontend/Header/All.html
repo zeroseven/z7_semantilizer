@@ -3,13 +3,17 @@
 	<f:if condition="{data.header} || {data.subheader} || {data.date}">
 		<f:spaceless>
 			<header>
-				<semantilzer:headline class="ce__header{f:if(condition:data.header_layout, then:'--{data.header_layout}')}" edit="tt_content:{data.uid}:header_type" type="{data.header_type}">
+				<f:variable name="layout" value="{data.header_layout}" />
+				<f:variable name="position" value="{data.header_position}" />
+
+				<semantilzer:headline class="ce__header{f:if(condition:layout, then:'--{layout}')}{f:if(condition:position, then:' ce__header--{position}')}" edit="tt_content:{data.uid}:header_type" type="{data.header_type}">
 					<f:link.typolink parameter="{data.header_link}">{data.header}</f:link.typolink>
 				</semantilzer:headline>
 
-				<semantilzer:headline class="ce__subheader" content="{data.subheader}"/>
+				<semantilzer:headline class="ce__subheader{f:if(condition:layout, then:'--{layout}')}{f:if(condition:position, then:' ce__subheader--{position}')}" content="{data.subheader}"/>
 
-				<f:render partial="Header/Date" arguments="{date: data.date}" />
+				<f:comment><!-- Call the "original" partial --></f:comment>
+				<f:render partial="Header/Date" arguments="{date: data.date, positionClass: 'ce__date{f:if(condition: position, then: \'-{position}\')}'}" />
 			</header>
 		</f:spaceless>
 	</f:if>
