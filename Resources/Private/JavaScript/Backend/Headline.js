@@ -24,11 +24,12 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter'], Converter => {
       return (this.type = Math.max(Math.min(Converter.toInteger(type), 6), 1));
     }
 
-    addError(code, priority, fix) {
+    addError(code, priority, fix, layout) {
       this.error.push({
         code: code,
         priority: priority,
-        fix: fix
+        fix: fix,
+        layout: layout || 'warning'
       });
     }
   }

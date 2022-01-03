@@ -5,7 +5,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     static mainHeadingNumber(headline, targetType) {
-      headline.addError('mainHeadingNumber', 2, targetType);
+      headline.addError('mainHeadingNumber', 2, targetType, 'info');
     }
 
     static mainHeadingPosition(headline, targetType) {
@@ -13,7 +13,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     static headingStructure(headline, targetType) {
-      headline.addError('headingStructure', 1, targetType);
+      headline.addError('headingStructure', 1, targetType, 'error');
     }
   }
 
@@ -112,7 +112,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
 
       this.headlines.filter(headline => headline.error.length).forEach(headline => headline.error.forEach(error => {
         if (notificationCodes.indexOf(error.code) < 0) {
-          Notification.warning(translate('notification.' + error.code + '.title'), translate('notification.' + error.code + '.description'), 10, [
+          Notification[error.layout](translate('notification.' + error.code + '.title'), translate('notification.' + error.code + '.description'), 10, [
             {label: 'Close message', action: new ImmediateAction(() => true)},
             {label: 'Fix error', action: new ImmediateAction(() => Notification.success('fixed!', '', 1))}
           ]);
