@@ -123,7 +123,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     hideAllNotifications() {
-      const container = top.TYPO3.Notification.messageContainer;
+      const container = Notification.messageContainer;
       container && Converter.toArray(container.childNodes).forEach(message => container.removeChild(message));
     }
 
