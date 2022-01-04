@@ -118,7 +118,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
         };
 
         if(error.fix && headline.edit && headline.edit.table && headline.edit.uid && headline.edit.field) {
-          notificationQueue[error.code].fix.push([error.fix, headline.edit]);
+          notificationQueue[error.code].fix.push([error.fix, headline]);
         }
       }));
 
@@ -134,8 +134,8 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
           buttons.push({
             label: 'fix error' + (fixLength > 1 ? ' (' + fixLength + ')' : ''),
             action: new ImmediateAction(() => Edit.updateTypes(notificationQueue[key].fix.map(fix => ({
-              value: fix[0],
-              config: fix[1],
+              type: fix[0],
+              headline: fix[1],
             })), () => Notification.success('', '', 1)))
           });
         }

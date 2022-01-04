@@ -52,11 +52,7 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYP
 
               new Edit(headline).updateType(newHeadlineType, response => {
                 if (!response.hasErrors) {
-                  // Update layout
                   item.dataset.level = newHeadlineType;
-
-                  // Update structure
-                  headline.setType(newHeadlineType);
 
                   // Revalidate headings
                   this.parent.revalidate();
