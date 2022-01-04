@@ -28,6 +28,8 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       this.contentSelectors = Converter.toArray(contentSelectors);
       this.module = new Module(document.getElementById(elementId), this);
 
+      this.refresh = this.refresh.bind(this);
+
       this.init();
     }
 
@@ -174,6 +176,9 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
 
     init() {
       this.refresh();
+
+      // Watch the sorting of the content elements in the page module
+      require(['jquery', 'jquery-ui/droppable'], $ => $('.t3js-page-ce-dropzone-available').on('drop', this.refresh));
     }
   }
 
