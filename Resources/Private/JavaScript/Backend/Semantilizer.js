@@ -66,6 +66,8 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     validate() {
+      this.headlines.forEach(headline => headline.error.length = 0);
+
       const validateMainHeadings = () => {
         const firstHeadline = this.headlines[0];
         const mainHeadlines = this.headlines.filter(headline => headline.type === 1);
@@ -135,8 +137,12 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
             label: 'fix error' + (fixLength > 1 ? ' (' + fixLength + ')' : ''),
             action: new ImmediateAction(() => Edit.updateTypes(notificationQueue[key].fix.map(fix => ({
               type: fix[0],
-              headline: fix[1],
-            })), () => Notification.success('', '', 1)))
+              headline: fix[1]
+            })), () => {
+              this.revalidate();
+              
+              Notification.success('', '', 1);
+            }))
           });
         }
 
@@ -150,25 +156,21 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     revalidate() {
-      this.headlines.forEach(headline => headline.error.length = 0);
       this.validate();
       this.hideAllNotifications();
       this.showNotifications();
+
+      this.module.drawStructure();
     }
 
     refresh(callback) {
       this.collect(request => {
-        this.validate();
-
         if (typeof callback === 'function') {
           callback();
         }
 
         this.module.setHeadlines(this.headlines);
-        this.module.drawStructure();
-
-        this.hideAllNotifications();
-        this.showNotifications();
+        this.revalidate();
       });
     }
 

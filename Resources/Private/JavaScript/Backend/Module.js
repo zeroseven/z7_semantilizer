@@ -29,7 +29,7 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYP
         const list = new Node('ul').setBemClassName('list').appendTo(wrap);
 
         this.headlines.forEach(headline => {
-          const item = new Node('li').setBemClassName('item').setAttribute('data-level', headline.type).appendTo(list);
+          const item = new Node('li').setBemClassName('item', 'level' + headline.type).appendTo(list);
           const select = new Node('select').setBemClassName('select').appendTo(item);
 
           const editTable = headline.edit && headline.edit.table;
@@ -45,16 +45,11 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYP
               }
             }
 
-            let newHeadlineType = 0;
-
             select.addEventListener('change', event => {
-              newHeadlineType = event.target.options[event.target.selectedIndex].value;
+              const newHeadlineType = event.target.options[event.target.selectedIndex].value;
 
               new Edit(headline).updateType(newHeadlineType, response => {
                 if (!response.hasErrors) {
-                  item.dataset.level = newHeadlineType;
-
-                  // Revalidate headings
                   this.parent.revalidate();
                 }
               });
@@ -64,7 +59,9 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYP
             select.disabled = 'disabled';
           }
 
-          (editTable && editUid ? new Node('a').setAttribute('href', new Edit(headline).getEditUrl()) : new Node('span')).setContent(headline.text).appendTo(item);
+          const text = editTable && editUid ? new Node('a').setAttribute('href', new Edit(headline).getEditUrl()) : new Node('span');
+
+          text.setContent(headline.text).setBemClassName('headline', headline.error.length ? 'error' : '').appendTo(item);
         });
       } else {
         return new Node('p').setContent(translate('overview.empty')).appendTo(this.element);
