@@ -18,24 +18,18 @@
 			<trans-unit id="overview.hideNotifications">
 				<source>Hide notifications</source>
 			</trans-unit>
-			<trans-unit id="overview.orderChanged">
-				<source>The order has been changed.</source>
-			</trans-unit>
-			<trans-unit id="overview.refresh">
-				<source>Reload the overview</source>
-			</trans-unit>
-			<trans-unit id="overview.fixIt">
-				<source>Fix it</source>
-			</trans-unit>
 			<trans-unit id="overview.loading">
 				<source>Loading ...</source>
 			</trans-unit>
 
-			<trans-unit id="notification.affectedElements">
-				<source>Affected content elements</source>
+			<trans-unit id="notification.fixed.title">
+				<source>Heading structure has been fixed:</source>
 			</trans-unit>
-			<trans-unit id="notification.fixIt">
-				<source>Fix it</source>
+			<trans-unit id="notification.close">
+				<source>Close message</source>
+			</trans-unit>
+			<trans-unit id="notification.fix">
+				<source>Fix issue</source>
 			</trans-unit>
 
 			<trans-unit id="notification.mainHeadingRequired.title">
@@ -65,17 +59,6 @@
 			<trans-unit id="notification.headingStructure.description">
 				<source>An error in the headline hierarchy has been detected. For a correct semantic distinction of the page, a H1 should be followed by a H2, a H2 should be followed by a H3 and so on.</source>
 			</trans-unit>
-
-			<trans-unit id="widget.title">
-				<source>Check heading structure</source>
-			</trans-unit>
-			<trans-unit id="widget.description">
-				<source>Display potential errors in the structuring of headlines and gives easy fixing options.</source>
-			</trans-unit>
-			<trans-unit id="widget.congratulation">
-				<source>No discrepancies were found in the structure of the headings.</source>
-			</trans-unit>
-
 		</body>
 	</file>
 </xliff>

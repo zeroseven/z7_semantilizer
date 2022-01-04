@@ -13,7 +13,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     static headingStructure(headline, targetType) {
-      headline.addError('headingStructure', 1, targetType, 'error');
+      headline.addError('headingStructure', 1, targetType);
     }
   }
 
@@ -128,20 +128,18 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       Object.keys(notificationQueue).forEach(key => {
         const fixLength = notificationQueue[key].fix.length;
 
-        const buttons = [
-          {label: 'Close message', action: new ImmediateAction(() => true)}
-        ];
+        const buttons = [];
 
         if(fixLength) {
           buttons.push({
-            label: 'fix error' + (fixLength > 1 ? ' (' + fixLength + ')' : ''),
+            label: translate('notification.fix') + (fixLength > 1 ? ' (' + fixLength + ')' : ''),
             action: new ImmediateAction(() => Edit.updateTypes(notificationQueue[key].fix.map(fix => ({
               type: fix[0],
               headline: fix[1]
             })), () => {
               this.revalidate();
-              
-              Notification.success('', '', 1);
+
+              Notification.success(translate('notification.fixed.title'), translate('notification.' + key + '.title'), 4);
             }))
           });
         }
