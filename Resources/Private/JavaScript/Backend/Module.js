@@ -1,4 +1,4 @@
-define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Icons, AjaxDataHandler, Node, translate) => {
+define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Z7Semantilizer/Backend/Edit', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Icons, Node, Edit, translate) => {
   class Module {
     element;
     parent;
@@ -20,12 +20,6 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/C
       while (firstChild = (node || this.element).firstElementChild) {
         (node || this.element).removeChild(firstChild);
       }
-    }
-
-    getEditRecordUrl(table, uid) {
-      const returnUrl = encodeURIComponent(top.list_frame.document.location.pathname + top.list_frame.document.location.search);
-
-      return top.TYPO3.settings.FormEngine.moduleUrl + '&edit[' + table + '][' + parseInt(uid) + ']=edit&returnUrl=' + returnUrl;
     }
 
     drawList() {
@@ -53,37 +47,28 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/C
 
             let newHeadlineType = 0;
 
-            select.addEventListener('change', event => AjaxDataHandler.process((() => {
+            select.addEventListener('change', event => {
               newHeadlineType = event.target.options[event.target.selectedIndex].value;
 
-              const parameters = {data: {}};
+              new Edit(headline).updateType(newHeadlineType, response => {
+                if (!response.hasErrors) {
+                  // Update layout
+                  item.dataset.level = newHeadlineType;
 
-              parameters.data[editTable] = {};
-              parameters.data[editTable][editUid] = {};
-              parameters.data[editTable][editUid][editField] = newHeadlineType;
+                  // Update structure
+                  headline.setType(newHeadlineType);
 
-              return parameters;
-            })()).done(response => {
-              if (!response.hasErrors) {
-                // Update layout
-                item.dataset.level = newHeadlineType;
-
-                // Update structure
-                headline.setType(newHeadlineType);
-
-                // Revalidate  headings
-                this.parent.revalidate();
-                this.parent.hideAllNotifications();
-                this.parent.showNotifications();
-              }
-            }));
+                  // Revalidate headings
+                  this.parent.revalidate();
+                }
+              });
+            });
           } else {
             new Node('option').setAttributes({value: 'url'}).setContent('H' + headline.type).appendTo(select);
-
             select.disabled = 'disabled';
           }
 
-          (editTable && editUid ? new Node('a').setAttribute('href', this.getEditRecordUrl(editTable, editUid)) : new Node('span')).setContent(headline.text).appendTo(item);
+          (editTable && editUid ? new Node('a').setAttribute('href', new Edit(headline).getEditUrl()) : new Node('span')).setContent(headline.text).appendTo(item);
         });
       } else {
         return new Node('p').setContent(translate('overview.empty')).appendTo(this.element);

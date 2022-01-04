@@ -1,4 +1,4 @@
-define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/ImmediateAction', 'TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/Backend/Headline', 'TYPO3/CMS/Z7Semantilizer/Backend/Module', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Notification, ImmediateAction, Converter, Headline, Module, translate) => {
+define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/ImmediateAction', 'TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/Backend/Headline', 'TYPO3/CMS/Z7Semantilizer/Backend/Module', 'TYPO3/CMS/Z7Semantilizer/Backend/Edit', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Notification, ImmediateAction, Converter, Headline, Module, Edit, translate) => {
   class Error {
     static mainHeadingRequired(headline, targetType) {
       headline.addError('mainHeadingRequired', 4, targetType);
@@ -108,18 +108,40 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     showNotifications() {
-      const notificationCodes = [];
+      const notificationQueue = {};
 
+      // Collect messages
       this.headlines.filter(headline => headline.error.length).forEach(headline => headline.error.forEach(error => {
-        if (notificationCodes.indexOf(error.code) < 0) {
-          Notification[error.layout](translate('notification.' + error.code + '.title'), translate('notification.' + error.code + '.description'), 10, [
-            {label: 'Close message', action: new ImmediateAction(() => true)},
-            {label: 'Fix error', action: new ImmediateAction(() => Notification.success('fixed!', '', 1))}
-          ]);
+        notificationQueue[error.code] = notificationQueue[error.code] || {
+          layout: error.layout,
+          fix: []
+        };
 
-          notificationCodes.push(error.code);
+        if(error.fix && headline.edit && headline.edit.table && headline.edit.uid && headline.edit.field) {
+          notificationQueue[error.code].fix.push([error.fix, headline.edit]);
         }
       }));
+
+      // Print messages
+      Object.keys(notificationQueue).forEach(key => {
+        const fixLength = notificationQueue[key].fix.length;
+
+        const buttons = [
+          {label: 'Close message', action: new ImmediateAction(() => true)}
+        ];
+
+        if(fixLength) {
+          buttons.push({
+            label: 'fix error' + (fixLength > 1 ? ' (' + fixLength + ')' : ''),
+            action: new ImmediateAction(() => Edit.updateTypes(notificationQueue[key].fix.map(fix => ({
+              value: fix[0],
+              config: fix[1],
+            })), () => Notification.success('', '', 1)))
+          });
+        }
+
+        Notification[notificationQueue[key].layout](translate('notification.' + key + '.title'), translate('notification.' + key + '.description'), 10, buttons);
+      });
     }
 
     hideAllNotifications() {
@@ -130,6 +152,8 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     revalidate() {
       this.headlines.forEach(headline => headline.error.length = 0);
       this.validate();
+      this.hideAllNotifications();
+      this.showNotifications();
     }
 
     refresh(callback) {
@@ -143,6 +167,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
         this.module.setHeadlines(this.headlines);
         this.module.drawStructure();
 
+        this.hideAllNotifications();
         this.showNotifications();
       });
     }
