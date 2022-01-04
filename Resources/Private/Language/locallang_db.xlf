@@ -6,6 +6,12 @@
 			<trans-unit id="tt_content.header_type">
 				<source>Type</source>
 			</trans-unit>
+			<trans-unit id="tt_content.header_type.semantic">
+				<source>Semantic meaning</source>
+			</trans-unit>
+			<trans-unit id="tt_content.header_type.no_semantic">
+				<source>No semantic</source>
+			</trans-unit>
 			<trans-unit id="tt_content.header_type.0">
 				<source>None</source>
 			</trans-unit>
