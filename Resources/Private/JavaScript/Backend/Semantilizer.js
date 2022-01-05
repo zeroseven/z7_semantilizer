@@ -28,16 +28,11 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       this.contentSelectors = Converter.toArray(contentSelectors);
       this.module = new Module(document.getElementById(elementId), this);
 
-      this.refresh = this.refresh.bind(this);
-
       this.init();
     }
 
     collect(callback) {
       let request = new XMLHttpRequest();
-
-      // Add loader
-      this.module.loader();
 
       // Clear headlines
       this.headlines.length = 0;
@@ -67,7 +62,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       request.send();
     }
 
-    validate() {
+    validateStructure() {
       this.headlines.forEach(headline => headline.error.length = 0);
 
       const validateMainHeadings = () => {
@@ -139,7 +134,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
               type: fix[0],
               headline: fix[1]
             })), () => {
-              this.revalidate();
+              this.validate();
 
               Notification.success(translate('notification.fixed.title'), translate('notification.' + key + '.title'), 4);
             }))
@@ -155,8 +150,9 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       container && Converter.toArray(container.childNodes).forEach(message => container.removeChild(message));
     }
 
-    revalidate() {
-      this.validate();
+    validate() {
+      this.validateStructure();
+
       this.hideAllNotifications();
       this.showNotifications();
 
@@ -164,21 +160,27 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     refresh(callback) {
-      this.collect(request => {
+      this.collect(() => {
         if (typeof callback === 'function') {
           callback();
         }
 
         this.module.setHeadlines(this.headlines);
-        this.revalidate();
+        this.validate();
       });
     }
 
     init() {
       this.refresh();
 
+      // Add loader
+      this.module.loader();
+
       // Watch the sorting of the content elements in the page module
-      require(['jquery', 'jquery-ui/droppable'], $ => $('.t3js-page-ce-dropzone-available').on('drop', this.refresh));
+      require(['jquery', 'jquery-ui/droppable'], $ => $('.t3js-page-ce-dropzone-available').on('drop', () => {
+        this.module.lockStructure();
+        this.refresh();
+      }));
     }
   }
 

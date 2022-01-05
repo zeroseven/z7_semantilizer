@@ -21,6 +21,9 @@
 			<trans-unit id="overview.loading">
 				<source>Loading ...</source>
 			</trans-unit>
+			<trans-unit id="overview.update">
+				<source>Structure will be updated ...</source>
+			</trans-unit>
 
 			<trans-unit id="notification.fixed.title">
 				<source>Heading structure has been fixed:</source>
