@@ -7,41 +7,16 @@ $overview-select-width: 36px;
 
 .semantilizer__listwrap {
     position: relative;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 #{strip-unit($overview-pattern-width)} #{strip-unit($overview-pattern-height)}' xmlns='http://www.w3.org/2000/svg' width='#{strip-unit($overview-pattern-width)}' height='#{strip-unit($overview-pattern-height)}'%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' x2='#{strip-unit($overview-pattern-width) - strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='1' x2='#{strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height)}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3C/svg%3E%0A") repeat top left $overview-background-color;
-    border-style: solid;
-    border-color: $overview-background-color;
-    border-width: 1em 1em 2em 3em;
-
-    // This will fake a border
-    outline: 1px solid rgba($overview-pattern-color, 0.5);
+    background: $overview-background-color;
+    border: 1px solid rgba($overview-pattern-color, 0.5);
     margin: 1px 1px 2em 1px;
 }
 
 .semantilizer__list {
     padding: 0;
     list-style: none;
-    position: relative;
-
-    // Eliminate the line on the bottom
-    margin: 0 0 math.div($overview-pattern-height, - 2) + $overview-pattern-stroke;
-}
-
-.semantilizer__overlay {
-    position: absolute;
-    top: -1em;
-    right: -1em;
-    bottom: -2em;
-    left: -3em;
-    background: rgba(#fff, 0.7);
-    backdrop-filter: blur(2px);
-}
-
-.semantilizer__overlay-message {
-    position: inherit;
-    top: 50%;
-    left: 50%;
-    max-width: 100%;
-    transform: translateX(-50%) translateY(-50%);
+    margin: 1em 1em 3em 3em;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 #{strip-unit($overview-pattern-width)} #{strip-unit($overview-pattern-height)}' xmlns='http://www.w3.org/2000/svg' width='#{strip-unit($overview-pattern-width)}' height='#{strip-unit($overview-pattern-height)}'%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' x2='#{strip-unit($overview-pattern-width) - strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='1' x2='#{strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height)}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3C/svg%3E%0A") repeat top left;
 }
 
 %semantilizer__item {
@@ -54,6 +29,10 @@ $overview-select-width: 36px;
     position: relative;
     white-space: nowrap;
     text-overflow: ellipsis;
+
+    &:last-child {
+        height: math.div($overview-pattern-height, 2) + $overview-pattern-stroke;
+    }
 }
 
 @for $i from 1 through 6 {
@@ -109,4 +88,22 @@ $overview-select-width: 36px;
     &:hover {
         text-decoration: underline solid red;
     }
+}
+
+.semantilizer__lock {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(#fff, 0.7);
+    backdrop-filter: blur(2px);
+}
+
+.semantilizer__lock-message {
+    position: inherit;
+    top: 50%;
+    left: 50%;
+    max-width: 100%;
+    transform: translateX(-50%) translateY(-50%);
 }

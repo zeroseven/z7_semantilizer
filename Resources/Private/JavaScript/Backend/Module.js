@@ -64,19 +64,17 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYP
           text.setContent(headline.text).setBemClassName('headline', headline.error.length ? 'error' : '').appendTo(item);
         });
 
-        return wrap;
+        this.wrap = wrap;
       } else {
-        return new Node('p').setContent(translate('overview.empty')).appendTo(this.element);
+        new Node('p').setContent(translate('overview.empty')).appendTo(this.element);
       }
     }
 
     lockStructure() {
       this.parent.hideAllNotifications();
-      this.clearContent();
 
-      const list = this.drawList();
-      const overlay = new Node('div').setBemClassName('overlay').appendTo(list);
-      new Node('span').setBemClassName('overlay-message').setContent(translate('overview.update')).appendTo(overlay);
+      const overlay = new Node('div').setBemClassName('lock').appendTo(this.wrap);
+      new Node('span').setBemClassName('lock-message').setContent(translate('overview.update')).appendTo(overlay);
     }
 
     drawStructure() {
