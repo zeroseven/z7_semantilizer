@@ -59,6 +59,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       };
 
       request.open('GET', this.url, true);
+      request.setRequestHeader('X-Semantilizer', 'true');
       request.send();
     }
 

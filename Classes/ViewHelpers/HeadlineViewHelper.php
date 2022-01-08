@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Zeroseven\Semantilizer\ViewHelpers;
 
+use Psr\Http\Message\RequestInterface;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -51,7 +52,11 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
 
     protected function addSemantilizerData(): void
     {
-        if (PermissionUtility::getBackendUser() && ($editSetup = $this->getEditSetup()) && PermissionUtility::editContent($editSetup['table'] ?? null)) {
+        if ($GLOBALS['TYPO3_REQUEST'] instanceof RequestInterface
+            && !empty($GLOBALS['TYPO3_REQUEST']->getHeader('X-Semantilizer'))
+            && PermissionUtility::getBackendUser() && ($editSetup = $this->getEditSetup())
+            && PermissionUtility::editContent($editSetup['table'] ?? null)
+        ) {
             $this->tag->addAttribute('data-semantilizer', json_encode($editSetup));
         }
     }
