@@ -14,7 +14,6 @@ use Zeroseven\Semantilizer\Utility\TsConfigUtility;
 
 class DrawHeaderHook
 {
-
     /** @var array */
     protected const IGNORED_DOKTYPES = [
         PageRepository::DOKTYPE_LINK,
@@ -27,47 +26,36 @@ class DrawHeaderHook
     ];
 
     /** @var string */
-    protected $id;
+    protected $identifier;
 
     /** @var PageRenderer */
     protected $pageRenderer;
 
-    /** @var array */
-    protected $page;
+    /** int */
+    protected $pageUid;
+
+    /** int */
+    protected $languageUid;
 
     /** @var array */
     protected $tsConfig;
 
     public function __construct()
     {
-        $this->id = uniqid('js-', false);
+        $this->identifier = uniqid('js-', false);
         $this->pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-
-        $this->initializePage();
-        $this->initializeTsConfig();
+        $this->pageUid = (int)GeneralUtility::_GP('id');
+        $this->languageUid = (int)(BackendUtility::getModuleData([], null, 'web_layout')['language'] ?? 0);
+        $this->tsConfig = TsConfigUtility::getTsConfig($this->pageUid);
     }
 
-    private function initializeTsConfig(): void
+    private function getPageData(): array
     {
-        if (($pageUid = $this->page['uid'] ?? null) && $tsConfig = TsConfigUtility::getTsConfig((int)$pageUid)) {
-            $this->tsConfig = $tsConfig;
-        }
-    }
+        $row = $this->languageUid > 0 ?
+            (BackendUtility::getRecordLocalization('pages', $this->pageUid, $this->languageUid)[0]) :
+            (BackendUtility::readPageAccess($this->pageUid, true) ?: []);
 
-    private function initializePage(): void
-    {
-        // Get the language by module data
-        $moduleData = BackendUtility::getModuleData([], null, 'web_layout');
-        $languageUid = (int)$moduleData['language'];
-        $pageUid = (int)GeneralUtility::_GP('id');
-
-        // Get page data
-        $row = $languageUid ?
-            (BackendUtility::getRecordLocalization('pages', $pageUid, $languageUid)[0]) :
-            (BackendUtility::readPageAccess($pageUid, true) ?: []);
-
-        // Store page data in array
-        $this->page = PermissionUtility::showPage($row) ? $row : [];
+        return PermissionUtility::showPage($row) ? $row : [];
     }
 
     private function skipSemantilizer(): bool
@@ -75,16 +63,16 @@ class DrawHeaderHook
         return
 
             // The page must be available
-            empty($this->page)
+            empty($pageData = $this->getPageData())
 
             // Ts configuration can be loaded
             || empty($this->tsConfig)
 
             // The "doktype" must not be disabled
-            || in_array((int)$this->page['doktype'], array_merge(self::IGNORED_DOKTYPES, GeneralUtility::intExplode(',', $this->tsConfig['disabledDoktypes'])), true)
+            || in_array((int)$pageData['doktype'], array_merge(self::IGNORED_DOKTYPES, GeneralUtility::intExplode(',', $this->tsConfig['disabledDoktypes'])), true)
 
             // The page uid must not be disabled
-            || in_array((int)$this->page['uid'], GeneralUtility::intExplode(',', $this->tsConfig['disableOnPages']), true);
+            || in_array($this->pageUid, GeneralUtility::intExplode(',', $this->tsConfig['disableOnPages']), true);
     }
 
     private function getPreviewUrl(): ?string
@@ -92,7 +80,7 @@ class DrawHeaderHook
         $id = (int)GeneralUtility::_GP('id');
 
         try {
-            return BackendUtility::getPreviewUrl($id);
+            return BackendUtility::getPreviewUrl($id, '', null, '', '', $this->languageUid > 0 ? '&L=' . $this->languageUid : '');
         } catch (UnableToLinkToPageException $e) {
             return null;
         }
@@ -102,7 +90,7 @@ class DrawHeaderHook
     {
         // Define JavaScript parameters
         $url = GeneralUtility::quoteJSvalue($this->getPreviewUrl());
-        $id = GeneralUtility::quoteJSvalue($this->id);
+        $id = GeneralUtility::quoteJSvalue($this->identifier);
         $contentSelectors = json_encode(GeneralUtility::trimExplode(',', $this->tsConfig['contentSelectors']));
 
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer');
@@ -121,7 +109,7 @@ class DrawHeaderHook
         $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html'));
         $view->setPartialRootPaths([0 => GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Partials/Backend')]);
         $view->assignMultiple([
-            'id' => $this->id
+            'id' => $this->identifier
         ]);
 
         return $view;
