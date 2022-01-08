@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Zeroseven\Semantilizer\ViewHelpers;
 
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Zeroseven\Semantilizer\Utility\PermissionUtility;
 
@@ -26,12 +29,21 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
 
         if (is_array($value)) {
             $setup['table'] = $value['table'] ?? null;
-            $setup['uid'] = $value['uid'] ?? null;
+            $setup['uid'] = (int)$value['uid'] ?? null;
             $setup['field'] = $value['field'] ?? null;
         } elseif (is_string($value) && preg_match('/^(\w+):(\d+)(?::(\w+))?$/', $value, $matches)) {
             $setup['table'] = $matches[1];
-            $setup['uid'] = $matches[2];
+            $setup['uid'] = (int)$matches[2];
             $setup['field'] = $matches[3] ?? null;
+        }
+
+        // Get localized uid
+        if ($setup['table'] && $setup['uid']
+            && ($languageUid = GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('language', 'id'))
+            && ($localizedRecord = BackendUtility::getRecordLocalization($setup['table'], $setup['uid'], $languageUid))
+            && ($localizedUid = reset($localizedRecord)['uid'] ?? null)
+        ) {
+            $setup['uid'] = (int)$localizedUid;
         }
 
         return !empty($return = array_filter($setup)) && isset($return['table'], $return['uid']) ? $return : null;
