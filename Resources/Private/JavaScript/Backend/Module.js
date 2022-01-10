@@ -32,11 +32,7 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/ErrorNotifi
           const item = new Node('li').setBemClassName('item', 'level' + headline.type).appendTo(list);
           const select = new Node('select').setBemClassName('select').appendTo(item);
 
-          const editTable = headline.edit && headline.edit.table;
-          const editUid = headline.edit && headline.edit.uid;
-          const editField = headline.edit && headline.edit.field;
-
-          if (editField) {
+          if (headline.edit.isEditableType()) {
             for (let i = 1; i <= 6; i++) {
               let option = new Node('option').setAttributes({value: i}).setContent('H' + i).appendTo(select);
 
@@ -46,22 +42,21 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/ErrorNotifi
             }
 
             select.addEventListener('change', event => {
-              const newHeadlineType = event.target.options[event.target.selectedIndex].value;
-
-              new Edit(headline).updateType(newHeadlineType, response => {
+              headline.type = event.target.options[event.target.selectedIndex].value;
+              headline.update(response => {
                 if (!response.hasErrors) {
                   this.parent.validate();
                 }
               });
             });
           } else {
-            new Node('option').setAttributes({value: 'url'}).setContent('H' + headline.type).appendTo(select);
+            new Node('option').setContent('H' + headline.type).appendTo(select);
             select.disabled = 'disabled';
           }
 
-          const text = editTable && editUid ? new Node('a').setAttribute('href', new Edit(headline).getEditUrl()) : new Node('span');
+          const text = headline.edit.isEditableRecord() ? new Node('a').setAttribute('href', headline.getEditUrl()) : new Node('span');
 
-          text.setContent(headline.text).setBemClassName('headline', headline.error.length ? 'error' : '').appendTo(item);
+          text.setContent(headline.text).setBemClassName('headline', headline.errors.count() ? 'error' : '').appendTo(item);
         });
 
         this.wrap = wrap;

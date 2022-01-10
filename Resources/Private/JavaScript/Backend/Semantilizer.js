@@ -1,23 +1,5 @@
 
 define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/ImmediateAction', 'TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/Backend/Headline', 'TYPO3/CMS/Z7Semantilizer/Backend/Module', 'TYPO3/CMS/Z7Semantilizer/Backend/ErrorNotification'], (Notification, ImmediateAction, Converter, Headline, Module, ErrorNotification) => {
-  class Error {
-    static mainHeadingRequired(headline, targetType) {
-      headline.addError('mainHeadingRequired', 4, targetType);
-    }
-
-    static mainHeadingNumber(headline, targetType) {
-      headline.addError('mainHeadingNumber', 2, targetType, 'info');
-    }
-
-    static mainHeadingPosition(headline, targetType) {
-      headline.addError('mainHeadingPosition', 3, targetType);
-    }
-
-    static headingStructure(headline, targetType) {
-      headline.addError('headingStructure', 1, targetType);
-    }
-  }
-
   class Semantilizer {
     headlines = [];
     url;
@@ -68,30 +50,30 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     validateStructure() {
-      this.headlines.forEach(headline => headline.error.length = 0);
+      this.headlines.forEach(headline => headline.errors.clear());
 
       const validateMainHeadings = () => {
         const firstHeadline = this.headlines[0];
         const mainHeadlines = this.headlines.filter(headline => headline.type === 1);
 
         if (mainHeadlines.length === 0) {
-          Error.mainHeadingRequired(firstHeadline, 1);
+          firstHeadline.errors.add('mainHeadingRequired', 1);
         }
 
         if (mainHeadlines.length > 1) {
           this.headlines.forEach((headline, i) => {
             if (i && headline.type === 1) {
-              Error.mainHeadingNumber(headline, 2);
+              headline.errors.add('mainHeadingNumber', 2);
             }
           });
         }
 
         if (mainHeadlines.length === 1 && firstHeadline.type !== 1) {
-          Error.mainHeadingPosition(firstHeadline, 1);
+          firstHeadline.errors.add('mainHeadingPosition', 1);
 
           this.headlines.forEach((headline, i) => {
             if (i && headline.type === 1) {
-              Error.mainHeadingPosition(headline, 2);
+              headline.errors.add('mainHeadingPosition', 2);
             }
           });
         }
@@ -100,7 +82,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       const validateStructure = () => {
         this.headlines.forEach((headline, i) => {
           if (i && headline.type > this.headlines[i - 1].type + 1) {
-            Error.headingStructure(headline);
+            headline.errors.add('headingStructure');
           }
         });
       };
