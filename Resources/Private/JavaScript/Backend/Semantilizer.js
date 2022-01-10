@@ -1,4 +1,5 @@
-define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/ImmediateAction', 'TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/Backend/Headline', 'TYPO3/CMS/Z7Semantilizer/Backend/Module', 'TYPO3/CMS/Z7Semantilizer/Backend/Edit', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Notification, ImmediateAction, Converter, Headline, Module, Edit, translate) => {
+
+define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/ImmediateAction', 'TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/Backend/Headline', 'TYPO3/CMS/Z7Semantilizer/Backend/Module', 'TYPO3/CMS/Z7Semantilizer/Backend/ErrorNotification'], (Notification, ImmediateAction, Converter, Headline, Module, ErrorNotification) => {
   class Error {
     static mainHeadingRequired(headline, targetType) {
       headline.addError('mainHeadingRequired', 4, targetType);
@@ -27,6 +28,9 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       this.url = url;
       this.contentSelectors = Converter.toArray(contentSelectors);
       this.module = new Module(document.getElementById(elementId), this);
+
+      // Bind methods
+      this.validate = this.validate.bind(this);
 
       this.init();
     }
@@ -107,55 +111,10 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       }
     }
 
-    showNotifications() {
-      const notificationQueue = {};
-
-      // Collect messages
-      this.headlines.filter(headline => headline.error.length).forEach(headline => headline.error.forEach(error => {
-        notificationQueue[error.code] = notificationQueue[error.code] || {
-          layout: error.layout,
-          fix: []
-        };
-
-        if(error.fix && headline.edit && headline.edit.table && headline.edit.uid && headline.edit.field) {
-          notificationQueue[error.code].fix.push([error.fix, headline]);
-        }
-      }));
-
-      // Print messages
-      Object.keys(notificationQueue).forEach(key => {
-        const fixLength = notificationQueue[key].fix.length;
-
-        const buttons = [];
-
-        if(fixLength) {
-          buttons.push({
-            label: translate('notification.fix') + (fixLength > 1 ? ' (' + fixLength + ')' : ''),
-            action: new ImmediateAction(() => Edit.updateTypes(notificationQueue[key].fix.map(fix => ({
-              type: fix[0],
-              headline: fix[1]
-            })), () => {
-              this.validate();
-
-              Notification.success(translate('notification.fixed.title'), translate('notification.' + key + '.title'), 4);
-            }))
-          });
-        }
-
-        Notification[notificationQueue[key].layout](translate('notification.' + key + '.title'), translate('notification.' + key + '.description'), 10, buttons);
-      });
-    }
-
-    hideAllNotifications() {
-      const container = Notification.messageContainer;
-      container && Converter.toArray(container.childNodes).forEach(message => container.removeChild(message));
-    }
-
     validate() {
       this.validateStructure();
-
-      this.hideAllNotifications();
-      this.showNotifications();
+      ErrorNotification.hideAll();
+      ErrorNotification.showErrors(this.headlines, this.validate);
 
       this.module.drawStructure();
     }

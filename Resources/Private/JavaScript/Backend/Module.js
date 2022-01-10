@@ -1,4 +1,4 @@
-define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Z7Semantilizer/Backend/Edit', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Icons, Node, Edit, translate) => {
+define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/ErrorNotification', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Z7Semantilizer/Backend/Edit', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Icons, ErrorNotification, Node, Edit, translate) => {
   class Module {
     element;
     parent;
@@ -71,7 +71,7 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYP
     }
 
     lockStructure() {
-      this.parent.hideAllNotifications();
+      ErrorNotification.hideAll();
 
       const overlay = new Node('div').setBemClassName('lock').appendTo(this.wrap);
       new Node('span').setBemClassName('lock-message').setContent(translate('overview.update')).appendTo(overlay);
