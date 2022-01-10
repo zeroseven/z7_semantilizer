@@ -29,98 +29,90 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
     set field(value) {
       this._field = (value || '').trim();
     }
+  }
 
-    isEditableRecord() {
-      return this.table && this.uid;
-    }
-
-    isEditableType() {
-      return this.isEditableRecord() && this.field;
+  class Issue {
+    constructor(key, fix) {
+      this.key = key;
+      this.fix = fix;
     }
   }
 
-  class Error {
+  class Issues {
     static mainHeadingRequired = 'mainHeadingRequired';
     static mainHeadingNumber = 'mainHeadingNumber';
     static mainHeadingPosition = 'mainHeadingPosition';
     static headingStructure = 'headingStructure';
 
-    constructor(key, fix) {
-      this.key = key;
-      this.fix = fix;
-    }
+    constructor(parent) {
+      this.list = {};
+      this.list[Issues.mainHeadingRequired] = null;
+      this.list[Issues.mainHeadingNumber] = null;
+      this.list[Issues.mainHeadingPosition] = null;
+      this.list[Issues.headingStructure] = null;
 
-    static isValidKey(key) {
-      return [Error.mainHeadingRequired, Error.mainHeadingNumber, Error.mainHeadingPosition, Error.headingStructure].indexOf(key) > -1;
-    }
-
-    get key() {
-      return this._key;
-    }
-
-    set key(key) {
-      if (Error.isValidKey(key)) {
-        this._key = key;
-      } else {
-        console.warn('Not allowed error key "' + key + '"', 1641814278);
-      }
-
-      return this;
-    }
-
-    get fix() {
-      return this._fix;
-    }
-
-    set fix(fix) {
-      this._fix = fix || null;
-
-      return this;
-    }
-
-    get layout() {
-      return this.key === Error.mainHeadingNumber ? 'info' : 'warning';
-    }
-  }
-
-  class ErrorList {
-    constructor() {
-      this.list = [];
-    }
-
-    clear() {
-      this.list.length = 0;
+      this.parent = parent;
     }
 
     count() {
-      return this.list.length;
+      let count = 0;
+
+      Object.keys(this.list).forEach(key => (count += this.list[key] ? 1 : 0));
+
+      return count;
     }
 
     empty() {
-      return this.count() === 0;
-    }
-
-    getFirst() {
-      return this.empty() ? null : this.list[0];
-    }
-
-    getAll() {
-      return this.list;
+       return this.count() === 0;
     }
 
     add(key, fix) {
-      this.list.push(new Error(key, fix));
+      if (this.list[key] !== 'undefined') {
+        this.list[key] = new Issue(key, fix);
+      } else {
+        console.warn('Not allowed error key "' + key + '"', 1641814278);
+      }
+    }
 
-      return this;
+    each(callback) {
+      return Object.keys(this.list).filter(key => this.list[key]).forEach(key => callback(this.list[key], key));
+    }
+
+    get(key) {
+      return this.list[key] || null;
+    }
+
+    has(key) {
+      return this.get(key) !== null;
+    }
+
+    remove(key) {
+      this.list[key] = null;
+    }
+
+    clear() {
+      Object.keys(this.list).forEach(key => this.list[key] = null);
+    }
+
+    fix(key, update) {
+      const issue = this.get(key);
+
+      if (issue && issue.fix) {
+        this.parent.type = issue.fix;
+        this.remove(key);
+
+        typeof update !== 'undefined' && this.parent.store();
+      }
     }
   }
 
   class Headline {
-    constructor(node) {
+    constructor(node, parent) {
       this.type = node.nodeName;
       this.text = node.innerText;
+      this.parent = parent;
       this.edit = new EditConfiguration();
-      this.errors = new ErrorList();
+      this.issues = new Issues(this);
 
       if (node.dataset.semantilizer) {
         try {
@@ -132,10 +124,9 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
           typeof console.log === 'function' && console.log(e, 1640904719);
         }
       }
-    }
 
-    static parseType(type) {
-      return Math.min(Math.max(Converter.toInteger(type), 1), 6);
+      // Bind methods
+      this.showIssues = this.showIssues.bind(this);
     }
 
     get type() {
@@ -143,7 +134,7 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
     }
 
     set type(type) {
-      this._type = Headline.parseType(type);
+      this._type = Math.min(Math.max(Converter.toInteger(type), 1), 6);
 
       return this;
     }
@@ -158,21 +149,14 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       return this;
     }
 
-    fix(callback) {
-      if(this.edit.isEditableType() && this.errors.count()) {
-        this.type = this.errors.getFirst().fix;
-        this.updateType(callback);
-      }
-    }
-
-    update(callback) {
-      if(this.edit.isEditableType()) {
-        return Headline.updateHeadlines(callback, this);
+    store(callback) {
+      if (this.isEditableType()) {
+        return Headline.storeHeadlines([this], callback);
       }
     }
 
     getEditUrl() {
-      if (this.edit.isEditableRecord()) {
+      if (this.isEditableRecord()) {
         const returnUrl = encodeURIComponent(top.list_frame.document.location.pathname + top.list_frame.document.location.search);
         return top.TYPO3.settings.FormEngine.moduleUrl + '&edit[' + this.edit.table + '][' + this.edit.uid + ']=edit&returnUrl=' + returnUrl;
       }
@@ -180,11 +164,23 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       return null;
     }
 
-    static updateHeadlines(callback, ...headlines) {
+    isEditableRecord() {
+      return this.edit.table && this.edit.uid;
+    }
+
+    isEditableType() {
+      return this.isEditableRecord() && this.edit.field;
+    }
+
+    showIssues() {
+      this.issues.count() && this.issues.each((issue, key) => this.parent.notifications.showIssue(key));
+    }
+
+    static storeHeadlines(headlines, callback) {
       const parameters = {data: {}};
 
       headlines.forEach(headline => {
-        if (headline.edit.isEditableType()) {
+        if (headline.isEditableType()) {
           const table = headline.edit.table;
           const uid = headline.edit.uid;
           const field = headline.edit.field;

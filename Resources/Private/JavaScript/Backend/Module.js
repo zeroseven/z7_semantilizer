@@ -1,18 +1,67 @@
-define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/ErrorNotification', 'TYPO3/CMS/Z7Semantilizer/Backend/Node', 'TYPO3/CMS/Z7Semantilizer/Backend/Edit', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Icons, ErrorNotification, Node, Edit, translate) => {
+define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate'], (Icons, translate) => {
+  class Node {
+    constructor(nodeType) {
+      this.element = document.createElement(nodeType || 'div');
+
+      return this;
+    }
+
+    setAttribute(attribute, value) {
+      this.element.setAttribute(attribute, value);
+
+      return this;
+    }
+
+    setAttributes(object) {
+      Object.keys(object).forEach(key => this.setAttribute(key, object[key]));
+
+      return this;
+    }
+
+    setStyles(styles) {
+      if (this.element && styles) {
+        Object.keys(styles).forEach(attribute => {
+          this.element.style[attribute] = styles[attribute];
+        });
+      }
+
+      return this;
+    }
+
+    setClassName(className) {
+      this.element.className = className;
+
+      return this;
+    }
+
+    setBemClassName(element, modifier, block) {
+      return this.setClassName((block || 'semantilizer') + (element ? ('__' + element) : '') + (modifier ? ('--' + modifier) : ''));
+    }
+
+    setContent(string) {
+      this.element.innerHTML = string;
+
+      return this;
+    }
+
+    appendTo(parent) {
+      return parent.appendChild(this.render());
+    }
+
+    render() {
+      return this.element;
+    }
+  }
+
   class Module {
     element;
     parent;
-    headlines = [];
 
     constructor(element, parent) {
       this.element = element;
       this.parent = parent;
 
       this.init();
-    }
-
-    setHeadlines(headlines) {
-      this.headlines = headlines;
     }
 
     clearContent(node) {
@@ -23,16 +72,16 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/ErrorNotifi
     }
 
     drawList() {
-      if (this.headlines.length) {
+      if (this.parent.headlines.length) {
         new Node('p').setContent(translate('overview.description')).appendTo(this.element);
         const wrap = new Node('div').setBemClassName('listwrap').appendTo(this.element);
         const list = new Node('ul').setBemClassName('list').appendTo(wrap);
 
-        this.headlines.forEach(headline => {
+        this.parent.headlines.forEach(headline => {
           const item = new Node('li').setBemClassName('item', 'level' + headline.type).appendTo(list);
           const select = new Node('select').setBemClassName('select').appendTo(item);
 
-          if (headline.edit.isEditableType()) {
+          if (headline.isEditableType()) {
             for (let i = 1; i <= 6; i++) {
               let option = new Node('option').setAttributes({value: i}).setContent('H' + i).appendTo(select);
 
@@ -43,20 +92,17 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/ErrorNotifi
 
             select.addEventListener('change', event => {
               headline.type = event.target.options[event.target.selectedIndex].value;
-              headline.update(response => {
-                if (!response.hasErrors) {
-                  this.parent.validate();
-                }
-              });
+              headline.store(response => !response.hasErrors &&  this.parent.validate());
             });
           } else {
             new Node('option').setContent('H' + headline.type).appendTo(select);
             select.disabled = 'disabled';
           }
 
-          const text = headline.edit.isEditableRecord() ? new Node('a').setAttribute('href', headline.getEditUrl()) : new Node('span');
+          const hasError = headline.issues.count();
+          const text = headline.isEditableRecord() ? new Node('a').setAttribute('href', headline.getEditUrl()) : new Node('span');
 
-          text.setContent(headline.text).setBemClassName('headline', headline.errors.count() ? 'error' : '').appendTo(item);
+          text.setContent(headline.text).setBemClassName('headline', hasError ? 'error' : '').appendTo(item);
         });
 
         this.wrap = wrap;
@@ -66,7 +112,7 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/ErrorNotifi
     }
 
     lockStructure() {
-      ErrorNotification.hideAll();
+      this.parent.notifications.hideAll();
 
       const overlay = new Node('div').setBemClassName('lock').appendTo(this.wrap);
       new Node('span').setBemClassName('lock-message').setContent(translate('overview.update')).appendTo(overlay);

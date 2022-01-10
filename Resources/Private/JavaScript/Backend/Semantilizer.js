@@ -1,5 +1,4 @@
-
-define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/ImmediateAction', 'TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/Backend/Headline', 'TYPO3/CMS/Z7Semantilizer/Backend/Module', 'TYPO3/CMS/Z7Semantilizer/Backend/ErrorNotification'], (Notification, ImmediateAction, Converter, Headline, Module, ErrorNotification) => {
+define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/Backend/Headline', 'TYPO3/CMS/Z7Semantilizer/Backend/Module', 'TYPO3/CMS/Z7Semantilizer/Backend/Notification'], (Converter, Headline, Module, Notification) => {
   class Semantilizer {
     headlines = [];
     url;
@@ -10,6 +9,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       this.url = url;
       this.contentSelectors = Converter.toArray(contentSelectors);
       this.module = new Module(document.getElementById(elementId), this);
+      this.notifications = new Notification(this);
 
       // Bind methods
       this.validate = this.validate.bind(this);
@@ -33,7 +33,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
 
             // Find headlines in contents
             this.contentSelectors.map(selector => doc.querySelector(selector)).filter(container => container).forEach(container => {
-              this.headlines.push(...Converter.toArray((container || doc).querySelectorAll('h1, h2, h3, h4, h5, h6')).map(node => new Headline(node)));
+              this.headlines.push(...Converter.toArray((container || doc).querySelectorAll('h1, h2, h3, h4, h5, h6')).map(node => new Headline(node, this)));
             });
           }
 
@@ -50,30 +50,30 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     validateStructure() {
-      this.headlines.forEach(headline => headline.errors.clear());
+      this.headlines.forEach(headline => headline.issues.clear());
 
       const validateMainHeadings = () => {
         const firstHeadline = this.headlines[0];
         const mainHeadlines = this.headlines.filter(headline => headline.type === 1);
 
         if (mainHeadlines.length === 0) {
-          firstHeadline.errors.add('mainHeadingRequired', 1);
+          firstHeadline.issues.add('mainHeadingRequired', 1);
         }
 
         if (mainHeadlines.length > 1) {
           this.headlines.forEach((headline, i) => {
             if (i && headline.type === 1) {
-              headline.errors.add('mainHeadingNumber', 2);
+              headline.issues.add('mainHeadingNumber', 2);
             }
           });
         }
 
         if (mainHeadlines.length === 1 && firstHeadline.type !== 1) {
-          firstHeadline.errors.add('mainHeadingPosition', 1);
+          firstHeadline.issues.add('mainHeadingPosition', 1);
 
           this.headlines.forEach((headline, i) => {
             if (i && headline.type === 1) {
-              headline.errors.add('mainHeadingPosition', 2);
+              headline.issues.add('mainHeadingPosition', 2);
             }
           });
         }
@@ -82,7 +82,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       const validateStructure = () => {
         this.headlines.forEach((headline, i) => {
           if (i && headline.type > this.headlines[i - 1].type + 1) {
-            headline.errors.add('headingStructure');
+            headline.issues.add('headingStructure');
           }
         });
       };
@@ -95,21 +95,13 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
 
     validate() {
       this.validateStructure();
-      ErrorNotification.hideAll();
-      ErrorNotification.showErrors(this.headlines, this.validate);
-
       this.module.drawStructure();
+      this.notifications.hideAll();
+      this.notifications.showIssues();
     }
 
-    refresh(callback) {
-      this.collect(() => {
-        if (typeof callback === 'function') {
-          callback();
-        }
-
-        this.module.setHeadlines(this.headlines);
-        this.validate();
-      });
+    refresh() {
+      this.collect(this.validate);
     }
 
     init() {
