@@ -79,7 +79,7 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
 
         this.parent.headlines.forEach(headline => {
           const item = new Node('li').setBemClassName('item', 'level' + headline.type).appendTo(list);
-          const select = new Node('select').setBemClassName('select').appendTo(item);
+          const select = new Node('select').setBemClassName('select', 'level' + headline.type).appendTo(item);
 
           if (headline.isEditableType()) {
             for (let i = 1; i <= 6; i++) {
