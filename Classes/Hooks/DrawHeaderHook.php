@@ -93,13 +93,14 @@ class DrawHeaderHook
         $id = GeneralUtility::quoteJSvalue($this->identifier);
         $contentSelectors = json_encode(GeneralUtility::trimExplode(',', $this->tsConfig['contentSelectors']));
 
+        // Configure page renderer
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer');
         $this->pageRenderer->addCssFile('EXT:z7_semantilizer/Resources/Public/Css/Backend/Styles.css');
         $this->pageRenderer->addInlineLanguageLabelFile('EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf', 'overview');
         $this->pageRenderer->addInlineLanguageLabelFile('EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf', 'notification');
         $this->pageRenderer->addJsFooterInlineCode(self::class, sprintf('
             require(["TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer"], function(Semantilizer) {
-                Semantilizer = new Semantilizer(%s, %s, %s);
+                TYPO3.Semantilizer = top.TYPO3.Semantilizer = new Semantilizer(%s, %s, %s);
             });
         ', $url, $id, $contentSelectors));
     }
