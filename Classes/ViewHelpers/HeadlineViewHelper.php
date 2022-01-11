@@ -13,7 +13,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 class HeadlineViewHelper extends AbstractTagBasedViewHelper
 {
-    /** @var BackendUserAuthentication|null  */
+    /** @var BackendUserAuthentication|null */
     private $backendUser;
 
     public function __construct()
@@ -52,7 +52,7 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
         }
 
         // Check backend user permissions
-        if(!$table || !$uid || !$this->backendUser->check('tables_modify', $table)) {
+        if (!$table || !$uid || !$this->backendUser->check('tables_modify', $table)) {
             return null;
         }
 
@@ -65,17 +65,17 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
         }
 
         // Check content permission
-        if($table === 'tt_content') {
+        if ($table === 'tt_content') {
             $typeField = $GLOBALS['TCA'][$table]['ctrl']['type'];
             $type = BackendUtility::getRecord($table, $uid, $typeField);
 
-            if(empty($type) || !$this->backendUser->check('explicit_allowdeny', $table . ':' . $typeField . ':' . reset($type) . ':ALLOW')) {
+            if (empty($type) || !$this->backendUser->check('explicit_allowdeny', $table . ':' . $typeField . ':' . reset($type) . ':ALLOW')) {
                 return null;
             }
         }
 
         // Check field permissions
-        if($field && ($GLOBALS['TCA'][$table]['columns'][$field]['exclude'] ?? false) && !$this->backendUser->check('non_exclude_fields', $table . ':' . $field)) {
+        if ($field && ($GLOBALS['TCA'][$table]['columns'][$field]['exclude'] ?? false) && !$this->backendUser->check('non_exclude_fields', $table . ':' . $field)) {
             $field = null;
         }
 
