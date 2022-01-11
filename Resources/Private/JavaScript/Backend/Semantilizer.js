@@ -97,7 +97,7 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/
       this.validateStructure();
       this.module.drawStructure();
       this.notifications.hideAll();
-      this.notifications.showIssues();
+      this.notifications.autoload.enabled() && this.notifications.showIssues();
     }
 
     refresh() {

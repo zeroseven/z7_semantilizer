@@ -71,9 +71,14 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
       }
     }
 
-    drawList() {
+    drawDescription() {
       if (this.parent.headlines.length) {
         new Node('p').setContent(translate('overview.description')).appendTo(this.element);
+      }
+    }
+
+    drawList() {
+      if (this.parent.headlines.length) {
         const wrap = new Node('div').setBemClassName('listwrap').appendTo(this.element);
         const list = new Node('ul').setBemClassName('list').appendTo(wrap);
 
@@ -106,7 +111,7 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
 
           if(hasError) {
             Icons.getIcon('actions-question-circle-alt', Icons.sizes.small).then(icon => {
-              const info = new Node('button').setAttributes({'type': 'button', 'title': translate('overview.showNotification')}).setBemClassName('error-info').appendTo(item);
+              const info = new Node('button').setAttributes({'type': 'button', 'title': translate('overview.notification.show')}).setBemClassName('error-info').appendTo(item);
               info.insertAdjacentHTML('beforeend', icon);
               info.addEventListener('click', headline.showIssues);
             });
@@ -119,6 +124,27 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
       }
     }
 
+    drawNotificationToggle() {
+      const enabled = this.parent.notifications.autoload.enabled();
+
+      Icons.getIcon(enabled ? 'actions-toggle-on' : 'actions-toggle-off', Icons.sizes.small).then(icon => {
+        const toggle = new Node('button').setAttribute('type', 'button').setContent(translate(enabled ? 'overview.notifications.on' : 'overview.notifications.off')).setBemClassName('notifications-toggle').appendTo(this.element);
+        toggle.insertAdjacentHTML('afterbegin', icon + ' ');
+        toggle.addEventListener('click', () => {
+          if(enabled) {
+            this.parent.notifications.hideAll();
+            this.parent.notifications.autoload.disable();
+          } else {
+            this.parent.notifications.showIssues();
+            this.parent.notifications.autoload.enable();
+          }
+
+          this.element.removeChild(toggle);
+          this.drawNotificationToggle();
+        });
+      });
+    }
+
     lockStructure() {
       this.parent.notifications.hideAll();
 
@@ -128,7 +154,9 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
 
     drawStructure() {
       this.clearContent();
+      this.drawDescription();
       this.drawList();
+      this.drawNotificationToggle();
     }
 
     loader() {

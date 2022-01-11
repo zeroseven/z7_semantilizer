@@ -12,11 +12,14 @@
 			<trans-unit id="overview.description">
 				<target>Dies ist eine semantische Übersicht der verwendeten Überschriften auf der aktuellen Seite:</target>
 			</trans-unit>
-			<trans-unit id="overview.showNotifications">
-				<target>Hinweise einblenden</target>
+			<trans-unit id="overview.notification.show">
+				<target>Hinweis einblenden</target>
 			</trans-unit>
-			<trans-unit id="overview.hideNotifications">
-				<target>Hinweise ausblenden</target>
+			<trans-unit id="overview.notifications.on">
+				<target>Hinweise anzeigen</target>
+			</trans-unit>
+			<trans-unit id="overview.notifications.off">
+				<target>Hinweise verbergen</target>
 			</trans-unit>
 			<trans-unit id="overview.loading">
 				<target>Wird geladen ...</target>

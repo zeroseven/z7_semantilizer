@@ -31,9 +31,46 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
   }
 
+  class State {
+    constructor(key, defaultState) {
+      this.key = key;
+      console.log(this.get());
+
+      if(this.get() === null) {
+        this.set(defaultState);
+      }
+    }
+
+    get() {
+      const value = localStorage.getItem(this.key);
+      return value === null ? null : parseInt(value);
+    }
+
+    set(state) {
+      localStorage.setItem(this.key, state ? '1' : '0');
+    }
+
+    enabled() {
+      return this.get() === 1;
+    }
+
+    disabled() {
+      return !this.enabled();
+    }
+
+    enable() {
+      this.set(1);
+    }
+
+    disable() {
+      this.set(0);
+    }
+  }
+
   class Notification {
     constructor(parent) {
       this.parent = parent;
+      this.autoload = new State('semantilizer-notification', true);
 
       return this;
     }

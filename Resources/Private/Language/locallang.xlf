@@ -12,13 +12,13 @@
 			<trans-unit id="overview.description">
 				<source>This is a semantic overview of all the used headlines on the current page:</source>
 			</trans-unit>
-			<trans-unit id="overview.showNotification">
+			<trans-unit id="overview.notification.show">
 				<source>Show notification</source>
 			</trans-unit>
-			<trans-unit id="overview.showNotifications">
+			<trans-unit id="overview.notifications.on">
 				<source>Show notifications</source>
 			</trans-unit>
-			<trans-unit id="overview.hideNotifications">
+			<trans-unit id="overview.notifications.on">
 				<source>Hide notifications</source>
 			</trans-unit>
 			<trans-unit id="overview.loading">

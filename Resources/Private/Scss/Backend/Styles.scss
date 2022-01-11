@@ -117,6 +117,13 @@ $overview-error-color: #dc3545;
     svg { fill: $overview-error-color; }
 }
 
+.semantilizer__notifications-toggle {
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
 .semantilizer__lock {
     position: absolute;
     top: 0;
