@@ -10,7 +10,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     render(callback) {
-      const fixableHeadlines = this.headlines.filter(headline => headline.issues.get(this.key).fix).length;
+      const fixableHeadlines = this.headlines.filter(headline => headline.isEditableType() && headline.issues.get(this.key).fix).length;
       const buttons = [];
 
       if (fixableHeadlines) {
@@ -19,8 +19,8 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
           action: new ImmediateAction(() => {
             this.headlines.forEach(headline => headline.issues.fix(this.key));
             Headline.storeHeadlines(this.headlines, () => {
-              TYPO3Notification.success(translate('notification.fixed.title'), translate('notification.' + this.key + '.title'), 4);
               typeof callback === 'function' && callback();
+              TYPO3Notification.success(translate('notification.fixed.title'), translate('notification.' + this.key + '.title'), 4);
             });
           })
         });
