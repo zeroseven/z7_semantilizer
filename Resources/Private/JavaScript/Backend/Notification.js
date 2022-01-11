@@ -34,9 +34,8 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
   class State {
     constructor(key, defaultState) {
       this.key = key;
-      console.log(this.get());
 
-      if(this.get() === null) {
+      if (this.get() === null) {
         this.set(defaultState);
       }
     }

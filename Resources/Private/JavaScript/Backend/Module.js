@@ -97,7 +97,7 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
 
             select.addEventListener('change', event => {
               headline.type = event.target.options[event.target.selectedIndex].value;
-              headline.store(response => !response.hasErrors &&  this.parent.validate());
+              headline.store(response => !response.hasErrors && this.parent.validate());
             });
           } else {
             new Node('option').setContent('H' + headline.type).appendTo(select);
@@ -109,9 +109,12 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
 
           text.setContent(headline.text).setBemClassName('headline', hasError ? 'error' : '').appendTo(item);
 
-          if(hasError) {
+          if (hasError) {
             Icons.getIcon('actions-question-circle-alt', Icons.sizes.small).then(icon => {
-              const info = new Node('button').setAttributes({'type': 'button', 'title': translate('overview.notification.show')}).setBemClassName('error-info').appendTo(item);
+              const info = new Node('button').setAttributes({
+                'type': 'button',
+                'title': translate('overview.notification.show')
+              }).setBemClassName('error-info').appendTo(item);
               info.insertAdjacentHTML('beforeend', icon);
               info.addEventListener('click', headline.showIssues);
             });
@@ -131,7 +134,7 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
         const toggle = new Node('button').setAttribute('type', 'button').setContent(translate(enabled ? 'overview.notifications.on' : 'overview.notifications.off')).setBemClassName('notifications-toggle').appendTo(this.element);
         toggle.insertAdjacentHTML('afterbegin', icon + ' ');
         toggle.addEventListener('click', () => {
-          if(enabled) {
+          if (enabled) {
             this.parent.notifications.hideAll();
             this.parent.notifications.autoload.disable();
           } else {

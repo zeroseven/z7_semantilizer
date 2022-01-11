@@ -86,8 +86,23 @@ class DrawHeaderHook
         }
     }
 
-    private function includeJavaScript(): void
+    private function createView(): AbstractTemplateView
     {
+        $view = GeneralUtility::makeInstance(StandaloneView::class);
+        $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html'));
+        $view->setPartialRootPaths([0 => GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Partials/Backend')]);
+        $view->assign('id', $this->identifier);
+
+        return $view;
+    }
+
+    public function render(): string
+    {
+        // Skip rendering
+        if ($this->skipSemantilizer()) {
+            return '';
+        }
+
         // Define JavaScript parameters
         $url = GeneralUtility::quoteJSvalue($this->getPreviewUrl());
         $id = GeneralUtility::quoteJSvalue($this->identifier);
@@ -103,29 +118,8 @@ class DrawHeaderHook
                 TYPO3.Semantilizer = top.TYPO3.Semantilizer = new Semantilizer(%s, %s, %s);
             });
         ', $url, $id, $contentSelectors));
-    }
 
-    private function createView(): AbstractTemplateView
-    {
-        $view = GeneralUtility::makeInstance(StandaloneView::class);
-        $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html'));
-        $view->setPartialRootPaths([0 => GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Partials/Backend')]);
-        $view->assignMultiple([
-            'id' => $this->identifier
-        ]);
-
-        return $view;
-    }
-
-    public function render(): string
-    {
-        // Skip rendering
-        if ($this->skipSemantilizer()) {
-            return '';
-        }
-
-        $this->includeJavaScript();
-
+        // Render view
         return $this->createView()->render();
     }
 }

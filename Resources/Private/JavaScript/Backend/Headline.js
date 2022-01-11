@@ -63,7 +63,7 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
     }
 
     empty() {
-       return this.count() === 0;
+      return this.count() === 0;
     }
 
     add(key, fix) {
