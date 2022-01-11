@@ -56,17 +56,8 @@ $overview-select-width: 36px;
 }
 
 .semantilizer__select {
-
-    // Remove the arrows https://stackoverflow.com/a/32623650
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
-
-    &::-ms-expand {
-        display: none;
-    }
-
     display: inline-block;
+    appearance: none;
     border: none;
     border-radius: 2px;
     margin: 0 $overview-pattern-width - $overview-select-width 0 0;
@@ -78,6 +69,10 @@ $overview-select-width: 36px;
     height: 18px;
     width: $overview-select-width;
     background: url("data:image/svg+xml,%3Csvg version='1' xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath fill='%23fff' d='M11 7H5l3-4zM5 9h6l-3 4z'/%3E%3C/svg%3E") no-repeat center right $overview-pattern-color;
+
+    &::-ms-expand {
+        display: none;
+    }
 
     &:focus {
         outline: 0;
@@ -100,6 +95,16 @@ $overview-select-width: 36px;
     &:hover {
         text-decoration: underline solid red;
     }
+}
+
+.semantilizer__error-info {
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0 0 0 0.3em;
+
+    svg { fill: red; }
 }
 
 .semantilizer__lock {

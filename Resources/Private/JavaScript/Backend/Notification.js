@@ -39,6 +39,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     showIssue(key) {
+      this.parent.notifications.hideAll();
       new IssueMessage(key, this.parent.headlines.filter(headline => headline.issues.has(key))).render(this.parent.validate);
     }
 

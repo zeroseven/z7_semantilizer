@@ -103,6 +103,14 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
           const text = headline.isEditableRecord() ? new Node('a').setAttribute('href', headline.getEditUrl()) : new Node('span');
 
           text.setContent(headline.text).setBemClassName('headline', hasError ? 'error' : '').appendTo(item);
+
+          if(hasError) {
+            Icons.getIcon('actions-question-circle-alt', Icons.sizes.small).then(icon => {
+              const info = new Node('button').setAttributes({'type': 'button', 'title': translate('overview.showNotification')}).setBemClassName('error-info').appendTo(item);
+              info.insertAdjacentHTML('beforeend', icon);
+              info.addEventListener('click', headline.showIssues);
+            });
+          }
         });
 
         this.wrap = wrap;
