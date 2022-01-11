@@ -97,7 +97,7 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
     fix(key, update) {
       const issue = this.get(key);
 
-      if (issue && issue.fix) {
+      if (issue && issue.fix && this.parent.isEditableType()) {
         this.parent.type = issue.fix;
         this.remove(key);
 

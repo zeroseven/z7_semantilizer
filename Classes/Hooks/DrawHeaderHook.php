@@ -9,7 +9,6 @@ use TYPO3\CMS\Core\Routing\UnableToLinkToPageException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\AbstractTemplateView;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use Zeroseven\Semantilizer\Utility\PermissionUtility;
 use Zeroseven\Semantilizer\Utility\TsConfigUtility;
 
 class DrawHeaderHook
@@ -51,11 +50,9 @@ class DrawHeaderHook
 
     private function getPageData(): array
     {
-        $row = $this->languageUid > 0 ?
+        return $this->languageUid > 0 ?
             (BackendUtility::getRecordLocalization('pages', $this->pageUid, $this->languageUid)[0]) :
             (BackendUtility::readPageAccess($this->pageUid, true) ?: []);
-
-        return PermissionUtility::showPage($row) ? $row : [];
     }
 
     private function skipSemantilizer(): bool
