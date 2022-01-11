@@ -110,13 +110,11 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
         // Set header type (fallback to a "div")
         if (($type = (int)$this->arguments['type']) && in_array($type, [1, 2, 3, 4, 5, 6], true)) {
             $this->tag->setTagName('h' . $type);
+            $this->addSemantilizerData();
         } else {
             $this->tag->setTagName('div');
             $this->tag->addAttribute('role', 'heading');
         }
-
-        // Add some data attributes to edit content in backend
-        $this->addSemantilizerData();
 
         return $this->tag->render();
     }
