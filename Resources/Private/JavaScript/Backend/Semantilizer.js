@@ -62,8 +62,8 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/
 
         if (mainHeadlines.length > 1) {
           this.headlines.forEach((headline, i) => {
-            if (i && headline.type === 1) {
-              headline.issues.add('mainHeadingNumber', 2);
+            if (headline.type === 1) {
+              headline.issues.add('mainHeadingNumber', i ? 2 : null);
             }
           });
         }
