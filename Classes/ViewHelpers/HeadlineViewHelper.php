@@ -101,7 +101,7 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
     public function render(): string
     {
         // Set content or remove abort
-        if ($content = $this->arguments['content'] ?: $this->renderChildren()) {
+        if ($content = trim($this->arguments['content'] ?: $this->renderChildren())) {
             $this->tag->setContent($content);
         } else {
             return '';
