@@ -57,17 +57,19 @@ $overview-error-color: #dc3545;
 }
 
 %semantilizer__select {
+    $height: 18px;
+
     display: inline-block;
     appearance: none;
     border: none;
-    border-radius: 2px;
+    border-radius: 3px;
     margin: 0 $overview-pattern-width - $overview-select-width 0 0;
-    padding: 0 0 0 0.3em;
+    padding: 0 0 0 5px;
     text-align: left;
     color: #fff;
-    font-size: 12px;
-    line-height: 18px;
-    height: 18px;
+    font-size: round($height * 0.6);
+    line-height: $height;
+    height: $height;
     width: $overview-select-width;
     background: url("data:image/svg+xml,%3Csvg version='1' xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath fill='%23fff' d='M11 7H5l3-4zM5 9h6l-3 4z'/%3E%3C/svg%3E") no-repeat center right $overview-pattern-color;
 
@@ -119,7 +121,7 @@ $overview-error-color: #dc3545;
     background: $overview-error-color;
     color: #fff;
     padding: 0;
-    margin: 0 0 0 0.3em;
+    margin: 0 0 0 0.5em;
     vertical-align: middle;
     line-height: $size;
     text-align: center;
