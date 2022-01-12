@@ -107,14 +107,34 @@ $overview-error-color: #dc3545;
     }
 }
 
-.semantilizer__error-info {
+.semantilizer__issue-info {
+    $size: 14px;
+
+    display: inline-block;
     appearance: none;
     border: none;
-    background: transparent;
+    width: $size;
+    height: $size;
+    border-radius: math.div($size, 2);
+    background: $overview-error-color;
+    color: #fff;
     padding: 0;
     margin: 0 0 0 0.3em;
+    vertical-align: middle;
+    line-height: $size;
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.1s;
 
-    svg { fill: $overview-error-color; }
+    &:before {
+        content: '?';
+        font-size: 0.8em;
+    }
+
+    &:focus,
+    &:hover {
+        background: lighten($overview-error-color, 8);
+    }
 }
 
 .semantilizer__notifications-toggle {
