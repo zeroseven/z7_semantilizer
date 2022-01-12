@@ -91,7 +91,13 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
     }
 
     hideAll() {
-      const container = TYPO3Notification.messageContainer;
+      let container = TYPO3Notification.messageContainer;
+
+      // Workaround for TYPO3 10
+      if (typeof container[0] !== 'undefined') {
+        container = container[0];
+      }
+
       container && Converter.toArray(container.childNodes).forEach(message => container.removeChild(message));
     }
   }

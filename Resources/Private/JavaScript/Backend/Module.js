@@ -104,20 +104,14 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
             select.disabled = 'disabled';
           }
 
-          const hasError = headline.issues.count();
+          const hasIssues = headline.issues.count();
           const text = headline.isEditableRecord() ? new Node('a').setAttribute('href', headline.getEditUrl()) : new Node('span');
 
-          text.setContent(headline.text).setBemClassName('headline', hasError ? 'error' : '').appendTo(item);
+          text.setContent(headline.text).setBemClassName('headline', hasIssues ? 'error' : '').appendTo(item);
 
-          if (hasError) {
-            Icons.getIcon('actions-question-circle-alt', Icons.sizes.small).then(icon => {
-              const info = new Node('button').setAttributes({
-                'type': 'button',
-                'title': translate('overview.notification.show')
-              }).setBemClassName('error-info').appendTo(item);
-              info.insertAdjacentHTML('beforeend', icon);
-              info.addEventListener('click', headline.showIssues);
-            });
+          if (hasIssues) {
+            const issueInfo = new Node('button').setAttributes({'type': 'button', 'title': translate('overview.notification.show')}).setBemClassName('issue-info').appendTo(item);
+            issueInfo.addEventListener('click', headline.showIssues);
           }
         });
 
