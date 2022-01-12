@@ -94,7 +94,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
       let container = TYPO3Notification.messageContainer;
 
       // Workaround for TYPO3 10
-      if (typeof container[0] !== 'undefined') {
+      if (container && typeof container[0] !== 'undefined') {
         container = container[0];
       }
 
