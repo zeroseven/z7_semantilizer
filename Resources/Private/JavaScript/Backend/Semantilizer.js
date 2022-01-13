@@ -44,7 +44,7 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/
         }
       };
 
-      request.open('GET', this.url, true);
+      request.open('GET', (this.url.indexOf('#') < 0 ? this.url : this.url.substr(0, this.url.indexOf('#'))) + '#' + Math.random().toString(36).slice(2), true);
       request.setRequestHeader('X-Semantilizer', 'true');
       request.send();
     }
