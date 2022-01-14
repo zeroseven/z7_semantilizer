@@ -3,6 +3,7 @@
 namespace Zeroseven\Semantilizer\Hooks;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Routing\UnableToLinkToPageException;
@@ -74,10 +75,8 @@ class DrawHeaderHook
 
     private function getPreviewUrl(): ?string
     {
-        $id = (int)GeneralUtility::_GP('id');
-
         try {
-            return BackendUtility::getPreviewUrl($id, '', null, '', '', $this->languageUid > 0 ? '&L=' . $this->languageUid : '');
+            return BackendUtility::getPreviewUrl($this->pageUid, '', null, '', '', $this->languageUid > 0 ? '&L=' . $this->languageUid : '');
         } catch (UnableToLinkToPageException $e) {
             return null;
         }
@@ -116,6 +115,9 @@ class DrawHeaderHook
                 });
             });
         ', $url, $id, $contentSelectors));
+
+        // Clear the frontend page cache
+        GeneralUtility::makeInstance(CacheManager::class)->flushCachesInGroupByTags('pages', ['pageId_' . $this->pageUid]);
 
         // Render view
         return $this->createView()->render();

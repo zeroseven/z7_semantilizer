@@ -44,9 +44,7 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/
         }
       };
 
-      const urlWithoutHash = this.url.indexOf('#') < 0 ? this.url : this.url.substr(0, this.url.indexOf('#'));
-
-      request.open('GET',  urlWithoutHash + (urlWithoutHash.indexOf('?') < 0 ? '?' : '&') + Math.random().toString(36).slice(2), true);
+      request.open('GET', (this.url.indexOf('#') < 0 ? this.url : this.url.substr(0, this.url.indexOf('#'))) + '#' + Math.random().toString(36).slice(2), true);
       request.setRequestHeader('X-Semantilizer', 'true');
       request.send();
     }
@@ -104,7 +102,7 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/
 
     refresh() {
       this.collect(request => {
-        if(request.status === 200) {
+        if (request.status === 200) {
           this.validate();
         } else {
           this.notifications.hideAll();
