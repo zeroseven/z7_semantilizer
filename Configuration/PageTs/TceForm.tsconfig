@@ -3,7 +3,7 @@ TCEFORM.tt_content.header_layout.label = LLL:EXT:z7_semantilizer/Resources/Priva
 
 # Configure the semantilizer
 tx_semantilizer {
-  disableOnPages = 0
+  disabledPages = 0
   disabledDoktypes = 0
   contentSelectors = body
 }

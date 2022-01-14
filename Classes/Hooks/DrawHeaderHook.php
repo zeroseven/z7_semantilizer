@@ -69,7 +69,7 @@ class DrawHeaderHook
             || in_array((int)$pageData['doktype'], array_merge(self::IGNORED_DOKTYPES, GeneralUtility::intExplode(',', $this->tsConfig['disabledDoktypes'])), true)
 
             // The page uid must not be disabled
-            || in_array($this->pageUid, GeneralUtility::intExplode(',', $this->tsConfig['disableOnPages']), true);
+            || in_array($this->pageUid, GeneralUtility::intExplode(',', $this->tsConfig['disabledPages']), true);
     }
 
     private function getPreviewUrl(): ?string
