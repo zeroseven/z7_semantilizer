@@ -18,7 +18,7 @@
 			<trans-unit id="overview.notifications.on">
 				<source>Show notifications</source>
 			</trans-unit>
-			<trans-unit id="overview.notifications.on">
+			<trans-unit id="overview.notifications.off">
 				<source>Hide notifications</source>
 			</trans-unit>
 			<trans-unit id="overview.loading">
