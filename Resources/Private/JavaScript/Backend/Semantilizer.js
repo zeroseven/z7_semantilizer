@@ -44,7 +44,9 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/
         }
       };
 
-      request.open('GET', (this.url.indexOf('#') < 0 ? this.url : this.url.substr(0, this.url.indexOf('#'))) + '#' + Math.random().toString(36).slice(2), true);
+      const urlWithoutHash = this.url.indexOf('#') < 0 ? this.url : this.url.substr(0, this.url.indexOf('#'));
+
+      request.open('GET',  urlWithoutHash + (urlWithoutHash.indexOf('?') < 0 ? '?' : '&') + Math.random().toString(36).slice(2), true);
       request.setRequestHeader('X-Semantilizer', 'true');
       request.send();
     }
