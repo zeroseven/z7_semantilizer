@@ -27,6 +27,9 @@
 			<trans-unit id="overview.update">
 				<source>Structure will be updated ...</source>
 			</trans-unit>
+			<trans-unit id="overview.error">
+				<source>An error occurred while parsing the heading structure. The content of this page could not be loaded.</source>
+			</trans-unit>
 
 			<trans-unit id="notification.fixed.title">
 				<source>Heading structure has been fixed:</source>

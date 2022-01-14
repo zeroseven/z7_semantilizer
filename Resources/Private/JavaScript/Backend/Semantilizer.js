@@ -103,7 +103,14 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/
     }
 
     refresh() {
-      this.collect(this.validate);
+      this.collect(request => {
+        if(request.status === 200) {
+          this.validate();
+        } else {
+          this.notifications.hideAll();
+          this.module.drawError();
+        }
+      });
     }
 
     init() {

@@ -156,6 +156,11 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
       this.drawNotificationToggle();
     }
 
+    drawError() {
+      this.clearContent();
+      new Node('p').setContent(translate('overview.error')).appendTo(this.element);
+    }
+
     loader() {
       Icons.getIcon('spinner-circle', Icons.sizes.small).then(icon => {
         this.element.insertAdjacentHTML('beforeend', icon + '<span style="margin-left: 0.3em">' + translate('overview.loading') + '</span>');
