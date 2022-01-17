@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" product-name="z7_semantilizer">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" product-name="z7_semantilizer">
 		<header/>
 		<body>
 			<trans-unit id="tt_content.header_layout">
-				<source>Layout</source>
+				<target>Layout</target>
 			</trans-unit>
 
 			<trans-unit id="tt_content.header_type">
-				<source>Type</source>
+				<target>Typ</target>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.semantic">
-				<source>Semantic meaning:</source>
+				<target>Strukturelle Auszeichnung:</target>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.no_semantic">
-				<source>No semantic:</source>
+				<target>Keine strukturelle Bedeutung:</target>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.0">
-				<source>None</source>
+				<target>Ohne</target>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.1">
-				<source>H1</source>
+				<target>H1</target>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.2">
-				<source>H2</source>
+				<target>H2</target>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.3">
-				<source>H3</source>
+				<target>H3</target>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.4">
-				<source>H4</source>
+				<target>H4</target>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.5">
-				<source>H5</source>
+				<target>H5</target>
 			</trans-unit>
 			<trans-unit id="tt_content.header_type.6">
-				<source>H6</source>
+				<target>H6</target>
 			</trans-unit>
 		</body>
 	</file>
