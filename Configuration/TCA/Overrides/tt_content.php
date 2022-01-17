@@ -1,10 +1,8 @@
 <?php
 
-defined('TYPO3_MODE') || die();
+defined('TYPO3') || die('✘');
 
 call_user_func(static function () {
-
-    // Add fields to tt_content
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('tt_content', [
         'header_type' => [
             'exclude' => 0,
@@ -32,7 +30,6 @@ call_user_func(static function () {
         ]
     ]);
 
-    // Add fields to the palettes
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('tt_content', 'header', 'header_type', 'after:header_layout');
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('tt_content', 'headers', 'header_type', 'after:header_layout');
 });

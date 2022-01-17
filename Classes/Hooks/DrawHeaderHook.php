@@ -86,8 +86,7 @@ class DrawHeaderHook
     {
         $view = GeneralUtility::makeInstance(StandaloneView::class);
         $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html'));
-        $view->setPartialRootPaths([0 => GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Partials/Backend')]);
-        $view->assign('id', $this->identifier);
+        $view->assign('identifier', $this->identifier);
 
         return $view;
     }
@@ -98,6 +97,9 @@ class DrawHeaderHook
         if ($this->skipSemantilizer()) {
             return '';
         }
+
+        // Clear the frontend page cache
+        GeneralUtility::makeInstance(CacheManager::class)->flushCachesInGroupByTags('pages', ['pageId_' . $this->pageUid]);
 
         // Define JavaScript parameters
         $url = GeneralUtility::quoteJSvalue($this->getPreviewUrl());
@@ -115,9 +117,6 @@ class DrawHeaderHook
                 });
             });
         ', $url, $id, $contentSelectors));
-
-        // Clear the frontend page cache
-        GeneralUtility::makeInstance(CacheManager::class)->flushCachesInGroupByTags('pages', ['pageId_' . $this->pageUid]);
 
         // Render view
         return $this->createView()->render();

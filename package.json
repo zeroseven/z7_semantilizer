@@ -1,6 +1,10 @@
 {
   "name": "z7_semantilizer",
   "private": true,
+  "scripts": {
+    "build": "gulp build",
+    "build-dev": "GULP_CONTEXT=development gulp build"
+  },
   "devDependencies": {
     "@babel/core": "^7.16.7",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",

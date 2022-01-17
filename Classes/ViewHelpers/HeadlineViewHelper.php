@@ -35,6 +35,13 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
 
     protected function getEditSetup(): ?array
     {
+
+        // Checks if the user is logged in and the Semantilizer has accessed the page
+        if(!$this->backendUser || $GLOBALS['TYPO3_REQUEST'] instanceof RequestInterface && empty($GLOBALS['TYPO3_REQUEST']->getHeader('X-Semantilizer'))) {
+            return null;
+        }
+
+        // Define values
         $value = $this->arguments['edit'];
         $table = null;
         $uid = null;
@@ -89,25 +96,21 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
 
     protected function addSemantilizerData(): void
     {
-        if ($this->backendUser
-            && $GLOBALS['TYPO3_REQUEST'] instanceof RequestInterface
-            && !empty($GLOBALS['TYPO3_REQUEST']->getHeader('X-Semantilizer'))
-            && ($editSetup = $this->getEditSetup())
-        ) {
+        if ($editSetup = $this->getEditSetup()) {
             $this->tag->addAttribute('data-semantilizer', json_encode($editSetup));
         }
     }
 
     public function render(): string
     {
-        // Set content or remove abort
+        // Set content or abort if empty
         if ($content = trim((string)($this->arguments['content'] ?: $this->renderChildren()))) {
             $this->tag->setContent($content);
         } else {
             return '';
         }
 
-        // Set header type (fallback to a "div")
+        // Set header type (fallback to a "div" element)
         if (($type = (int)$this->arguments['type']) && in_array($type, [1, 2, 3, 4, 5, 6], true)) {
             $this->tag->setTagName('h' . $type);
             $this->addSemantilizerData();
