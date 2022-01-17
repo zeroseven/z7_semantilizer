@@ -11,5 +11,5 @@
 /package.json export-ignore
 /package-lock.json export-ignore
 /node_modules export-ignore
-/Resources/Private/Scss/JavaScript export-ignore
+/Resources/Private/JavaScript/Backend export-ignore
 /Resources/Private/Scss/Backend export-ignore
