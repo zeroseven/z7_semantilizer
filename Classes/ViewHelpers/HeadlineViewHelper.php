@@ -33,30 +33,36 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument('edit', 'string|array', 'Content edit setup (Example "{table:\'tt_content\', uid:data.uid, field:\'header_type\'}" or "tt_content:{data.uid}:header_type")');
     }
 
+    protected function parseEditSetup($value): ?array
+    {
+        if (is_array($value)) {
+            return [
+                'table' => $value['table'] ?? null,
+                'uid' => (int)$value['uid'] ?? null,
+                'field' => $value['field'] ?? null
+            ];
+        }
+
+        if (is_string($value) && preg_match('/^(\w+):(\d+)(?::(\w+))?$/', $value, $matches)) {
+            return [
+                'table' => $matches[1],
+                'uid' => (int)$matches[2],
+                'field' => $matches[3] ?? null
+            ];
+        }
+
+        return null;
+    }
+
     protected function getEditSetup(): ?array
     {
-
         // Checks if the user is logged in and the Semantilizer has accessed the page
-        if(!$this->backendUser || $GLOBALS['TYPO3_REQUEST'] instanceof RequestInterface && empty($GLOBALS['TYPO3_REQUEST']->getHeader('X-Semantilizer'))) {
+        if (!$this->backendUser || $GLOBALS['TYPO3_REQUEST'] instanceof RequestInterface && empty($GLOBALS['TYPO3_REQUEST']->getHeader('X-Semantilizer'))) {
             return null;
         }
 
-        // Define values
-        $value = $this->arguments['edit'];
-        $table = null;
-        $uid = null;
-        $field = null;
-
-        // Get setup
-        if (is_array($value)) {
-            $table = $value['table'] ?? null;
-            $uid = (int)$value['uid'] ?? null;
-            $field = $value['field'] ?? null;
-        } elseif (is_string($value) && preg_match('/^(\w+):(\d+)(?::(\w+))?$/', $value, $matches)) {
-            $table = $matches[1];
-            $uid = (int)$matches[2];
-            $field = $matches[3] ?? null;
-        }
+        // Get values and assign them to the variables
+        list($table, $uid, $field) = ($setup = $this->parseEditSetup($this->arguments['edit'])) ? array_values($setup) : [];
 
         // Check backend user permissions
         if (!$table || !$uid || !$this->backendUser->check('tables_modify', $table)) {
