@@ -51,14 +51,9 @@ class DrawHeaderHook
 
     private function getPageData(): array
     {
-        $page = BackendUtility::readPageAccess($this->pageUid, true);
-        if (is_array($page)) {
-            return $this->languageUid > 0 ?
-                (array)BackendUtility::getRecordLocalization('pages', $this->pageUid, $this->languageUid)[0] :
-                BackendUtility::readPageAccess($this->pageUid, true);
-        }
-
-        return $this->languageUid > 0 ? (array)BackendUtility::getRecordLocalization('pages', $this->pageUid, $this->languageUid)[0] : [];
+        return $this->languageUid > 0 ?
+            (BackendUtility::getRecordLocalization('pages', $this->pageUid, $this->languageUid)[0]) :
+            (BackendUtility::readPageAccess($this->pageUid, true) ?: []);
     }
 
     private function skipSemantilizer(): bool
