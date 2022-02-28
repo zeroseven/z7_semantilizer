@@ -8,7 +8,7 @@ class SiblingViewHelper extends AbstractRelationViewHelper
 {
     public function render()
     {
-        $type = $this->getReference($this->arguments['of'] ?: 0);
+        $type = $this->getReference($this->arguments['of']) ?: 0;
 
         return $this->renderHeadline($type);
     }

@@ -69,19 +69,15 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
             $this->tag->addAttribute('role', 'heading');
         }
 
-        // Checks if the user is logged in and the Semantilizer has accessed the page
-        if ($this->backendUser && $GLOBALS['TYPO3_REQUEST'] instanceof RequestInterface && $GLOBALS['TYPO3_REQUEST']->getHeader('X-Semantilizer')) {
+        // Store the reference for sibling and child viewHelpers
+        if ($referenceId !== null || $referenceId = $this->arguments['referenceId']) {
+            $this->addSemantilizerData(['referenceId' => $referenceId]);
+            $this->storeReference($referenceId, $type);
+        }
 
-            // Store the reference for sibling and child viewHelpers
-            if ($referenceId !== null || $referenceId = $this->arguments['referenceId']) {
-                $this->addSemantilizerData(['referenceId' => $referenceId]);
-                $this->storeReference($referenceId, $type);
-            }
-
-            // Add data attributes
-            if (!empty($this->dataAttributes)) {
-                $this->tag->addAttribute('data-semantilizer', json_encode($this->dataAttributes));
-            }
+        // Add data attributes, if the user is logged in and the Semantilizer has accessed the page
+        if (!empty($this->dataAttributes) && $this->backendUser && $GLOBALS['TYPO3_REQUEST'] instanceof RequestInterface && $GLOBALS['TYPO3_REQUEST']->getHeader('X-Semantilizer')) {
+            $this->tag->addAttribute('data-semantilizer', json_encode($this->dataAttributes));
         }
 
         // Ciao …
