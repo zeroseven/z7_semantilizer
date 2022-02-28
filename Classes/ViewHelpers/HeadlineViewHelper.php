@@ -88,6 +88,10 @@ class HeadlineViewHelper extends AbstractHeadlineViewHelper
             $this->addSemantilizerData($editSetup);
         }
 
-        return $this->renderHeadline((int)$this->arguments['type']);
+        if (empty($referenceId = $this->arguments['referenceId']) && $editSetup) {
+            $referenceId = $editSetup['table'] . ':' . $editSetup['uid'];
+        }
+
+        return $this->renderHeadline((int)$this->arguments['type'], (string)$referenceId);
     }
 }
