@@ -49,11 +49,11 @@ class DrawHeaderHook
         $this->tsConfig = TsConfigUtility::getTsConfig($this->pageUid);
     }
 
-    private function getPageData(): array
+    private function getPageData(): ?array
     {
         return $this->languageUid > 0 ?
             (BackendUtility::getRecordLocalization('pages', $this->pageUid, $this->languageUid)[0]) :
-            (BackendUtility::readPageAccess($this->pageUid, true) ?: []);
+            (BackendUtility::readPageAccess($this->pageUid, true) ?: null);
     }
 
     private function skipSemantilizer(): bool
