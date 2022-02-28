@@ -4,37 +4,24 @@ declare(strict_types=1);
 
 namespace Zeroseven\Semantilizer\ViewHelpers;
 
-use Psr\Http\Message\RequestInterface;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
-class HeadlineViewHelper extends AbstractTagBasedViewHelper
+class HeadlineViewHelper extends AbstractHeadlineViewHelper
 {
-    /** @var BackendUserAuthentication|null */
-    private $backendUser;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->backendUser = $GLOBALS['BE_USER'] ?? null;
-    }
-
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        parent::registerUniversalTagAttributes();
 
         $this->registerArgument('type', 'int', 'Header type (1,2,3,4,5,6)');
-        $this->registerArgument('content', 'string', 'Header content');
         $this->registerArgument('edit', 'string|array', 'Content edit setup (Example "{table:\'tt_content\', uid:data.uid, field:\'header_type\'}" or "tt_content:{data.uid}:header_type")');
     }
 
-    protected function parseEditSetup($value): ?array
+    protected function parseEditSetup(): ?array
     {
+        $value = $this->arguments['edit'] ?? null;
+
         if (is_array($value)) {
             return [
                 'table' => $value['table'] ?? null,
@@ -56,13 +43,8 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
 
     protected function getEditSetup(): ?array
     {
-        // Checks if the user is logged in and the Semantilizer has accessed the page
-        if (!$this->backendUser || $GLOBALS['TYPO3_REQUEST'] instanceof RequestInterface && empty($GLOBALS['TYPO3_REQUEST']->getHeader('X-Semantilizer'))) {
-            return null;
-        }
-
         // Get values and assign them to the variables
-        list($table, $uid, $field) = ($setup = $this->parseEditSetup($this->arguments['edit'])) ? array_values($setup) : [];
+        list($table, $uid, $field) = ($setup = $this->parseEditSetup()) ? array_values($setup) : [];
 
         // Check backend user permissions
         if (!$table || !$uid || !$this->backendUser->check('tables_modify', $table)) {
@@ -100,31 +82,12 @@ class HeadlineViewHelper extends AbstractTagBasedViewHelper
         ]);
     }
 
-    protected function addSemantilizerData(): void
-    {
-        if ($editSetup = $this->getEditSetup()) {
-            $this->tag->addAttribute('data-semantilizer', json_encode($editSetup));
-        }
-    }
-
     public function render(): string
     {
-        // Set content or abort if empty
-        if ($content = trim((string)($this->arguments['content'] ?: $this->renderChildren()))) {
-            $this->tag->setContent($content);
-        } else {
-            return '';
+        if ($editSetup = $this->getEditSetup()) {
+            $this->addSemantilizerData($editSetup);
         }
 
-        // Set header type (fallback to a "div" element)
-        if (($type = (int)$this->arguments['type']) && in_array($type, [1, 2, 3, 4, 5, 6], true)) {
-            $this->tag->setTagName('h' . $type);
-            $this->addSemantilizerData();
-        } else {
-            $this->tag->setTagName('div');
-            $this->tag->addAttribute('role', 'heading');
-        }
-
-        return $this->tag->render();
+        return $this->renderHeadline((int)$this->arguments['type']);
     }
 }
