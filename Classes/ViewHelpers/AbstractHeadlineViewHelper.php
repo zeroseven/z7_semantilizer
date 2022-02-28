@@ -13,11 +13,15 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
     /** @var BackendUserAuthentication|null */
     protected $backendUser;
 
+    /** @var array */
+    protected $dataAttributes;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->backendUser = $GLOBALS['BE_USER'] ?? null;
+        $this->dataAttributes = [];
     }
 
     public function initializeArguments(): void
@@ -31,10 +35,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
 
     protected function addSemantilizerData(array $data): void
     {
-        // Checks if the user is logged in and the Semantilizer has accessed the page
-        if (!$this->backendUser || $GLOBALS['TYPO3_REQUEST'] instanceof RequestInterface && empty($GLOBALS['TYPO3_REQUEST']->getHeader('X-Semantilizer'))) {
-            $this->tag->addAttribute('data-semantilizer', json_encode($data));
-        }
+        $this->dataAttributes = array_merge($this->dataAttributes, $data);
     }
 
     protected function storeReference(string $referenceId, int $type): void
@@ -68,9 +69,19 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
             $this->tag->addAttribute('role', 'heading');
         }
 
-        // Store the reference for sibling and child viewHelpers
-        if ($referenceId !== null || $referenceId = $this->arguments['referenceId']) {
-            $this->storeReference($referenceId, $type);
+        // Checks if the user is logged in and the Semantilizer has accessed the page
+        if ($this->backendUser && $GLOBALS['TYPO3_REQUEST'] instanceof RequestInterface && $GLOBALS['TYPO3_REQUEST']->getHeader('X-Semantilizer')) {
+
+            // Store the reference for sibling and child viewHelpers
+            if ($referenceId !== null || $referenceId = $this->arguments['referenceId']) {
+                $this->addSemantilizerData(['referenceId' => $referenceId]);
+                $this->storeReference($referenceId, $type);
+            }
+
+            // Add data attributes
+            if (!empty($this->dataAttributes)) {
+                $this->tag->addAttribute('data-semantilizer', json_encode($this->dataAttributes));
+            }
         }
 
         // Ciao …
