@@ -30,7 +30,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         parent::registerUniversalTagAttributes();
 
         $this->registerArgument('content', 'string', 'Header content');
-        $this->registerArgument('referenceId', 'string', 'Reference fot child and sibling viewhelpers');
+        $this->registerArgument('referenceId', 'string', 'Reference identifier for child and sibling viewHelpers');
     }
 
     protected function addSemantilizerData(array $data): void
@@ -38,7 +38,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         $this->dataAttributes = array_merge($this->dataAttributes, $data);
     }
 
-    protected function storeReference(string $referenceId, int $type): void
+    protected function storeReference($referenceId, int $type): void
     {
         if (!is_array($GLOBALS['USER']['z7_semantilizer']['temporary_structure'] ?? null)) {
             $GLOBALS['USER']['z7_semantilizer']['temporary_structure'] = [];
@@ -47,7 +47,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         $GLOBALS['USER']['z7_semantilizer']['temporary_structure'][$referenceId] = $type;
     }
 
-    protected function getReference(string $referenceId): ?int
+    protected function getReference($referenceId): ?int
     {
         return $GLOBALS['USER']['z7_semantilizer']['temporary_structure'][$referenceId] ?? null;
     }

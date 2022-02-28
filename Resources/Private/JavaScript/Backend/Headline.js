@@ -11,7 +11,7 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
         }
       }
 
-      ['table', 'uid', 'field', 'referenceId'].forEach(key => this['_' + key] = editConfigData[key] || null);
+      ['table', 'uid', 'field', 'referenceId', 'relatedTo'].forEach(key => this['_' + key] = editConfigData[key] || null);
     }
 
     get table() {
@@ -44,6 +44,14 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
 
     set referenceId(value) {
       this._referenceId = (value || '').trim();
+    }
+
+    get relatedTo() {
+      return this._relatedTo;
+    }
+
+    set relatedTo(value) {
+      this._relatedTo = (value || '').trim();
     }
   }
 
@@ -178,7 +186,7 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
     }
 
     hasReferences() {
-      return this.parent.headlines.filter(headline => headline.edit.referenceId === this.edit.referenceId).length > 1;
+      return this.parent.headlines.filter(headline => headline.edit.relatedTo === this.edit.referenceId).length > 0;
     }
 
     showIssues() {
