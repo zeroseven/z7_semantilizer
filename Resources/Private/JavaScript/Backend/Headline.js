@@ -181,12 +181,16 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       return this.parent.headlines.filter(headline => headline.edit.relatedTo === this.edit.referenceId).length > 0;
     }
 
+    isRelated() {
+      return this.edit.relatedTo;
+    }
+
     isEditableRecord() {
       return this.edit.table && this.edit.uid;
     }
 
     isEditableType() {
-      return this.isEditableRecord() && this.edit.field && !this.edit.relatedTo;
+      return this.isEditableRecord() && this.edit.field && !this.isRelated();
     }
 
     showIssues() {

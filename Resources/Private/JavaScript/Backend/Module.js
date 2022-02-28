@@ -102,6 +102,10 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
           } else {
             new Node('option').setContent('H' + headline.type).appendTo(select);
             select.disabled = 'disabled';
+
+            if(headline.isRelated) {
+              select.setAttribute('data-related', headline.edit.relatedTo);
+            }
           }
 
           const hasIssues = headline.issues.count();
