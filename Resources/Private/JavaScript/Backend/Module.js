@@ -97,7 +97,7 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
 
             select.addEventListener('change', event => {
               headline.type = event.target.options[event.target.selectedIndex].value;
-              headline.store((response, hasReferences) => !response.hasErrors && this.parent.revalidate(hasReferences));
+              headline.store((response, hasRelations) => !response.hasErrors && this.parent.revalidate(hasRelations));
             });
           } else {
             new Node('option').setContent('H' + headline.type).appendTo(select);

@@ -177,16 +177,16 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       return null;
     }
 
+    hasRelations() {
+      return this.parent.headlines.filter(headline => headline.edit.relatedTo === this.edit.referenceId).length > 0;
+    }
+
     isEditableRecord() {
       return this.edit.table && this.edit.uid;
     }
 
     isEditableType() {
-      return this.isEditableRecord() && this.edit.field;
-    }
-
-    hasReferences() {
-      return this.parent.headlines.filter(headline => headline.edit.relatedTo === this.edit.referenceId).length > 0;
+      return this.isEditableRecord() && this.edit.field && !this.edit.relatedTo;
     }
 
     showIssues() {
@@ -195,7 +195,7 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
 
     static storeHeadlines(headlines, callback) {
       let parameters = {data: {}};
-      let hasReferences = false;
+      let hasRelations = false;
 
       headlines.forEach(headline => {
         if (headline.isEditableType()) {
@@ -208,10 +208,10 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
           parameters.data[table][uid][field] = headline.type;
         }
 
-        headline.hasReferences() && (hasReferences = true);
+        headline.hasRelations() && (hasRelations = true);
       });
 
-      Object.keys(parameters).length && AjaxDataHandler.process(parameters).done(response => typeof callback === 'function' && callback(response, hasReferences));
+      Object.keys(parameters).length && AjaxDataHandler.process(parameters).done(response => typeof callback === 'function' && callback(response, hasRelations));
     }
   }
 
