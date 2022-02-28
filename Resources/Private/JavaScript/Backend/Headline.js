@@ -1,9 +1,17 @@
 define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/Converter'], (AjaxDataHandler, Converter) => {
   class EditConfiguration {
-    constructor(table, uid, field) {
-      this._table = table;
-      this._uid = uid;
-      this._field = field;
+    constructor(node) {
+      let editConfigData = {};
+
+      if (node.dataset.semantilizer) {
+        try {
+          editConfigData = JSON.parse(node.dataset.semantilizer);
+        } catch (e) {
+          typeof console.log === 'function' && console.log(e, 1640904719);
+        }
+      }
+
+      ['table', 'uid', 'field', 'referenceId'].forEach(key => this['_' + key] = editConfigData[key] || null);
     }
 
     get table() {
@@ -28,6 +36,14 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
 
     set field(value) {
       this._field = (value || '').trim();
+    }
+
+    get referenceId() {
+      return this._referenceId;
+    }
+
+    set referenceId(value) {
+      this._referenceId = (value || '').trim();
     }
   }
 
@@ -94,14 +110,14 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       Object.keys(this.list).forEach(key => this.list[key] = null);
     }
 
-    fix(key, update) {
+    fix(key, store) {
       const issue = this.get(key);
 
       if (issue && issue.fix && this.parent.isEditableType()) {
         this.parent.type = issue.fix;
         this.remove(key);
 
-        typeof update !== 'undefined' && this.parent.store();
+        store === true && this.parent.store();
       }
     }
   }
@@ -111,19 +127,8 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       this.type = node.nodeName;
       this.text = node.innerText;
       this.parent = parent;
-      this.edit = new EditConfiguration();
+      this.edit = new EditConfiguration(node);
       this.issues = new Issues(this);
-
-      if (node.dataset.semantilizer) {
-        try {
-          const editConfigData = JSON.parse(node.dataset.semantilizer);
-          this.edit.table = editConfigData.table;
-          this.edit.uid = editConfigData.uid;
-          this.edit.field = editConfigData.field;
-        } catch (e) {
-          typeof console.log === 'function' && console.log(e, 1640904719);
-        }
-      }
 
       // Bind methods
       this.showIssues = this.showIssues.bind(this);
@@ -151,7 +156,7 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
 
     store(callback) {
       if (this.isEditableType()) {
-        return Headline.storeHeadlines([this], callback);
+        Headline.storeHeadlines([this], callback);
       }
     }
 
@@ -172,12 +177,17 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       return this.isEditableRecord() && this.edit.field;
     }
 
+    hasReferences() {
+      return this.parent.headlines.filter(headline => headline.edit.referenceId === this.edit.referenceId).length > 1;
+    }
+
     showIssues() {
       this.issues.count() && this.issues.each((issue, key) => this.parent.notifications.showIssue(key));
     }
 
     static storeHeadlines(headlines, callback) {
-      const parameters = {data: {}};
+      let parameters = {data: {}};
+      let hasReferences = false;
 
       headlines.forEach(headline => {
         if (headline.isEditableType()) {
@@ -189,9 +199,11 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
           parameters.data[table][uid] = {};
           parameters.data[table][uid][field] = headline.type;
         }
+
+        headline.hasReferences() && (hasReferences = true);
       });
 
-      Object.keys(parameters).length && AjaxDataHandler.process(parameters).done(response => typeof callback === 'function' && callback(response));
+      Object.keys(parameters).length && AjaxDataHandler.process(parameters).done(response => typeof callback === 'function' && callback(response, hasReferences));
     }
   }
 
