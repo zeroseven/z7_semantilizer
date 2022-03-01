@@ -178,7 +178,7 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
     }
 
     hasRelations() {
-      return this.parent.headlines.filter(headline => headline.edit.relatedTo === this.edit.referenceId).length > 0;
+      return this.edit.referenceId && this.parent.headlines.filter(headline => headline.edit.relatedTo === this.edit.referenceId).length > 0;
     }
 
     isRelated() {

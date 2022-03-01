@@ -103,8 +103,8 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
             new Node('option').setContent('H' + headline.type).appendTo(select);
             select.disabled = 'disabled';
 
-            if(headline.isRelated) {
-              select.setAttribute('data-related', headline.edit.relatedTo);
+            if (headline.isRelated()) {
+              select.setAttribute('data-related-to', headline.edit.relatedTo);
             }
           }
 
@@ -114,7 +114,10 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
           text.setContent(headline.text).setBemClassName('headline', hasIssues ? 'error' : '').appendTo(item);
 
           if (hasIssues) {
-            const issueInfo = new Node('button').setAttributes({'type': 'button', 'title': translate('overview.notification.show')}).setBemClassName('issue-info').appendTo(item);
+            const issueInfo = new Node('button').setAttributes({
+              'type': 'button',
+              'title': translate('overview.notification.show')
+            }).setBemClassName('issue-info').appendTo(item);
             issueInfo.addEventListener('click', headline.showIssues);
           }
         });
