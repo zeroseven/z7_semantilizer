@@ -181,8 +181,21 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       return this.edit.referenceId && this.parent.headlines.filter(headline => headline.edit.relatedTo === this.edit.referenceId).length > 0;
     }
 
+    relatedHeadline() {
+      if(this.edit.relatedTo) {
+        const filtered = this.parent.headlines.filter(headline => headline.edit.referenceId === this.edit.relatedTo);
+
+        // Return the last matched headline
+        if(filtered.length) {
+          return filtered[filtered.length - 1];
+        }
+      }
+
+      return null;
+    }
+
     isRelated() {
-      return this.edit.relatedTo;
+      return this.relatedHeadline() !== null;
     }
 
     isEditableRecord() {

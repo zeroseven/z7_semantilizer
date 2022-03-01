@@ -99,12 +99,23 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
               headline.type = event.target.options[event.target.selectedIndex].value;
               headline.store((response, hasRelations) => !response.hasErrors && this.parent.revalidate(hasRelations));
             });
+
+            if (headline.hasRelations) {
+              select.setAttribute('data-reference-id', btoa(headline.edit.referenceId));
+            }
+
           } else {
             new Node('option').setContent('H' + headline.type).appendTo(select);
-            select.disabled = 'disabled';
 
-            if (headline.isRelated()) {
+            if (headline.isRelated() && headline.relatedHeadline().isEditableType()) {
               select.setAttribute('data-related-to', headline.edit.relatedTo);
+              select.addEventListener('click', e => {
+                const references = list.querySelectorAll('[data-reference-id=' + btoa(headline.relatedHeadline().edit.referenceId) + ']');
+                references && references[references.length - 1].focus();
+                e.preventDefault();
+              });
+            } else {
+              select.disabled = 'disabled';
             }
           }
 
