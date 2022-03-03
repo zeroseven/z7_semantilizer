@@ -63,7 +63,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
     protected function getEditSetup(): ?array
     {
         // Get values and assign them to the variables
-        list($table, $uid, $field) = ($setup = $this->parseEditSetup()) ? array_values($setup) : [];
+        list($table, $uid, $field) = ($setup = $this->parseEditSetup()) ? array_values($setup) : [null, null, null];
 
         // Check backend user permissions
         if (!$table || !$uid || !$this->backendUser || !$this->backendUser->check('tables_modify', $table)) {
