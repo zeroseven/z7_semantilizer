@@ -1,9 +1,17 @@
 define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/Converter'], (AjaxDataHandler, Converter) => {
   class EditConfiguration {
-    constructor(table, uid, field) {
-      this._table = table;
-      this._uid = uid;
-      this._field = field;
+    constructor(node) {
+      let editConfigData = {};
+
+      if (node.dataset.semantilizer) {
+        try {
+          editConfigData = JSON.parse(node.dataset.semantilizer);
+        } catch (e) {
+          typeof console.log === 'function' && console.log(e, 1640904719);
+        }
+      }
+
+      ['table', 'uid', 'field', 'relationId', 'relatedTo'].forEach(key => this['_' + key] = editConfigData[key] || null);
     }
 
     get table() {
@@ -28,6 +36,22 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
 
     set field(value) {
       this._field = (value || '').trim();
+    }
+
+    get relationId() {
+      return this._relationId;
+    }
+
+    set relationId(value) {
+      this._relationId = (value || '').trim();
+    }
+
+    get relatedTo() {
+      return this._relatedTo;
+    }
+
+    set relatedTo(value) {
+      this._relatedTo = (value || '').trim();
     }
   }
 
@@ -94,14 +118,14 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       Object.keys(this.list).forEach(key => this.list[key] = null);
     }
 
-    fix(key, update) {
+    fix(key, store) {
       const issue = this.get(key);
 
       if (issue && issue.fix && this.parent.isEditableType()) {
         this.parent.type = issue.fix;
         this.remove(key);
 
-        typeof update !== 'undefined' && this.parent.store();
+        store === true && this.parent.store();
       }
     }
   }
@@ -111,19 +135,8 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       this.type = node.nodeName;
       this.text = node.innerText;
       this.parent = parent;
-      this.edit = new EditConfiguration();
+      this.edit = new EditConfiguration(node);
       this.issues = new Issues(this);
-
-      if (node.dataset.semantilizer) {
-        try {
-          const editConfigData = JSON.parse(node.dataset.semantilizer);
-          this.edit.table = editConfigData.table;
-          this.edit.uid = editConfigData.uid;
-          this.edit.field = editConfigData.field;
-        } catch (e) {
-          typeof console.log === 'function' && console.log(e, 1640904719);
-        }
-      }
 
       // Bind methods
       this.showIssues = this.showIssues.bind(this);
@@ -151,7 +164,7 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
 
     store(callback) {
       if (this.isEditableType()) {
-        return Headline.storeHeadlines([this], callback);
+        Headline.storeHeadlines([this], callback);
       }
     }
 
@@ -164,12 +177,33 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       return null;
     }
 
+    hasRelations() {
+      return this.edit.relationId && this.parent.headlines.filter(headline => headline.edit.relatedTo === this.edit.relationId).length > 0;
+    }
+
+    relatedHeadline() {
+      if(this.edit.relatedTo) {
+        const filtered = this.parent.headlines.filter(headline => headline.edit.relationId === this.edit.relatedTo);
+
+        // Return the last matched headline
+        if(filtered.length) {
+          return filtered[filtered.length - 1];
+        }
+      }
+
+      return null;
+    }
+
+    isRelated() {
+      return this.relatedHeadline() !== null;
+    }
+
     isEditableRecord() {
       return this.edit.table && this.edit.uid;
     }
 
     isEditableType() {
-      return this.isEditableRecord() && this.edit.field;
+      return this.isEditableRecord() && this.edit.field && !this.isRelated();
     }
 
     showIssues() {
@@ -177,7 +211,8 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
     }
 
     static storeHeadlines(headlines, callback) {
-      const parameters = {data: {}};
+      let parameters = {data: {}};
+      let hasRelations = false;
 
       headlines.forEach(headline => {
         if (headline.isEditableType()) {
@@ -189,9 +224,11 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
           parameters.data[table][uid] = {};
           parameters.data[table][uid][field] = headline.type;
         }
+
+        headline.hasRelations() && (hasRelations = true);
       });
 
-      Object.keys(parameters).length && AjaxDataHandler.process(parameters).done(response => typeof callback === 'function' && callback(response));
+      Object.keys(parameters).length && AjaxDataHandler.process(parameters).done(response => typeof callback === 'function' && callback(response, hasRelations));
     }
   }
 

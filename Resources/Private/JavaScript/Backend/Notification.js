@@ -18,8 +18,8 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
           label: translate('notification.fix') + (fixableHeadlines > 1 ? ' (' + fixableHeadlines + ')' : ''),
           action: new ImmediateAction(() => {
             this.headlines.forEach(headline => headline.issues.fix(this.key));
-            Headline.storeHeadlines(this.headlines, () => {
-              typeof callback === 'function' && callback();
+            Headline.storeHeadlines(this.headlines, (response, hasRelations) => {
+              typeof callback === 'function' && callback(hasRelations);
               TYPO3Notification.success(translate('notification.fixed.title'), translate('notification.' + this.key + '.title'), 4);
             });
           })
@@ -76,7 +76,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
 
     showIssue(key) {
       this.parent.notifications.hideAll();
-      new IssueMessage(key, this.parent.headlines.filter(headline => headline.issues.has(key))).render(this.parent.validate);
+      new IssueMessage(key, this.parent.headlines.filter(headline => headline.issues.has(key))).render(hasRelations => this.parent.revalidate(hasRelations));
     }
 
     showIssues() {
@@ -87,7 +87,7 @@ define(['TYPO3/CMS/Backend/Notification', 'TYPO3/CMS/Backend/ActionButton/Immedi
         keys[issue.key].push(headline);
       }));
 
-      Object.keys(keys).forEach(key => new IssueMessage(key, keys[key]).render(this.parent.validate));
+      Object.keys(keys).forEach(key => new IssueMessage(key, keys[key]).render(hasRelations => this.parent.revalidate(hasRelations)));
     }
 
     hideAll() {

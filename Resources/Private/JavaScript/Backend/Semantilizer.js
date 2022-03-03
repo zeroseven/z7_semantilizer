@@ -100,7 +100,9 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/
       this.notifications.autoload.enabled() && this.notifications.showIssues();
     }
 
-    refresh() {
+    refresh(lock) {
+      lock === true && this.module.lockStructure();
+
       this.collect(request => {
         if (request.status === 200) {
           this.validate();
@@ -111,6 +113,16 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/
       });
     }
 
+    revalidate(hard) {
+      if(hard) {
+        this.module.drawStructure();
+        this.notifications.hideAll();
+        this.refresh(true);
+      } else {
+        this.validate();
+      }
+    }
+
     init() {
       this.refresh();
 
@@ -118,10 +130,7 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/
       this.module.loader();
 
       // Watch the sorting of the content elements in the page module
-      require(['jquery', 'jquery-ui/droppable'], $ => $('.t3js-page-ce-dropzone-available').on('drop', () => {
-        this.module.lockStructure();
-        this.refresh();
-      }));
+      require(['jquery', 'jquery-ui/droppable'], $ => $('.t3js-page-ce-dropzone-available').on('drop', () => this.refresh(true)));
     }
   }
 

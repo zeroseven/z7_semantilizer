@@ -82,11 +82,12 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
         const wrap = new Node('div').setBemClassName('listwrap').appendTo(this.element);
         const list = new Node('ul').setBemClassName('list').appendTo(wrap);
 
-        this.parent.headlines.forEach(headline => {
+        this.parent.headlines.forEach((headline, i) => {
           const item = new Node('li').setBemClassName('item', 'level' + headline.type).appendTo(list);
-          const select = new Node('select').setBemClassName('select', 'level' + headline.type).appendTo(item);
 
           if (headline.isEditableType()) {
+            const select = new Node('select').setBemClassName('control', 'level' + headline.type).setAttribute('data-index', i).appendTo(item);
+
             for (let i = 1; i <= 6; i++) {
               let option = new Node('option').setAttributes({value: i}).setContent('H' + i).appendTo(select);
 
@@ -97,11 +98,21 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
 
             select.addEventListener('change', event => {
               headline.type = event.target.options[event.target.selectedIndex].value;
-              headline.store(response => !response.hasErrors && this.parent.validate());
+              headline.store((response, hasRelations) => !response.hasErrors && this.parent.revalidate(hasRelations));
             });
           } else {
-            new Node('option').setContent('H' + headline.type).appendTo(select);
-            select.disabled = 'disabled';
+            const button = new Node('button').setBemClassName('control', 'level' + headline.type).setAttribute('type', 'button').setContent('H' + headline.type).appendTo(item);
+
+            if (headline.isRelated() && headline.relatedHeadline().isEditableType()) {
+              button.setAttribute('data-related-to', headline.edit.relatedTo);
+              button.addEventListener('click', e => {
+                const relations = list.querySelectorAll('[data-index="' + this.parent.headlines.indexOf(headline.relatedHeadline()) + '"]');
+                relations && relations[relations.length - 1].focus();
+                e.preventDefault();
+              });
+            } else {
+              button.disabled = 'disabled';
+            }
           }
 
           const hasIssues = headline.issues.count();
@@ -110,7 +121,10 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
           text.setContent(headline.text).setBemClassName('headline', hasIssues ? 'error' : '').appendTo(item);
 
           if (hasIssues) {
-            const issueInfo = new Node('button').setAttributes({'type': 'button', 'title': translate('overview.notification.show')}).setBemClassName('issue-info').appendTo(item);
+            const issueInfo = new Node('button').setAttributes({
+              'type': 'button',
+              'title': translate('overview.notification.show')
+            }).setBemClassName('issue-info').appendTo(item);
             issueInfo.addEventListener('click', headline.showIssues);
           }
         });
