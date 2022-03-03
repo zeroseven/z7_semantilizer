@@ -8,7 +8,7 @@ class ChildViewHelper extends AbstractRelationViewHelper
 {
     public function render()
     {
-        $type = empty($reference = $this->getReference($this->arguments['of'])) ? 0 : $reference + 1;
+        $type = empty($relationType = $this->getRelation($this->arguments['of'])) ? 0 : $relationType + 1;
 
         return $this->renderHeadline($type);
     }

@@ -84,9 +84,10 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
 
         this.parent.headlines.forEach(headline => {
           const item = new Node('li').setBemClassName('item', 'level' + headline.type).appendTo(list);
-          const select = new Node('select').setBemClassName('select', 'level' + headline.type).appendTo(item);
 
           if (headline.isEditableType()) {
+            const select = new Node('select').setBemClassName('control', 'level' + headline.type).appendTo(item);
+
             for (let i = 1; i <= 6; i++) {
               let option = new Node('option').setAttributes({value: i}).setContent('H' + i).appendTo(select);
 
@@ -101,21 +102,21 @@ define(['TYPO3/CMS/Backend/Icons', 'TYPO3/CMS/Z7Semantilizer/Backend/Translate']
             });
 
             if (headline.hasRelations) {
-              select.setAttribute('data-reference-id', btoa(headline.edit.referenceId));
+              select.setAttribute('data-relation-id', btoa(headline.edit.relationId));
             }
 
           } else {
-            new Node('option').setContent('H' + headline.type).appendTo(select);
+            const button = new Node('button').setBemClassName('control', 'level' + headline.type).setContent('H' + headline.type).appendTo(item);
 
             if (headline.isRelated() && headline.relatedHeadline().isEditableType()) {
-              select.setAttribute('data-related-to', headline.edit.relatedTo);
-              select.addEventListener('click', e => {
-                const references = list.querySelectorAll('[data-reference-id=' + btoa(headline.relatedHeadline().edit.referenceId) + ']');
-                references && references[references.length - 1].focus();
+              button.setAttribute('data-related-to', headline.edit.relatedTo);
+              button.addEventListener('click', e => {
+                const relations = list.querySelectorAll('[data-relation-id=' + btoa(headline.relatedHeadline().edit.relationId) + ']');
+                relations && relations[relations.length - 1].focus();
                 e.preventDefault();
               });
             } else {
-              select.disabled = 'disabled';
+              button.disabled = 'disabled';
             }
           }
 

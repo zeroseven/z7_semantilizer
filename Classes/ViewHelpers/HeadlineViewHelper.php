@@ -15,11 +15,11 @@ class HeadlineViewHelper extends AbstractHeadlineViewHelper
 
     public function render(): string
     {
-        // Fallback reference id
-        if (empty($referenceId = $this->arguments['referenceId']) && ($editSetup = $this->parseEditSetup())) {
-            $referenceId = $editSetup['table'] . ':' . $editSetup['uid'];
+        // Relation id fallback
+        if (empty($relationId = $this->arguments['relationId']) && ($editSetup = $this->parseEditSetup())) {
+            $relationId = $editSetup['table'] . ':' . $editSetup['uid'];
         }
 
-        return $this->renderHeadline((int)$this->arguments['type'], (string)$referenceId);
+        return $this->renderHeadline((int)$this->arguments['type'], (string)$relationId);
     }
 }

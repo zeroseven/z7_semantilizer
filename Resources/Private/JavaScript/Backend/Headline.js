@@ -11,7 +11,7 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
         }
       }
 
-      ['table', 'uid', 'field', 'referenceId', 'relatedTo'].forEach(key => this['_' + key] = editConfigData[key] || null);
+      ['table', 'uid', 'field', 'relationId', 'relatedTo'].forEach(key => this['_' + key] = editConfigData[key] || null);
     }
 
     get table() {
@@ -38,12 +38,12 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
       this._field = (value || '').trim();
     }
 
-    get referenceId() {
-      return this._referenceId;
+    get relationId() {
+      return this._relationId;
     }
 
-    set referenceId(value) {
-      this._referenceId = (value || '').trim();
+    set relationId(value) {
+      this._relationId = (value || '').trim();
     }
 
     get relatedTo() {
@@ -178,12 +178,12 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
     }
 
     hasRelations() {
-      return this.edit.referenceId && this.parent.headlines.filter(headline => headline.edit.relatedTo === this.edit.referenceId).length > 0;
+      return this.edit.relationId && this.parent.headlines.filter(headline => headline.edit.relatedTo === this.edit.relationId).length > 0;
     }
 
     relatedHeadline() {
       if(this.edit.relatedTo) {
-        const filtered = this.parent.headlines.filter(headline => headline.edit.referenceId === this.edit.relatedTo);
+        const filtered = this.parent.headlines.filter(headline => headline.edit.relationId === this.edit.relatedTo);
 
         // Return the last matched headline
         if(filtered.length) {

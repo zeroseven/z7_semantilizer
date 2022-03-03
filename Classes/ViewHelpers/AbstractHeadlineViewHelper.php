@@ -33,7 +33,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         parent::registerUniversalTagAttributes();
 
         $this->registerArgument('content', 'string', 'Header content');
-        $this->registerArgument('referenceId', 'string', 'Reference identifier for child and sibling viewHelpers');
+        $this->registerArgument('relationId', 'string', 'Relation identifier for child and sibling viewHelpers');
         $this->registerArgument('edit', 'string|array', 'Content edit setup (Example "{table:\'tt_content\', uid:data.uid, field:\'header_type\'}" or "tt_content:{data.uid}:header_type")');
     }
 
@@ -106,21 +106,21 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         $this->dataAttributes = array_merge($this->dataAttributes, $data);
     }
 
-    protected function storeReference($referenceId, int $type): void
+    protected function storeRelation($relationId, int $type): void
     {
-        if (!is_array($GLOBALS['USER']['z7_semantilizer']['temporary_structure'] ?? null)) {
-            $GLOBALS['USER']['z7_semantilizer']['temporary_structure'] = [];
+        if (!is_array($GLOBALS['USER']['z7_semantilizer']['temp']['relations'] ?? null)) {
+            $GLOBALS['USER']['z7_semantilizer']['temp']['relations'] = [];
         }
 
-        $GLOBALS['USER']['z7_semantilizer']['temporary_structure'][$referenceId] = $type;
+        $GLOBALS['USER']['z7_semantilizer']['temp']['relations'][$relationId] = $type;
     }
 
-    protected function getReference($referenceId): ?int
+    protected function getRelation($relationId): ?int
     {
-        return $GLOBALS['USER']['z7_semantilizer']['temporary_structure'][$referenceId] ?? null;
+        return $GLOBALS['USER']['z7_semantilizer']['temp']['relations'][$relationId] ?? null;
     }
 
-    protected function renderHeadline(int $type, string $referenceId = null): string
+    protected function renderHeadline(int $type, string $relationId = null): string
     {
         // Set content or abort if empty
         if ($content = trim((string)($this->arguments['content'] ?: $this->renderChildren()))) {
@@ -137,10 +137,10 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
             $this->tag->addAttribute('role', 'heading');
         }
 
-        // Store the reference for sibling and child viewHelpers
-        if ($referenceId !== null || $referenceId = $this->arguments['referenceId']) {
-            $this->addSemantilizerData(['referenceId' => $referenceId]);
-            $this->storeReference($referenceId, $type);
+        // Store the relation for sibling and child viewHelpers
+        if ($relationId !== null || $relationId = $this->arguments['relationId']) {
+            $this->addSemantilizerData(['relationId' => $relationId]);
+            $this->storeRelation($relationId, $type);
         }
 
         // Add data attributes if the user is logged in and the Semantilizer has accessed the page

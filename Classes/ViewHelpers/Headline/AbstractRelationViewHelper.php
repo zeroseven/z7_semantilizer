@@ -12,13 +12,13 @@ class AbstractRelationViewHelper extends AbstractHeadlineViewHelper
     {
         parent::initializeArguments();
 
-        $this->registerArgument('of', 'string', 'Reference id', true);
+        $this->registerArgument('of', 'string', 'Relation id', true);
     }
 
-    protected function renderHeadline(int $type, string $referenceId = null): string
+    protected function renderHeadline(int $type, string $relationId = null): string
     {
         $this->addSemantilizerData(['relatedTo' => $this->arguments['of']]);
 
-        return parent::renderHeadline($type, $referenceId);
+        return parent::renderHeadline($type, $relationId);
     }
 }
