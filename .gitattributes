@@ -7,6 +7,7 @@
 /.nvmrc export-ignore
 /.satisinclude export-ignore
 /.php_cs export-ignore
+/.php-cs-fixer.php export-ignore
 /gulpfile.js export-ignore
 /package.json export-ignore
 /package-lock.json export-ignore
