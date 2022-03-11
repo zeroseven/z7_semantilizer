@@ -1,0 +1,1 @@
+"use strict";define(function(){return function(n){return TYPO3.lang[n]||n}});

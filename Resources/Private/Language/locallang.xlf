@@ -12,67 +12,62 @@
 			<trans-unit id="overview.description">
 				<source>This is a semantic overview of all the used headlines on the current page:</source>
 			</trans-unit>
-			<trans-unit id="overview.showNotifications">
+			<trans-unit id="overview.notification.show">
+				<source>Show notification</source>
+			</trans-unit>
+			<trans-unit id="overview.notifications.on">
 				<source>Show notifications</source>
 			</trans-unit>
-			<trans-unit id="overview.hideNotifications">
+			<trans-unit id="overview.notifications.off">
 				<source>Hide notifications</source>
 			</trans-unit>
-			<trans-unit id="overview.orderChanged">
-				<source>The order has been changed.</source>
+			<trans-unit id="overview.loading">
+				<source>Loading ...</source>
 			</trans-unit>
-			<trans-unit id="overview.refresh">
-				<source>Reload the overview</source>
+			<trans-unit id="overview.update">
+				<source>Structure will be updated ...</source>
 			</trans-unit>
-			<trans-unit id="overview.fixIt">
-				<source>Fix it</source>
-			</trans-unit>
-
-			<trans-unit id="notification.affectedElements">
-				<source>Affected content elements</source>
-			</trans-unit>
-			<trans-unit id="notification.fixIt">
-				<source>Fix it</source>
+			<trans-unit id="overview.error">
+				<source>An error occurred while parsing the heading structure. The content of this page could not be loaded.</source>
 			</trans-unit>
 
-			<trans-unit id="notification.1.title">
+			<trans-unit id="notification.fixed.title">
+				<source>Heading structure has been fixed:</source>
+			</trans-unit>
+			<trans-unit id="notification.close">
+				<source>Close message</source>
+			</trans-unit>
+			<trans-unit id="notification.fix">
+				<source>Fix issue</source>
+			</trans-unit>
+
+			<trans-unit id="notification.mainHeadingRequired.title">
 				<source>No main headline</source>
 			</trans-unit>
-			<trans-unit id="notification.1.description">
+			<trans-unit id="notification.mainHeadingRequired.description">
 				<source>There's currently no main headline present. For a correct headline structure a main headline (type 'H1') is needed.</source>
 			</trans-unit>
 
-			<trans-unit id="notification.2.title">
+			<trans-unit id="notification.mainHeadingNumber.title">
 				<source>Multiple main headlines</source>
 			</trans-unit>
-			<trans-unit id="notification.2.description">
+			<trans-unit id="notification.mainHeadingNumber.description">
 				<source>It's recommended to only use one main headline (type 'H1') per page.</source>
 			</trans-unit>
 
-			<trans-unit id="notification.3.title">
+			<trans-unit id="notification.mainHeadingPosition.title">
 				<source>Positioning of main headline</source>
 			</trans-unit>
-			<trans-unit id="notification.3.description">
+			<trans-unit id="notification.mainHeadingPosition.description">
 				<source>It's recommended to mark the first headline of a page as the main headline (type 'H1'). Currently it's at the wrong position.</source>
 			</trans-unit>
 
-			<trans-unit id="notification.4.title">
+			<trans-unit id="notification.headingStructure.title">
 				<source>Invalid headline hierarchy</source>
 			</trans-unit>
-			<trans-unit id="notification.4.description">
+			<trans-unit id="notification.headingStructure.description">
 				<source>An error in the headline hierarchy has been detected. For a correct semantic distinction of the page, a H1 should be followed by a H2, a H2 should be followed by a H3 and so on.</source>
 			</trans-unit>
-
-			<trans-unit id="widget.title">
-				<source>Check heading structure</source>
-			</trans-unit>
-			<trans-unit id="widget.description">
-				<source>Display potential errors in the structuring of headlines and gives easy fixing options.</source>
-			</trans-unit>
-			<trans-unit id="widget.congratulation">
-				<source>No discrepancies were found in the structure of the headings.</source>
-			</trans-unit>
-
 		</body>
 	</file>
 </xliff>

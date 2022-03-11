@@ -12,65 +12,61 @@
 			<trans-unit id="overview.description">
 				<target>Dies ist eine semantische Übersicht der verwendeten Überschriften auf der aktuellen Seite:</target>
 			</trans-unit>
-			<trans-unit id="overview.showNotifications">
-				<target>Hinweise einblenden</target>
+			<trans-unit id="overview.notification.show">
+				<target>Hinweis einblenden</target>
 			</trans-unit>
-			<trans-unit id="overview.hideNotifications">
-				<target>Hinweise ausblenden</target>
+			<trans-unit id="overview.notifications.on">
+				<target>Hinweise anzeigen</target>
 			</trans-unit>
-			<trans-unit id="overview.orderChanged">
-				<target>Die Reihenfolge wurde verändert.</target>
+			<trans-unit id="overview.notifications.off">
+				<target>Hinweise verbergen</target>
 			</trans-unit>
-			<trans-unit id="overview.refresh">
-				<target>Übersicht aktualisieren</target>
+			<trans-unit id="overview.loading">
+				<target>Wird geladen ...</target>
 			</trans-unit>
-			<trans-unit id="overview.fixIt">
+			<trans-unit id="overview.update">
+				<target>Struktur wird aktualisiert ...</target>
+			</trans-unit>
+			<trans-unit id="overview.error">
+				<target>Beim Analysieren der Überschriftenstruktur ist ein Fehler aufgetreten. Der Inhalt dieser Seite konnte nicht geladen werden.</target>
+			</trans-unit>
+
+			<trans-unit id="notification.fixed.title">
+				<target>Struktur wurde korrigiert:</target>
+			</trans-unit>
+			<trans-unit id="notification.close">
+				<target>Hinweis ausblenden</target>
+			</trans-unit>
+			<trans-unit id="notification.fix">
 				<target>Fehler beheben</target>
 			</trans-unit>
 
-			<trans-unit id="notification.affectedElements">
-				<target>Betroffene Content-Elemente</target>
-			</trans-unit>
-			<trans-unit id="notification.fixIt">
-				<target>Fehler beheben</target>
-			</trans-unit>
-
-			<trans-unit id="notification.1.title">
+			<trans-unit id="notification.mainHeadingRequired.title">
 				<target>Keine Hauptüberschrift</target>
 			</trans-unit>
-			<trans-unit id="notification.1.description">
+			<trans-unit id="notification.mainHeadingRequired.description">
 				<target>Für diese Seite ist aktuell keine Hauptüberschrift vorhanden. Für einen korrekten Aufbau der Überschriften wird eine Hauptüberschrift (Typ: "H1") benötigt.</target>
 			</trans-unit>
 
-			<trans-unit id="notification.2.title">
+			<trans-unit id="notification.mainHeadingNumber.title">
 				<target>Mehrere Hauptüberschriften</target>
 			</trans-unit>
-			<trans-unit id="notification.2.description">
+			<trans-unit id="notification.mainHeadingNumber.description">
 				<target>Es wird empfohlen nur eine Hauptüberschrift (Typ: "H1") pro Seite zu verwenden.</target>
 			</trans-unit>
 
-			<trans-unit id="notification.3.title">
+			<trans-unit id="notification.mainHeadingPosition.title">
 				<target>Positionierung der Hauptüberschrift</target>
 			</trans-unit>
-			<trans-unit id="notification.3.description">
+			<trans-unit id="notification.mainHeadingPosition.description">
 				<target>Es wird empfohlen die erste Überschrift der Seite als die Hauptüberschrift (Typ: "H1") auszuzeichnen. Aktuell steht diese an falscher Stelle.</target>
 			</trans-unit>
 
-			<trans-unit id="notification.4.title">
+			<trans-unit id="notification.headingStructure.title">
 				<target>Ungültige Überschriften-Hierarchie</target>
 			</trans-unit>
-			<trans-unit id="notification.4.description">
+			<trans-unit id="notification.headingStructure.description">
 				<target>Es wurde ein Fehler in der Hierarchie der Überschriften festgestellt. Für eine korrekte semantische Auszeichnung einer Seite soll auf eine H1 eine H2 folgen, nach einer H2 eine H3 usw.</target>
-			</trans-unit>
-
-			<trans-unit id="widget.title">
-				<source>Überprüfung der Überschriftenstruktur</source>
-			</trans-unit>
-			<trans-unit id="widget.description">
-				<source>Zeigt potenzielle Fehler in der Überschriftenstruktur und zeigt einfach Möglichkeiten zur Behebung.</source>
-			</trans-unit>
-			<trans-unit id="widget.congratulation">
-				<source>Es wurden keine Fehler in der Struktur der Überschriften entdeckt.</source>
 			</trans-unit>
 		</body>
 	</file>
