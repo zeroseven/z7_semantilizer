@@ -182,11 +182,11 @@ define(['TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Z7Semantilizer/Backend/C
     }
 
     relatedHeadline() {
-      if(this.edit.relatedTo) {
+      if (this.edit.relatedTo) {
         const filtered = this.parent.headlines.filter(headline => headline.edit.relationId === this.edit.relatedTo);
 
         // Return the last matched headline
-        if(filtered.length) {
+        if (filtered.length) {
           return filtered[filtered.length - 1];
         }
       }

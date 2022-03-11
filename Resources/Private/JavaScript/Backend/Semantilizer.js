@@ -114,7 +114,7 @@ define(['TYPO3/CMS/Z7Semantilizer/Backend/Converter', 'TYPO3/CMS/Z7Semantilizer/
     }
 
     revalidate(hard) {
-      if(hard) {
+      if (hard) {
         this.module.drawStructure();
         this.notifications.hideAll();
         this.refresh(true);
