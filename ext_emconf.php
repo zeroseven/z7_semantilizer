@@ -2,7 +2,7 @@
 
 $EM_CONF[$_EXTKEY] = [
     'title' => 'The semantilizer',
-    'description' => 'Gives more semantic control for the headlines of the content elements.',
+    'description' => 'Simplify your semantic heading structure.',
     'category' => 'fe',
     'author' => 'Raphael Thanner',
     'author_email' => 'r.thanner@zeroseven.de',
