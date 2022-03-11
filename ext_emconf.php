@@ -1,7 +1,7 @@
 <?php
 
 $EM_CONF[$_EXTKEY] = [
-    'title' => 'The semantilizer',
+    'title' => 'The Semantilizer',
     'description' => 'Simplify your semantic heading structure.',
     'category' => 'fe',
     'author' => 'Raphael Thanner',
@@ -12,7 +12,7 @@ $EM_CONF[$_EXTKEY] = [
     'uploadfolder' => 0,
     'createDirs' => '',
     'clearCacheOnLoad' => 1,
-    'version' => '2.2.0',
+    'version' => '3.0.0',
     'constraints' => [
         'depends' => [
             'typo3' => '10.4.0-11.5.99'
