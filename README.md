@@ -49,16 +49,16 @@ about the current headlines.
 
 ```html
 
-<html xmlns:semantilzer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:semantilizer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" data-namespace-typo3-fluid="true">
 
-    <semantilzer:headline edit="{table: 'tt_content', uid: '{data.uid}', field: 'header_type'}" type="{data.header_type}">
+    <semantilizer:headline edit="{table: 'tt_content', uid: '{data.uid}', field: 'header_type'}" type="{data.header_type}">
         {data.header}
-    </semantilzer:headline>
+    </semantilizer:headline>
 
     <!-- Shorter syntax based on the syntax of TypoScript function getText:DB (https://docs.typo3.org/m/typo3/reference-typoscript/main/en-us/DataTypes/Properties/GetText.html#db) -->
-    <semantilzer:headline edit="tt_content:{data.uid}:header_type" type="{data.header_type}">
+    <semantilizer:headline edit="tt_content:{data.uid}:header_type" type="{data.header_type}">
         {data.header}
-    </semantilzer:headline>
+    </semantilizer:headline>
 
 </html>
 ```
@@ -100,12 +100,12 @@ connected headlines instead of making them hierarchical.
 
 ```html
 
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:semantilzer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" data-namespace-typo3-fluid="true">
-    <semantilzer:headline type="{data.header_type}" relationId="product{data.uid}" class="content-header">{data.header}</semantilzer:headline>
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:semantilizer="http://typo3.org/ns/Zeroseven/Semantilizer/ViewHelpers" data-namespace-typo3-fluid="true">
+    <semantilizer:headline type="{data.header_type}" relationId="product{data.uid}" class="content-header">{data.header}</semantilizer:headline>
 
     <f:for each="products" as="product">
         <div>
-            <semantilzer:headline.child of="product{data.uid}" class="product-title">{product.header}</semantilzer:headline.child>
+            <semantilizer:headline.child of="product{data.uid}" class="product-title">{product.header}</semantilizer:headline.child>
             <p>{product.description}</p>
         </div>
     </f:for>
