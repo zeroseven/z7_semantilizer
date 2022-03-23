@@ -80,8 +80,5 @@
       "web-dir": ".Build",
       "extension-key": "z7_semantilizer"
     }
-  },
-  "replace": {
-    "zeroseven/z7-semantilizer": "self.version"
   }
 }
