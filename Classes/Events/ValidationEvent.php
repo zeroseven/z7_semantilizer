@@ -12,6 +12,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
+use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\AbstractTemplateView;
@@ -113,13 +114,16 @@ class ValidationEvent
         $this->pageRenderer->addCssFile('EXT:z7_semantilizer/Resources/Public/Css/Backend/Styles.css');
         $this->pageRenderer->addInlineLanguageLabelFile('EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf', 'overview');
         $this->pageRenderer->addInlineLanguageLabelFile('EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf', 'notification');
-        $this->pageRenderer->addJsInlineCode(self::class, sprintf('
-            document.addEventListener("DOMContentLoaded", function(){
-                require(["TYPO3/CMS/Z7Semantilizer/Backend/Semantilizer"], function(Semantilizer) {
-                    TYPO3.Semantilizer = top.TYPO3.Semantilizer = new Semantilizer(%s, %s, %s);
-                });
-            });
-        ', $url, $id, $contentSelectors));
+        $this->pageRenderer->addJsFooterFile('EXT:z7_semantilizer/Resources/Public/JavaScript/Backend/Main.js', null, false);
+        $this->pageRenderer->loadJavaScriptModule('@zeroseven/semantilizer/main.js');
+
+//        $this->pageRenderer->getJavaScriptRenderer()->addJavaScriptModuleInstruction(
+//            JavaScriptModuleInstruction::create('@zeroseven/semantilizer/main.js')
+//        );
+
+//        $this->pageRenderer->addJsFooterInlineCode(self::class, sprintf('
+//            instanceSemantilizer(instance => (top.TYPO3.Semantilizer = instance), %s, %s, %s);
+//        ', $url, $id, $contentSelectors));
 
         // Clear frontend cache
         $this->clearCache();
