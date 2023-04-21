@@ -1,20 +1,24 @@
 <?php
 
-namespace Zeroseven\Semantilizer\Hooks;
+declare(strict_types=1);
 
+namespace Zeroseven\Semantilizer\Events;
+
+use JsonException;
+use Psr\Http\Message\UriInterface;
+use TYPO3\CMS\Backend\Controller\Event\ModifyPageLayoutContentEvent;
+use TYPO3\CMS\Backend\Routing\PreviewUriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Core\Routing\UnableToLinkToPageException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\AbstractTemplateView;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use Zeroseven\Semantilizer\Utility\TsConfigUtility;
 
-class DrawHeaderHook
+class ValidationEvent
 {
-    /** @var array */
     protected const IGNORED_DOKTYPES = [
         PageRepository::DOKTYPE_LINK,
         PageRepository::DOKTYPE_SHORTCUT,
@@ -25,35 +29,42 @@ class DrawHeaderHook
         PageRepository::DOKTYPE_RECYCLER
     ];
 
-    /** @var string */
-    protected $identifier;
-
-    /** @var PageRenderer */
-    protected $pageRenderer;
-
-    /** int */
-    protected $pageUid;
-
-    /** int */
-    protected $languageUid;
-
-    /** @var array */
-    protected $tsConfig;
+    protected string $identifier;
+    protected PageRenderer $pageRenderer;
+    protected int $pageUid;
+    protected int $languageUid;
+    protected array $tsConfig;
 
     public function __construct()
     {
         $this->identifier = uniqid('js-', false);
         $this->pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        $this->pageUid = (int)GeneralUtility::_GP('id');
+        $this->pageUid = (int)($_GET['id'] ?? 0);
         $this->languageUid = (int)(BackendUtility::getModuleData([], null, 'web_layout')['language'] ?? 0);
-        $this->tsConfig = TsConfigUtility::getTsConfig($this->pageUid);
+        $this->tsConfig = $this->getTsConfig();
+    }
+
+    private function getTsConfig(): array
+    {
+        if ($pagesTsConfig = BackendUtility::getPagesTSconfig($this->pageUid)) {
+            return $pagesTsConfig['tx_semantilizer.'] ?? [];
+        }
+
+        return [];
     }
 
     private function getPageData(): ?array
     {
-        return $this->languageUid > 0 ?
-            (BackendUtility::getRecordLocalization('pages', $this->pageUid, $this->languageUid)[0]) :
-            (BackendUtility::readPageAccess($this->pageUid, true) ?: null);
+        if ($this->languageUid > 0) {
+            return BackendUtility::getRecordLocalization('pages', $this->pageUid, $this->languageUid)[0] ?? null;
+        }
+
+        return BackendUtility::readPageAccess($this->pageUid, true) ?: null;
+    }
+
+    private function getPreviewUrl(): ?UriInterface
+    {
+        return GeneralUtility::makeInstance(PreviewUriBuilder::class, $this->pageUid)->buildUri();
     }
 
     private function skipSemantilizer(): bool
@@ -67,18 +78,17 @@ class DrawHeaderHook
             || empty($this->tsConfig)
 
             // The "doktype" must not be disabled
-            || in_array((int)$pageData['doktype'], array_merge(self::IGNORED_DOKTYPES, GeneralUtility::intExplode(',', $this->tsConfig['disabledDoktypes'])), true)
+            || in_array((int)($pageData['doktype'] ?? 0), array_merge(self::IGNORED_DOKTYPES, GeneralUtility::intExplode(',', ($this->tsConfig['disabledDoktypes'] ?? ''))), true)
 
             // The page uid must not be disabled
-            || in_array($this->pageUid, GeneralUtility::intExplode(',', $this->tsConfig['disabledPages']), true);
+            || in_array($this->pageUid, GeneralUtility::intExplode(',', ($this->tsConfig['disabledPages'] ?? '')), true);
     }
 
-    private function getPreviewUrl(): ?string
+    private function clearCache(): void
     {
         try {
-            return BackendUtility::getPreviewUrl($this->pageUid, '', null, '', '', $this->languageUid > 0 ? '&L=' . $this->languageUid : '');
-        } catch (UnableToLinkToPageException $e) {
-            return null;
+            GeneralUtility::makeInstance(CacheManager::class)->flushCachesInGroupByTags('pages', ['pageId_' . $this->pageUid]);
+        } catch (NoSuchCacheGroupException $e) {
         }
     }
 
@@ -91,20 +101,13 @@ class DrawHeaderHook
         return $view;
     }
 
-    public function render(): string
+    /** @throws JsonException */
+    private function render(): string
     {
-        // Skip rendering
-        if ($this->skipSemantilizer()) {
-            return '';
-        }
-
-        // Clear the frontend page cache
-        GeneralUtility::makeInstance(CacheManager::class)->flushCachesInGroupByTags('pages', ['pageId_' . $this->pageUid]);
-
         // Define JavaScript parameters
-        $url = GeneralUtility::quoteJSvalue($this->getPreviewUrl());
+        $url = GeneralUtility::quoteJSvalue((string)$this->getPreviewUrl());
         $id = GeneralUtility::quoteJSvalue($this->identifier);
-        $contentSelectors = json_encode(GeneralUtility::trimExplode(',', $this->tsConfig['contentSelectors']));
+        $contentSelectors = json_encode(GeneralUtility::trimExplode(',', ($this->tsConfig['contentSelectors'] ?? '')), JSON_THROW_ON_ERROR);
 
         // Configure page renderer
         $this->pageRenderer->addCssFile('EXT:z7_semantilizer/Resources/Public/Css/Backend/Styles.css');
@@ -118,7 +121,16 @@ class DrawHeaderHook
             });
         ', $url, $id, $contentSelectors));
 
+        // Clear frontend cache
+        $this->clearCache();
+
         // Render view
         return $this->createView()->render();
+    }
+
+    /** @throws JsonException */
+    public function __invoke(ModifyPageLayoutContentEvent $event): void
+    {
+        $this->skipSemantilizer() || $event->addHeaderContent($this->render());
     }
 }

@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Zeroseven\Semantilizer\:
+    resource: '../Classes/*'
+
+  Zeroseven\Semantilizer\Events\ValidationEvent:
+    tags:
+      - name: event.listener
+        identifier: 'zeroseven/z7-semantilizer/modify-page-module-content'
