@@ -6,9 +6,9 @@ namespace Zeroseven\Semantilizer\ViewHelpers\Headline;
 
 class SiblingViewHelper extends AbstractRelationViewHelper
 {
-    public function render()
+    public function render(): string
     {
-        $type = $this->getRelation($this->arguments['of']) ?: 0;
+        $type = $this->getRelation($this->arguments['of']) ?? 0;
 
         return $this->renderHeadline($type);
     }
