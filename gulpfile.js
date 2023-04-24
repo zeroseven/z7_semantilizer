@@ -19,11 +19,11 @@ gulp.task('Scss', done => {
 });
 
 gulp.task('JavaScript', () => browserify({
-    basedir: ".",
+    basedir: './Resources/Private/JavaScript/Backend/',
     debug: true,
-    entries: ['./Resources/Private/JavaScript/Backend/Semantilizer.ts'],
+    entries: ['main.ts'],
     cache: {},
-    packageCache: {},
+    packageCache: {}
   })
     .plugin(tsify)
     .transform('babelify', {

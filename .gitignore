@@ -1,5 +1,4 @@
 /node_modules
 .php_cs.cache
-/.Build
 /composer.lock
-/var
+/Resources/Private/JavaScript/Backend/Lib

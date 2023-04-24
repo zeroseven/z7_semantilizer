@@ -1,82 +1,97 @@
 {
 	"files": [
-		"src/main.ts"
+		"main.ts"
 	],
 	"compilerOptions": {
+		"target": "es2020",
+		"allowSyntheticDefaultImports": true,
+		"incremental": true,
+		"tsBuildInfoFile": "./Resources/Private/JavaScript/Backend/Lib/tsconfig.tsbuildinfo",
+		"module": "es2020",
+		"moduleResolution": "node",
+		"sourceMap": false,
+		"removeComments": false,
+		"alwaysStrict": true,
+		"downlevelIteration": true,
+		"experimentalDecorators": true,
+		"useDefineForClassFields": false,
 		"noImplicitAny": true,
-		"target": "es2015"
-	},
-	"baseUrl": "Resources/Private/JavaScript",
-	"paths": {
-		"@typo3/backend/*": [
-			"../../../../../../../../../vendor/typo3/cms-backend/Resources/Public/JavaScript/*"
-		],
-		"@typo3/belog/*": [
-			"../../../../../../../../vendor/typo3/cms-belog/Resources/Public/JavaScript/*"
-		],
-		"@typo3/beuser/*": [
-			"../../../../../../../../vendor/typo3/cms-beuser/Resources/Public/JavaScript/*"
-		],
-		"@typo3/core/*": [
-			"../../../../../../../../vendor/typo3/cms-core/Resources/Public/JavaScript/*"
-		],
-		"@typo3/dashboard/*": [
-			"../../../../../../../../vendor/typo3/cms-dashboard/Resources/Public/JavaScript/*"
-		],
-		"@typo3/extensionmanager/*": [
-			"../../../../../../../../vendor/typo3/cms-extensionmanager/Resources/Public/JavaScript/*"
-		],
-		"@typo3/filelist/*": [
-			"../../../../../../../../vendor/typo3/cms-filelist/Resources/Public/JavaScript/*"
-		],
-		"@typo3/form/*": [
-			"../../../../../../../../vendor/typo3/cms-form/Resources/Public/JavaScript/*"
-		],
-		"@typo3/impexp/*": [
-			"../../../../../../../../vendor/typo3/cms-impexp/Resources/Public/JavaScript/*"
-		],
-		"@typo3/info/*": [
-			"../../../../../../../../vendor/typo3/cms-info/Resources/Public/JavaScript/*"
-		],
-		"@typo3/install/*": [
-			"../../../../../../../../vendor/typo3/cms-install/Resources/Public/JavaScript/*"
-		],
-		"@typo3/linkvalidator/*": [
-			"../../../../../../../../vendor/typo3/cms-linkvalidator/Resources/Public/JavaScript/*"
-		],
-		"@typo3/lowlevel/*": [
-			"../../../../../../../../vendor/typo3/cms-lowlevel/Resources/Public/JavaScript/*"
-		],
-		"@typo3/opendocs/*": [
-			"../../../../../../../../vendor/typo3/cms-opendocs/Resources/Public/JavaScript/*"
-		],
-		"@typo3/recycler/*": [
-			"../../../../../../../../vendor/typo3/cms-recycler/Resources/Public/JavaScript/*"
-		],
-		"@typo3/redirects/*": [
-			"../../../../../../../../vendor/typo3/cms-redirects/Resources/Public/JavaScript/*"
-		],
-		"@typo3/rte-ckeditor/*": [
-			"../../../../../../../../vendor/typo3/cms-rte_ckeditor/Resources/Public/JavaScript/*"
-		],
-		"@typo3/scheduler/*": [
-			"../../../../../../../../vendor/typo3/cms-scheduler/Resources/Public/JavaScript/*"
-		],
-		"@typo3/setup/*": [
-			"../../../../../../../../vendor/typo3/cms-setup/Resources/Public/JavaScript/*"
-		],
-		"@typo3/t3editor/*": [
-			"../../../../../../../../vendor/typo3/cms-t3editor/Resources/Public/JavaScript/*"
-		],
-		"@typo3/tstemplate/*": [
-			"../../../../../../../../vendor/typo3/cms-tstemplate/Resources/Public/JavaScript/*"
-		],
-		"@typo3/viewpage/*": [
-			"../../../../../../../../vendor/typo3/cms-viewpage/Resources/Public/JavaScript/*"
-		],
-		"@typo3/workspaces/*": [
-			"../../../../../../../../vendor/typo3/cms-workspaces/Resources/Public/JavaScript/*"
-		]
+		"noImplicitThis": true,
+		"noImplicitReturns": true,
+		"pretty": true,
+		"suppressImplicitAnyIndexErrors": true,
+		"baseUrl": "./Resources/Private/JavaScript/Backend",
+		"paths": {
+			"@typo3/backend/*": [
+				"./Lib/TYPO3/backend/*"
+			],
+			"@typo3/belog/*": [
+				"./Lib/TYPO3/belog/*"
+			],
+			"@typo3/beuser/*": [
+				"./Lib/TYPO3/beuser/*"
+			],
+			"@typo3/core/*": [
+				"./Lib/TYPO3/core/*"
+			],
+			"@typo3/dashboard/*": [
+				"./Lib/TYPO3/dashboard/*"
+			],
+			"@typo3/extensionmanager/*": [
+				"./Lib/TYPO3/extensionmanager/*"
+			],
+			"@typo3/filelist/*": [
+				"./Lib/TYPO3/filelist/*"
+			],
+			"@typo3/form/*": [
+				"./Lib/TYPO3/form/*"
+			],
+			"@typo3/impexp/*": [
+				"./Lib/TYPO3/impexp/*"
+			],
+			"@typo3/info/*": [
+				"./Lib/TYPO3/info/*"
+			],
+			"@typo3/install/*": [
+				"./Lib/TYPO3/install/*"
+			],
+			"@typo3/linkvalidator/*": [
+				"./Lib/TYPO3/linkvalidator/*"
+			],
+			"@typo3/lowlevel/*": [
+				"./Lib/TYPO3/lowlevel/*"
+			],
+			"@typo3/opendocs/*": [
+				"./Lib/TYPO3/opendocs/*"
+			],
+			"@typo3/recycler/*": [
+				"./Lib/TYPO3/recycler/*"
+			],
+			"@typo3/redirects/*": [
+				"./Lib/TYPO3/redirects/*"
+			],
+			"@typo3/rte-ckeditor/*": [
+				"./Lib/TYPO3/rte_ckeditor/*"
+			],
+			"@typo3/scheduler/*": [
+				"./Lib/TYPO3/scheduler/*"
+			],
+			"@typo3/setup/*": [
+				"./Lib/TYPO3/setup/*"
+			],
+			"@typo3/t3editor/*": [
+				"./Lib/TYPO3/t3editor/*"
+			],
+			"@typo3/tstemplate/*": [
+				"./Lib/TYPO3/tstemplate/*"
+			],
+			"@typo3/viewpage/*": [
+				"./Lib/TYPO3/viewpage/*"
+			],
+			"@typo3/workspaces/*": [
+				"./Lib/TYPO3/workspaces/*"
+			]
+		}
 	}
 }
 
