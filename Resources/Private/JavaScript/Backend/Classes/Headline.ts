@@ -1,188 +1,69 @@
-class EditConfiguration {
-  constructor(node) {
-    let editConfigData = {};
-
-    if (node.dataset.semantilizer) {
-      try {
-        editConfigData = JSON.parse(node.dataset.semantilizer);
-      } catch (e) {
-        typeof console.log === 'function' && console.log(e, 1640904719);
-      }
-    }
-
-    ['table', 'uid', 'field', 'relationId', 'relatedTo'].forEach(key => this['_' + key] = editConfigData[key] || null);
-  }
-
-  get table() {
-    return this._table;
-  }
-
-  set table(value) {
-    this._table = (value || '').trim();
-  }
-
-  get uid() {
-    return this._uid;
-  }
-
-  set uid(value) {
-    this._uid = Converter.toInteger(value);
-  }
-
-  get field() {
-    return this._field;
-  }
-
-  set field(value) {
-    this._field = (value || '').trim();
-  }
-
-  get relationId() {
-    return this._relationId;
-  }
-
-  set relationId(value) {
-    this._relationId = (value || '').trim();
-  }
-
-  get relatedTo() {
-    return this._relatedTo;
-  }
-
-  set relatedTo(value) {
-    this._relatedTo = (value || '').trim();
-  }
-}
-
-class Issue {
-  constructor(key, fix) {
-    this.key = key;
-    this.fix = fix;
-  }
-}
-
-class Issues {
-  static mainHeadingRequired = 'mainHeadingRequired';
-  static mainHeadingNumber = 'mainHeadingNumber';
-  static mainHeadingPosition = 'mainHeadingPosition';
-  static headingStructure = 'headingStructure';
-
-  constructor(parent) {
-    this.list = {};
-    this.list[Issues.mainHeadingRequired] = null;
-    this.list[Issues.mainHeadingNumber] = null;
-    this.list[Issues.mainHeadingPosition] = null;
-    this.list[Issues.headingStructure] = null;
-
-    this.parent = parent;
-  }
-
-  count() {
-    let count = 0;
-
-    Object.keys(this.list).forEach(key => (count += this.list[key] ? 1 : 0));
-
-    return count;
-  }
-
-  empty() {
-    return this.count() === 0;
-  }
-
-  add(key, fix) {
-    if (this.list[key] !== 'undefined') {
-      this.list[key] = new Issue(key, fix);
-    } else {
-      console.warn('Not allowed error key "' + key + '"', 1641814278);
-    }
-  }
-
-  each(callback) {
-    return Object.keys(this.list).filter(key => this.list[key]).forEach(key => callback(this.list[key], key));
-  }
-
-  get(key) {
-    return this.list[key] || null;
-  }
-
-  has(key) {
-    return this.get(key) !== null;
-  }
-
-  remove(key) {
-    this.list[key] = null;
-  }
-
-  clear() {
-    Object.keys(this.list).forEach(key => this.list[key] = null);
-  }
-
-  fix(key, store) {
-    const issue = this.get(key);
-
-    if (issue && issue.fix && this.parent.isEditableType()) {
-      this.parent.type = issue.fix;
-      this.remove(key);
-
-      store === true && this.parent.store();
-    }
-  }
-}
+import {Semantilizer} from "@zeroseven/semantilizer/Semantilizer.js";
+import {EditConfiguration} from "@zeroseven/semantilizer/EditConfiguration.js";
+import {Issues} from "@zeroseven/semantilizer/Issues.js";
+import {Cast} from "@zeroseven/semantilizer/Cast.js";
+import AjaxDataHandler from "@typo3/backend/ajax-data-handler.js";
+import ResponseInterface from '@typo3/backend/ajax-data-handler/response-interface.js';
 
 export class Headline {
-  constructor(node, parent) {
-    this.type = node.nodeName;
-    this.text = node.innerText;
+  private readonly parent: Semantilizer;
+  public readonly edit: EditConfiguration;
+  public readonly issues: Issues;
+  public _type: number;
+  public _text: string;
+
+  constructor(node: HTMLElement, parent: Semantilizer) {
     this.parent = parent;
     this.edit = new EditConfiguration(node);
     this.issues = new Issues(this);
+    this.type = node.nodeName.replace(/[^0-9]/, '');
+    this.text = Cast.string(node.innerText);
 
     // Bind methods
     this.showIssues = this.showIssues.bind(this);
   }
 
-  get type() {
+  public get type(): number {
     return this._type;
   }
 
-  set type(type) {
-    this._type = Math.min(Math.max(Converter.toInteger(type), 1), 6);
-
-    return this;
+  public set type(type: any) {
+    this._type = Math.min(Math.max(Cast.integer(type), 1), 6);
   }
 
-  get text() {
+  public get text(): string {
     return this._text;
   }
 
-  set text(value) {
+  public set text(value: string) {
     this._text = value.trim();
-
-    return this;
   }
 
-  store(callback) {
+  public store(callback?: (response: ResponseInterface, hasRelations: boolean) => any): void {
     if (this.isEditableType()) {
       Headline.storeHeadlines([this], callback);
     }
   }
 
-  getEditUrl() {
+  public getEditUrl(): string | null {
     if (this.isEditableRecord()) {
-      const returnUrl = encodeURIComponent(top.list_frame.document.location.pathname + top.list_frame.document.location.search);
-      return top.TYPO3.settings.FormEngine.moduleUrl + '&edit[' + this.edit.table + '][' + this.edit.uid + ']=edit&returnUrl=' + returnUrl;
+      // @ts-ignore
+      const returnUrl = encodeURIComponent(window.top.list_frame.document.location.pathname + window.top.list_frame.document.location.search);
+
+      // @ts-ignore
+      return window.top.TYPO3.settings.FormEngine.moduleUrl + '&edit[' + this.edit.table + '][' + this.edit.uid + ']=edit&returnUrl=' + returnUrl;
     }
 
     return null;
   }
 
-  hasRelations() {
-    return this.edit.relationId && this.parent.headlines.filter(headline => headline.edit.relatedTo === this.edit.relationId).length > 0;
+  public hasRelations(): boolean {
+    return this.edit.relationId && this.parent.headlines.filter((headline: Headline) => headline.edit.relatedTo === this.edit.relationId).length > 0;
   }
 
-  relatedHeadline() {
+  public relatedHeadline(): Headline | null {
     if (this.edit.relatedTo) {
-      const filtered = this.parent.headlines.filter(headline => headline.edit.relationId === this.edit.relatedTo);
+      const filtered = this.parent.headlines.filter((headline: Headline) => headline.edit.relationId === this.edit.relatedTo);
 
       // Return the last matched headline
       if (filtered.length) {
@@ -193,24 +74,24 @@ export class Headline {
     return null;
   }
 
-  isRelated() {
+  public isRelated(): boolean {
     return this.relatedHeadline() !== null;
   }
 
-  isEditableRecord() {
-    return this.edit.table && this.edit.uid;
+  public isEditableRecord(): boolean {
+    return this.edit.table && this.edit.uid > 0;
   }
 
-  isEditableType() {
+  public isEditableType(): boolean {
     return this.isEditableRecord() && this.edit.field && !this.isRelated();
   }
 
-  showIssues() {
+  public showIssues(): void {
     this.issues.count() && this.issues.each((issue, key) => this.parent.notifications.showIssue(key));
   }
 
-  static storeHeadlines(headlines, callback) {
-    let parameters = {data: {}};
+  public static storeHeadlines(headlines: Headline[], callback?: (response: ResponseInterface, hasRelations: boolean) => any) {
+    let parameters = {data: {} as {[key: string]: any}};
     let hasRelations = false;
 
     headlines.forEach(headline => {
@@ -227,6 +108,6 @@ export class Headline {
       headline.hasRelations() && (hasRelations = true);
     });
 
-    Object.keys(parameters).length && AjaxDataHandler.process(parameters).done(response => typeof callback === 'function' && callback(response, hasRelations));
+    Object.keys(parameters).length && AjaxDataHandler.process(parameters).then(response => typeof callback === 'function' && callback(response, hasRelations));
   }
 }

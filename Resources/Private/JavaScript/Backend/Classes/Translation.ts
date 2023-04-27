@@ -1,7 +1,5 @@
-import {Semantilizer} from "../Semantilizer";
-
 export class Translation {
-  translate(key) {
+  static translate(key: string) {
     return window.TYPO3.lang[key] || key;
   }
 }

@@ -106,24 +106,18 @@ class ValidationEvent
     private function render(): string
     {
         // Define JavaScript parameters
-        $url = GeneralUtility::quoteJSvalue((string)$this->getPreviewUrl());
-        $id = GeneralUtility::quoteJSvalue($this->identifier);
-        $contentSelectors = json_encode(GeneralUtility::trimExplode(',', ($this->tsConfig['contentSelectors'] ?? '')), JSON_THROW_ON_ERROR);
+        $url = (string)$this->getPreviewUrl();
+        $id = $this->identifier;
+        $contentSelectors = GeneralUtility::trimExplode(',', ($this->tsConfig['contentSelectors'] ?? ''));
 
         // Configure page renderer
         $this->pageRenderer->addCssFile('EXT:z7_semantilizer/Resources/Public/Css/Backend/Styles.css');
         $this->pageRenderer->addInlineLanguageLabelFile('EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf', 'overview');
         $this->pageRenderer->addInlineLanguageLabelFile('EXT:z7_semantilizer/Resources/Private/Language/locallang.xlf', 'notification');
-        $this->pageRenderer->addJsFooterFile('EXT:z7_semantilizer/Resources/Public/JavaScript/Backend/Main.js', null, false);
-        $this->pageRenderer->loadJavaScriptModule('@zeroseven/semantilizer/main.js');
 
-//        $this->pageRenderer->getJavaScriptRenderer()->addJavaScriptModuleInstruction(
-//            JavaScriptModuleInstruction::create('@zeroseven/semantilizer/main.js')
-//        );
-
-//        $this->pageRenderer->addJsFooterInlineCode(self::class, sprintf('
-//            instanceSemantilizer(instance => (top.TYPO3.Semantilizer = instance), %s, %s, %s);
-//        ', $url, $id, $contentSelectors));
+        // Load module
+        $target = JavaScriptModuleInstruction::create('@zeroseven/semantilizer/Semantilizer.js', 'Semantilizer')->instance($url, $id, ...$contentSelectors);
+        $this->pageRenderer->getJavaScriptRenderer()->addJavaScriptModuleInstruction($target);
 
         // Clear frontend cache
         $this->clearCache();

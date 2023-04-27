@@ -2,9 +2,9 @@ const gulp = require('gulp');
 const sass = require('gulp-sass')(require('sass'));
 const autoprefixer = require('gulp-autoprefixer');
 const cleanCss = require('gulp-clean-css');
-const browserify = require('browserify');
-const source = require('vinyl-source-stream');
-const tsify = require('tsify');
+const ts = require('gulp-typescript');
+const tsProject = ts.createProject('tsconfig.json');
+const uglify = require('gulp-uglify');
 
 gulp.task('Scss', done => {
   gulp.src(['./Resources/Private/Scss/**/*.scss'])
@@ -18,21 +18,15 @@ gulp.task('Scss', done => {
   done();
 });
 
-gulp.task('JavaScript', () => browserify({
-    basedir: './Resources/Private/JavaScript/Backend/',
-    debug: true,
-    entries: ['main.ts'],
-    cache: {},
-    packageCache: {}
-  })
-    .plugin(tsify)
-    .transform('babelify', {
-      presets: ["es2015"],
-      extensions: [".ts"]
-    })
-    .bundle()
-    .pipe(source('main.js'))
-    .pipe(gulp.dest('./Resources/Public/JavaScript/Backend/')));
+gulp.task('JavaScript', () => tsProject.src()
+  .pipe(tsProject()).on('error', () => {})
+  .js.pipe(uglify(process.env.GULP_CONTEXT !== 'development' ? {} : {
+    compress: false,
+    mangle: false,
+    output: {
+      beautify: true
+    }
+  })).pipe(gulp.dest('./Resources/Public/JavaScript/Backend/')));
 
 gulp.task('watchScss', done => {
   gulp.watch('./Resources/Private/Scss/**/*.scss', gulp.series('Scss'));

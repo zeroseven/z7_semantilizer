@@ -1,9 +1,14 @@
 {
 	"files": [
-		"main.ts"
+		"./Resources/Private/JavaScript/Backend/main.ts",
+		"./Resources/Private/JavaScript/Backend/Classes/*"
+	],
+	"exclude": [
+		"node_modules",
+		"Resources/Private/JavaScript/Backend/Lib/TYPO3/backend"
 	],
 	"compilerOptions": {
-		"target": "es2020",
+		"target": "es2017",
 		"allowSyntheticDefaultImports": true,
 		"incremental": true,
 		"tsBuildInfoFile": "./Resources/Private/JavaScript/Backend/Lib/tsconfig.tsbuildinfo",
@@ -19,9 +24,11 @@
 		"noImplicitThis": true,
 		"noImplicitReturns": true,
 		"pretty": true,
-		"suppressImplicitAnyIndexErrors": true,
-		"baseUrl": "./Resources/Private/JavaScript/Backend",
+		"baseUrl": "./Resources/Private/JavaScript/Backend/",
 		"paths": {
+			"@zeroseven/semantilizer/*": [
+				"./Classes/*"
+			],
 			"@typo3/backend/*": [
 				"./Lib/TYPO3/backend/*"
 			],

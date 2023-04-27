@@ -1,77 +1,79 @@
-import {Node} from "./Node";
-import {Translation} from "./Translation";
+import {Semantilizer} from "@zeroseven/semantilizer/Semantilizer.js";
+import {Node} from "@zeroseven/semantilizer/Node.js";
+import {Translation} from "@zeroseven/semantilizer/Translation.js";
+import Icons from "@typo3/backend/Icons.js";
 
 export class Module {
-  element;
-  parent;
+  private readonly element: HTMLElement;
+  private readonly parent: Semantilizer;
+  private wrap: HTMLElement;
 
-  constructor(element, parent) {
+  constructor(element: HTMLElement, parent: Semantilizer) {
     this.element = element;
     this.parent = parent;
 
     this.init();
   }
 
-  clearContent(node) {
+  private clearContent(node?: HTMLElement): void {
     let firstChild;
     while (firstChild = (node || this.element).firstElementChild) {
       (node || this.element).removeChild(firstChild);
     }
   }
 
-  drawDescription() {
+  private drawDescription(): void {
     if (this.parent.headlines.length) {
-      new Node('p').setContent(Translation.translate('overview.description')).appendTo(this.element);
+      Node.create('p').setContent(Translation.translate('overview.description')).appendTo(this.element);
     }
   }
 
-  drawList() {
+  private drawList(): void {
     if (this.parent.headlines.length) {
-      const wrap = new Node('div').setBemClassName('listwrap').appendTo(this.element);
-      const list = new Node('ul').setBemClassName('list').appendTo(wrap);
+      const wrap = Node.create('div').setBemClassName('listwrap').appendTo(this.element);
+      const list = Node.create('ul').setBemClassName('list').appendTo(wrap);
 
       this.parent.headlines.forEach((headline, i) => {
-        const item = new Node('li').setBemClassName('item', 'level' + headline.type).appendTo(list);
+        const item = Node.create('li').setBemClassName('item', 'level' + headline.type).appendTo(list);
 
         if (headline.isEditableType()) {
-          const select = new Node('select').setBemClassName('control', 'level' + headline.type).setAttribute('data-index', i).appendTo(item);
+          const select = Node.create('select').setBemClassName('control', 'level' + headline.type).addAttribute('data-index', i)
+            .addEventListener('change', (event: Event) => {
+              headline.type = (event.target as HTMLSelectElement).options[(event.target as HTMLSelectElement).selectedIndex].value;
+              headline.store((response, hasRelations) => !response.hasErrors && this.parent.revalidate(hasRelations));
+            }).appendTo(item) as HTMLSelectElement;
 
           for (let i = 1; i <= 6; i++) {
-            let option = new Node('option').setAttributes({value: i}).setContent('H' + i).appendTo(select);
+            let option = Node.create('option').addAttributes({value: i}).setContent('H' + i).appendTo(select) as HTMLOptionElement;
 
             if (headline.type === i) {
               option.selected = true;
             }
           }
-
-          select.addEventListener('change', event => {
-            headline.type = event.target.options[event.target.selectedIndex].value;
-            headline.store((response, hasRelations) => !response.hasErrors && this.parent.revalidate(hasRelations));
-          });
         } else {
-          const button = new Node('button').setBemClassName('control', 'level' + headline.type).setAttribute('type', 'button').setContent('H' + headline.type).appendTo(item);
+          const button = Node.create('button').setBemClassName('control', 'level' + headline.type).addAttribute('type', 'button').setContent('H' + headline.type).appendTo(item) as HTMLButtonElement;
 
           if (headline.isRelated() && headline.relatedHeadline().isEditableType()) {
             button.setAttribute('data-related-to', headline.edit.relatedTo);
-            button.addEventListener('click', e => {
+            button.addEventListener('click', (event: MouseEvent) => {
               const relations = list.querySelectorAll('[data-index="' + this.parent.headlines.indexOf(headline.relatedHeadline()) + '"]');
-              relations && relations[relations.length - 1].focus();
-              e.preventDefault();
+              relations && (relations[relations.length - 1] as HTMLElement).focus();
+              event.preventDefault();
             });
           } else {
-            button.disabled = 'disabled';
+            button.disabled = true;
           }
         }
 
         const hasIssues = headline.issues.count();
-        const text = headline.isEditableRecord() ? new Node('a').setAttribute('href', headline.getEditUrl()) : new Node('span');
+        const text = headline.isEditableRecord() ? Node.create('a').addAttribute('href', headline.getEditUrl()) : Node.create('span');
 
         text.setContent(headline.text).setBemClassName('headline', hasIssues ? 'error' : '').appendTo(item);
 
         if (hasIssues) {
-          const issueInfo = new Node('button').setAttributes({
+          const issueInfo = Node.create('button').addAttributes({
             'type': 'button',
-            'title': translate('overview.notification.show')
+            'title': Translation.translate('overview.notification.show')
           }).setBemClassName('issue-info').appendTo(item);
           issueInfo.addEventListener('click', headline.showIssues);
         }
@@ -79,23 +81,23 @@ export class Module {
 
       this.wrap = wrap;
     } else {
-      new Node('p').setContent(translate('overview.empty')).appendTo(this.element);
+      Node.create('p').setContent(Translation.translate('overview.empty')).appendTo(this.element);
     }
   }
 
-  drawNotificationToggle() {
-    const enabled = this.parent.notifications.autoload.enabled();
+  private drawNotificationToggle(): void {
+    const enabled = this.parent.notification.autoload.enabled();
 
     Icons.getIcon(enabled ? 'actions-toggle-on' : 'actions-toggle-off', Icons.sizes.small).then(icon => {
-      const toggle = new Node('button').setAttribute('type', 'button').setContent(translate(enabled ? 'overview.notifications.on' : 'overview.notifications.off')).setBemClassName('notifications-toggle').appendTo(this.element);
+      const toggle = Node.create('button').addAttribute('type', 'button').setContent(Translation.translate(enabled ? 'overview.notifications.on' : 'overview.notifications.off')).setBemClassName('notifications-toggle').appendTo(this.element);
       toggle.insertAdjacentHTML('afterbegin', icon + ' ');
       toggle.addEventListener('click', () => {
         if (enabled) {
-          this.parent.notifications.hideAll();
-          this.parent.notifications.autoload.disable();
+          this.parent.notification.hideAll();
+          this.parent.notification.autoload.disable();
         } else {
-          this.parent.notifications.showIssues();
-          this.parent.notifications.autoload.enable();
+          this.parent.notification.showIssues();
+          this.parent.notification.autoload.enable();
         }
 
         this.element.removeChild(toggle);
@@ -104,32 +106,32 @@ export class Module {
     });
   }
 
-  lockStructure() {
-    this.parent.notifications.hideAll();
+  public lockStructure(): void {
+    this.parent.notification.hideAll();
 
-    const overlay = new Node('div').setBemClassName('lock').appendTo(this.wrap);
-    new Node('span').setBemClassName('lock-message').setContent(translate('overview.update')).appendTo(overlay);
+    const overlay = Node.create('div').setBemClassName('lock').appendTo(this.wrap);
+    Node.create('span').setBemClassName('lock-message').setContent(Translation.translate('overview.update')).appendTo(overlay);
   }
 
-  drawStructure() {
+  public drawStructure(): void {
     this.clearContent();
     this.drawDescription();
     this.drawList();
     this.drawNotificationToggle();
   }
 
-  drawError() {
+  public drawError(): void {
     this.clearContent();
-    new Node('p').setContent(translate('overview.error')).appendTo(this.element);
+    Node.create('p').setContent(Translation.translate('overview.error')).appendTo(this.element);
   }
 
-  loader() {
+  public loader(): void {
     Icons.getIcon('spinner-circle', Icons.sizes.small).then(icon => {
-      this.element.insertAdjacentHTML('beforeend', icon + '<span style="margin-left: 0.3em">' + translate('overview.loading') + '</span>');
+      this.element.insertAdjacentHTML('beforeend', icon + '<span style="margin-left: 0.3em">' + Translation.translate('overview.loading') + '</span>');
     });
   }
 
-  init() {
+  private init(): void {
     this.clearContent();
   }
 }

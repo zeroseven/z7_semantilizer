@@ -1,55 +1,93 @@
-export class Node {
-  private readonly element: HTMLDivElement;
+import {Cast} from "@zeroseven/semantilizer/Cast.js";
 
-  constructor(nodeType) {
+export class Node {
+  private readonly element: HTMLElement;
+
+  constructor(nodeType?: string) {
     this.element = document.createElement(nodeType || 'div');
 
     return this;
   }
 
-  setAttribute(attribute, value) {
-    this.element.setAttribute(attribute, value);
-
-    return this;
-  }
-
-  setAttributes(object) {
-    Object.keys(object).forEach(key => this.setAttribute(key, object[key]));
-
-    return this;
-  }
-
-  setStyles(styles) {
-    if (this.element && styles) {
-      Object.keys(styles).forEach(attribute => {
-        this.element.style[attribute] = styles[attribute];
-      });
+  public addAttribute(attribute: string, value: string | number | boolean): this {
+    if (value !== null && typeof value !== 'undefined') {
+      this.element.setAttribute(attribute, Cast.string(value));
     }
 
     return this;
   }
 
-  setClassName(className) {
+  public addAttributes(object: object): this {
+    Object.keys(object).forEach(key => this.addAttribute(key, (object as any)[key]));
+
+    return this;
+  }
+
+  public addEventListener(event: string, func: EventListenerOrEventListenerObject): this {
+    this.element.addEventListener(event, func);
+
+    return this;
+  }
+
+  public setStyle(attribute: string, value: string): this {
+    (this.element.style[attribute] as any) = value;
+
+    return this;
+  }
+
+  public setStyles(styles: { [attribute: string]: string }): this {
+    styles && Object.keys(styles).forEach(attribute => {
+      this.setStyle(attribute, styles[attribute]);
+    });
+
+    return this;
+  }
+
+  public addClassName(className: string): this {
+    this.element.classList.add(className);
+
+    return this;
+  }
+
+  public setClassName(className: string): this {
     this.element.className = className;
 
     return this;
   }
 
-  setBemClassName(element, modifier, block) {
-    return this.setClassName((block || 'semantilizer') + (element ? ('__' + element) : '') + (modifier ? ('--' + modifier) : ''));
+  public setBemClassName(element?: string, modifier?: string): this {
+    return this.setClassName('semantilizer' + (element ? ('__' + element) : '') + (modifier ? ('--' + modifier) : ''));
   }
 
-  setContent(string) {
-    this.element.innerHTML = string;
+  public setContent(content: string | number, nl2br?: boolean): this {
+    let text = Cast.string(content);
+
+    if (nl2br === true) {
+      text = text.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    }
+
+    this.element.innerHTML = text;
 
     return this;
   }
 
-  appendTo(parent) {
+  public prependTo(parent: Element | HTMLElement): HTMLElement {
+    return parent.insertBefore(this.render(), parent.firstChild);
+  }
+
+  public appendTo(parent: Element | HTMLElement): HTMLElement {
     return parent.appendChild(this.render());
   }
 
-  render() {
+  public insertBefore(target: Element | HTMLElement): HTMLElement {
+    return (target.parentElement || document.body).insertBefore(this.render(), target);
+  }
+
+  public render(): HTMLElement {
     return this.element;
+  }
+
+  public static create(nodeType?: string): Node {
+    return new Node(nodeType);
   }
 }

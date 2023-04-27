@@ -1,24 +1,26 @@
-import {Headline} from "./Headline";
-import {Module} from "./Module";
-import {Notification} from "./Notification";
-import {Converter} from "./Converter";
+import {Headline} from "@zeroseven/semantilizer/Headline.js";
+import {Module} from "@zeroseven/semantilizer/Module.js";
+import {Notification} from "@zeroseven/semantilizer/Notification.js";
+import {Cast} from "@zeroseven/semantilizer/Cast.js";
+import {Issues} from "@zeroseven/semantilizer/Issues.js";
 
 declare global {
   interface Window {
     TYPO3: any[]
+    list_frame: any[]
   }
 }
 
 export class Semantilizer {
-  private readonly url: string;
-  private readonly contentSelectors: any[];
+  public readonly url: string;
+  public readonly contentSelectors: string[];
   public readonly module: Module;
   public readonly notification: Notification;
-  public readonly headlines = Headline[];
+  public readonly headlines: Headline[];
 
-  constructor(url: string, elementId: string, contentSelectors: string[]) {
+  constructor(url: string, elementId: string, ...contentSelectors: string[]) {
     this.url = url;
-    this.contentSelectors = Converter.toArray(contentSelectors);
+    this.contentSelectors = Cast.array(contentSelectors || 'body');
     this.module = new Module(document.getElementById(elementId), this);
     this.notification = new Notification(this);
     this.headlines = [];
@@ -29,7 +31,7 @@ export class Semantilizer {
     this.init();
   }
 
-  private collect(callback): void {
+  private collect(callback: (request: XMLHttpRequest) => any): void {
     let request = new XMLHttpRequest();
 
     // Clear headlines
@@ -45,7 +47,7 @@ export class Semantilizer {
 
           // Find headlines in contents
           this.contentSelectors.map(selector => doc.querySelector(selector)).filter(container => container).forEach(container => {
-            this.headlines.push(...Converter.toArray((container || doc).querySelectorAll('h1, h2, h3, h4, h5, h6')).map(node => new Headline(node, this)));
+            this.headlines.push(...Cast.array((container || doc).querySelectorAll('h1, h2, h3, h4, h5, h6')).map(node => new Headline(node, this)));
           });
         }
 
@@ -69,23 +71,23 @@ export class Semantilizer {
       const mainHeadlines = this.headlines.filter(headline => headline.type === 1);
 
       if (mainHeadlines.length === 0) {
-        firstHeadline.issues.add('mainHeadingRequired', 1);
+        firstHeadline.issues.add(Issues.mainHeadingRequired, 1);
       }
 
       if (mainHeadlines.length > 1) {
         this.headlines.forEach((headline, i) => {
           if (headline.type === 1) {
-            headline.issues.add('mainHeadingNumber', i ? 2 : null);
+            headline.issues.add(Issues.mainHeadingNumber, i ? 2 : null);
           }
         });
       }
 
       if (mainHeadlines.length === 1 && firstHeadline.type !== 1) {
-        firstHeadline.issues.add('mainHeadingPosition', 1);
+        firstHeadline.issues.add(Issues.mainHeadingPosition, 1);
 
         this.headlines.forEach((headline, i) => {
           if (i && headline.type === 1) {
-            headline.issues.add('mainHeadingPosition', 2);
+            headline.issues.add(Issues.mainHeadingPosition, 2);
           }
         });
       }
@@ -94,7 +96,7 @@ export class Semantilizer {
     const validateStructure = () => {
       this.headlines.forEach((headline, i) => {
         if (i && headline.type > this.headlines[i - 1].type + 1) {
-          headline.issues.add('headingStructure');
+          headline.issues.add(Issues.headingStructure);
         }
       });
     };
@@ -125,8 +127,8 @@ export class Semantilizer {
     });
   }
 
-  private revalidate(hard): void {
-    if (hard) {
+  public revalidate(hard?: boolean): void {
+    if (hard === true) {
       this.module.drawStructure();
       this.notification.hideAll();
       this.refresh(true);
