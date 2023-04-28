@@ -19,6 +19,7 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-uglify": "^3.0.2",
+    "interactjs": "^1.10.17",
     "lit": "^2.7.2",
     "sass": "^1.62.0",
     "tsify": "^5.0.4"

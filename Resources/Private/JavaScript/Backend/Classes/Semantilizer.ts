@@ -3,6 +3,7 @@ import {Module} from "@zeroseven/semantilizer/Module.js";
 import {Notification} from "@zeroseven/semantilizer/Notification.js";
 import {Cast} from "@zeroseven/semantilizer/Cast.js";
 import {Issues} from "@zeroseven/semantilizer/Issues.js";
+import interact from 'interactjs';
 
 declare global {
   interface Window {
@@ -144,6 +145,6 @@ export class Semantilizer {
     this.module.loader();
 
     // Watch the sorting of the content elements in the page module
-    // TODO: require(['jquery', 'jquery-ui/droppable'], $ => $('.t3js-page-ce-dropzone-available').on('drop', () => this.refresh(true)));
+    interact('.t3js-page-ce-sortable').draggable({onend: () => this.refresh(true)})
   }
 }
