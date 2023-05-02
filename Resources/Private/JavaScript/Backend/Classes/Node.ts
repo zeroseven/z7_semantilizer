@@ -29,8 +29,8 @@ export class Node {
     return this;
   }
 
-  public setStyle(attribute: string, value: string): this {
-    (this.element.style[attribute] as any) = value;
+  public setStyle(attribute: string, value: any): this {
+    this.element.style[attribute] = Cast.string(value);
 
     return this;
   }

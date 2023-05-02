@@ -1,44 +1,9 @@
 import {Semantilizer} from "@zeroseven/semantilizer/Semantilizer.js";
-import {Headline} from "@zeroseven/semantilizer/Headline.js";
 import {Translation} from "@zeroseven/semantilizer/Translation.js";
 import {Cast} from "@zeroseven/semantilizer/Cast.js";
+import {Issue} from "@zeroseven/semantilizer/Issue.js";
 import TYPO3Notification from "@typo3/backend/notification.js";
 import ImmediateAction from "@typo3/backend/action-button/immediate-action.js";
-
-class IssueMessage {
-  private readonly key: string;
-  private readonly headlines: Headline[];
-
-  constructor(key: string, headlines: Headline[]) {
-    this.key = key;
-    this.headlines = headlines || [];
-  }
-
-  addHeadline(headline: Headline) {
-    this.headlines.push(headline);
-  }
-
-  render(callback: (hasRealtions: boolean) => any) {
-    const fixableHeadlines = this.headlines.filter(headline => headline.isEditableType() && headline.issues.get(this.key).fix).length;
-    const buttons = [];
-
-    if (fixableHeadlines) {
-      buttons.push({
-        label: Translation.translate('notification.fix') + (fixableHeadlines > 1 ? ' (' + fixableHeadlines + ')' : ''),
-        action: new ImmediateAction(() => {
-          this.headlines.forEach(headline => headline.issues.fix(this.key));
-          Headline.storeHeadlines(this.headlines, (response, hasRelations) => {
-            typeof callback === 'function' && callback(hasRelations);
-            TYPO3Notification.success(Translation.translate('notification.fixed.title'), Translation.translate('notification.' + this.key + '.title'), 4);
-          });
-        })
-      });
-    }
-
-    const layout = this.key === 'mainHeadingNumber' ? 'info' : 'warning';
-    TYPO3Notification[layout](Translation.translate('notification.' + this.key + '.title'), Translation.translate('notification.' + this.key + '.description'), 10, buttons);
-  }
-}
 
 class State {
   private readonly key: string;
@@ -87,24 +52,36 @@ export class Notification {
     return this;
   }
 
-  public showIssue(key: string): void {
-    this.parent.notification.hideAll();
-    new IssueMessage(key, this.parent.headlines.filter(headline => headline.issues.has(key))).render(hasRelations => this.parent.revalidate(hasRelations));
+  public showIssue(issue: Issue): void {
+    this.hideAll();
+
+    const relatedIssues = this.parent.issues.filter(relation => relation.key === issue.key);
+    const buttons = [];
+
+    if (relatedIssues.filter(issue => issue.suggestion && issue.headline.isEditableType()).length) {
+      buttons.push({
+        label: Translation.translate('notification.fix'),
+        action: new ImmediateAction(() => {
+            relatedIssues.forEach(issue => issue.fix(false));
+
+            this.parent.update(response => TYPO3Notification.success(Translation.translate('notification.fixed.title'), Translation.translate('notification.' + issue.key + '.title'), 4));
+          }
+        )
+      });
+    }
+
+    const layout = issue.key === 'mainHeadingNumber' ? 'info' : 'warning';
+    TYPO3Notification[layout](Translation.translate('notification.' + issue.key + '.title'), Translation.translate('notification.' + issue.key + '.description'), 10, buttons);
   }
 
   public showIssues(): void {
-    const keys = {};
-
-    this.parent.headlines.filter(headline => headline.issues.count()).forEach(headline => headline.issues.each(issue => {
-      keys[issue.key] = keys[issue.key] || [];
-      keys[issue.key].push(headline);
-    }));
-
-    Object.keys(keys).forEach(key => new IssueMessage(key, keys[key]).render(hasRelations => this.parent.revalidate(hasRelations)));
+    const firstIssue = this.parent.issues[0];
+    firstIssue && this.showIssue(firstIssue);
   }
 
   public hideAll(): void {
-    let container = window.TYPO3 && window.TYPO3.Notification && window.TYPO3.Notification.messageContainer ? window.TYPO3.Notification.messageContainer : 'null';
+    // @ts-ignore
+    let container = (window.top.TYPO3 && window.top.TYPO3.Notification && window.top.TYPO3.Notification.messageContainer) ? window.top.TYPO3.Notification.messageContainer : 'null';
 
     container && Cast.array(container.childNodes).forEach(message => container.removeChild(message));
   }

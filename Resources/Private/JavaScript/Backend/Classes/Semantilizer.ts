@@ -2,7 +2,9 @@ import {Headline} from "@zeroseven/semantilizer/Headline.js";
 import {Module} from "@zeroseven/semantilizer/Module.js";
 import {Notification} from "@zeroseven/semantilizer/Notification.js";
 import {Cast} from "@zeroseven/semantilizer/Cast.js";
-import {Issues} from "@zeroseven/semantilizer/Issues.js";
+import {Issue} from "@zeroseven/semantilizer/Issue.js";
+import AjaxDataHandler from "@typo3/backend/ajax-data-handler.js";
+import ResponseInterface from '@typo3/backend/ajax-data-handler/response-interface.js';
 import interact from 'interactjs';
 
 declare global {
@@ -18,6 +20,7 @@ export class Semantilizer {
   public readonly module: Module;
   public readonly notification: Notification;
   public readonly headlines: Headline[];
+  public readonly issues: Issue[];
 
   constructor(url: string, elementId: string, ...contentSelectors: string[]) {
     this.url = url;
@@ -25,6 +28,7 @@ export class Semantilizer {
     this.module = new Module(document.getElementById(elementId), this);
     this.notification = new Notification(this);
     this.headlines = [];
+    this.issues = [];
 
     // Bind methods
     this.validate = this.validate.bind(this);
@@ -65,30 +69,30 @@ export class Semantilizer {
   }
 
   private validateStructure(): void {
-    this.headlines.forEach(headline => headline.issues.clear());
+    this.issues.length = 0; // Reset issues
 
     const validateMainHeadings = () => {
       const firstHeadline = this.headlines[0];
       const mainHeadlines = this.headlines.filter(headline => headline.type === 1);
 
       if (mainHeadlines.length === 0) {
-        firstHeadline.issues.add(Issues.mainHeadingRequired, 1);
+        this.issues.push(Issue.mainHeadingRequired(firstHeadline, 1));
       }
 
       if (mainHeadlines.length > 1) {
         this.headlines.forEach((headline, i) => {
           if (headline.type === 1) {
-            headline.issues.add(Issues.mainHeadingNumber, i ? 2 : null);
+            this.issues.push(Issue.mainHeadingNumber(headline, i ? 2 : null));
           }
         });
       }
 
       if (mainHeadlines.length === 1 && firstHeadline.type !== 1) {
-        firstHeadline.issues.add(Issues.mainHeadingPosition, 1);
+        this.issues.push(Issue.mainHeadingPosition(firstHeadline, 1));
 
         this.headlines.forEach((headline, i) => {
           if (i && headline.type === 1) {
-            headline.issues.add(Issues.mainHeadingPosition, 2);
+            this.issues.push(Issue.mainHeadingPosition(headline, 2));
           }
         });
       }
@@ -97,7 +101,7 @@ export class Semantilizer {
     const validateStructure = () => {
       this.headlines.forEach((headline, i) => {
         if (i && headline.type > this.headlines[i - 1].type + 1) {
-          headline.issues.add(Issues.headingStructure);
+          this.issues.push(Issue.headingStructure(headline));
         }
       });
     };
@@ -136,6 +140,37 @@ export class Semantilizer {
     } else {
       this.validate();
     }
+  }
+
+  public update(callback?: (response: ResponseInterface) => any) {
+    const headlines = this.headlines.filter(headline => headline.isModified() && headline.isEditableType());
+    const parameters = {data: {} as { [key: string]: any }};
+    
+    let hasRelations = false;
+
+    headlines.forEach(headline => {
+      const table = headline.edit.table;
+      const uid = headline.edit.uid;
+      const field = headline.edit.field;
+
+      parameters.data[table] = parameters.data[table] || {};
+      parameters.data[table][uid] = {};
+      parameters.data[table][uid][field] = headline.type;
+
+      headline.hasRelations() && (hasRelations = true);
+    });
+
+    Object.keys(parameters).length && AjaxDataHandler.process(parameters).then(response => {
+
+      // Revalidate
+      !response.hasErrors && this.revalidate(hasRelations);
+
+      // Update heading properties
+      headlines.forEach(headline => headline.hasStored());
+
+      // Run callback function
+      typeof callback === 'function' && callback(response);
+    });
   }
 
   private init(): void {

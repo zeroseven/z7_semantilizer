@@ -1,26 +1,25 @@
 import {Semantilizer} from "@zeroseven/semantilizer/Semantilizer.js";
+import {Notification} from "@zeroseven/semantilizer/Notification.js";
 import {EditConfiguration} from "@zeroseven/semantilizer/EditConfiguration.js";
-import {Issues} from "@zeroseven/semantilizer/Issues.js";
+import {Issue} from "@zeroseven/semantilizer/Issue.js";
 import {Cast} from "@zeroseven/semantilizer/Cast.js";
-import AjaxDataHandler from "@typo3/backend/ajax-data-handler.js";
-import ResponseInterface from '@typo3/backend/ajax-data-handler/response-interface.js';
 
 export class Headline {
   private readonly parent: Semantilizer;
   public readonly edit: EditConfiguration;
-  public readonly issues: Issues;
-  public _type: number;
-  public _text: string;
+  private _isModified: boolean;
+  private _type: number;
+  private _text: string;
 
   constructor(node: HTMLElement, parent: Semantilizer) {
     this.parent = parent;
     this.edit = new EditConfiguration(node);
-    this.issues = new Issues(this);
-    this.type = node.nodeName.replace(/[^0-9]/, '');
-    this.text = Cast.string(node.innerText);
+    
+    this._type = Cast.integer(node.nodeName.replace(/[^0-9]/, ''));
+    this._text = Cast.string(node.innerText);
+    this._isModified = false
 
-    // Bind methods
-    this.showIssues = this.showIssues.bind(this);
+    this.showIssue = this.showIssue.bind(this);
   }
 
   public get type(): number {
@@ -29,6 +28,7 @@ export class Headline {
 
   public set type(type: any) {
     this._type = Math.min(Math.max(Cast.integer(type), 1), 6);
+    this._isModified = true;
   }
 
   public get text(): string {
@@ -37,12 +37,6 @@ export class Headline {
 
   public set text(value: string) {
     this._text = value.trim();
-  }
-
-  public store(callback?: (response: ResponseInterface, hasRelations: boolean) => any): void {
-    if (this.isEditableType()) {
-      Headline.storeHeadlines([this], callback);
-    }
   }
 
   public getEditUrl(): string | null {
@@ -55,6 +49,18 @@ export class Headline {
     }
 
     return null;
+  }
+
+  public getIssues(): Issue[] {
+    return this.parent.issues.filter(issue => issue.headline === this);
+  }
+
+  public hasIssues(): boolean {
+    return this.getIssues().length > 0;
+  }
+
+  public showIssue(): void {
+    const issues = this.getIssues().forEach(issue => this.parent.notification.showIssue(issue));
   }
 
   public hasRelations(): boolean {
@@ -86,28 +92,17 @@ export class Headline {
     return this.isEditableRecord() && this.edit.field && !this.isRelated();
   }
 
-  public showIssues(): void {
-    this.issues.count() && this.issues.each((issue, key) => this.parent.notifications.showIssue(key));
+  public isModified(): boolean {
+    return this._isModified;
   }
 
-  public static storeHeadlines(headlines: Headline[], callback?: (response: ResponseInterface, hasRelations: boolean) => any) {
-    let parameters = {data: {} as {[key: string]: any}};
-    let hasRelations = false;
+  public hasStored(): void {
+    this._isModified = false;
+  }
 
-    headlines.forEach(headline => {
-      if (headline.isEditableType()) {
-        const table = headline.edit.table;
-        const uid = headline.edit.uid;
-        const field = headline.edit.field;
+  public update(type?: any): void {
+    type && (this.type = type);
 
-        parameters.data[table] = parameters.data[table] || {};
-        parameters.data[table][uid] = {};
-        parameters.data[table][uid][field] = headline.type;
-      }
-
-      headline.hasRelations() && (hasRelations = true);
-    });
-
-    Object.keys(parameters).length && AjaxDataHandler.process(parameters).then(response => typeof callback === 'function' && callback(response, hasRelations));
+    this.parent.update();
   }
 }

@@ -39,8 +39,8 @@ export class Module {
         if (headline.isEditableType()) {
           const select = Node.create('select').setBemClassName('control', 'level' + headline.type).addAttribute('data-index', i)
             .addEventListener('change', (event: Event) => {
-              headline.type = (event.target as HTMLSelectElement).options[(event.target as HTMLSelectElement).selectedIndex].value;
-              headline.store((response, hasRelations) => !response.hasErrors && this.parent.revalidate(hasRelations));
+              const type = (event.target as HTMLSelectElement).options[(event.target as HTMLSelectElement).selectedIndex].value;
+              headline.update(type);
             }).appendTo(item) as HTMLSelectElement;
 
           for (let i = 1; i <= 6; i++) {
@@ -65,17 +65,16 @@ export class Module {
           }
         }
 
-        const hasIssues = headline.issues.count();
         const text = headline.isEditableRecord() ? Node.create('a').addAttribute('href', headline.getEditUrl()) : Node.create('span');
 
-        text.setContent(headline.text).setBemClassName('headline', hasIssues ? 'error' : '').appendTo(item);
+        text.setContent(headline.text).setBemClassName('headline', headline.hasIssues() ? 'error' : '').appendTo(item);
 
-        if (hasIssues) {
+        if (headline.hasIssues()) {
           const issueInfo = Node.create('button').addAttributes({
             'type': 'button',
             'title': Translation.translate('overview.notification.show')
           }).setBemClassName('issue-info').appendTo(item);
-          issueInfo.addEventListener('click', headline.showIssues);
+          issueInfo.addEventListener('click', headline.showIssue);
         }
       });
 
