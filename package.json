@@ -4,7 +4,7 @@
   "config": {
     "typo3_repository": "https://github.com/TYPO3/typo3.git",
     "typescript_folder": "Build/Sources/TypeScript",
-    "typescript_target": "./Resources/Private/JavaScript/Backend/Lib/TYPO3/"
+    "typescript_target": "./Resources/Private/JavaScript/Backend/TYPO3/"
   },
   "scripts": {
     "load-source": "git clone --no-checkout $npm_package_config_typo3_repository $npm_package_config_typescript_target && cd $npm_package_config_typescript_target && git sparse-checkout set $npm_package_config_typescript_folder && git reset --hard HEAD && mv $npm_package_config_typescript_folder/* .",

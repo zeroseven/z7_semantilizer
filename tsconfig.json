@@ -1,17 +1,19 @@
 {
 	"files": [
-		"./Resources/Private/JavaScript/Backend/main.ts",
-		"./Resources/Private/JavaScript/Backend/Classes/*"
+		"./Resources/Private/JavaScript/Backend/*.ts"
+	],
+	"include": [
+		"./Resources/Private/JavaScript/Backend/*.ts"
 	],
 	"exclude": [
 		"node_modules",
-		"Resources/Private/JavaScript/Backend/Lib/TYPO3/backend"
+		"./Resources/Private/JavaScript/Backend/TYPO3/**/*.ts"
 	],
 	"compilerOptions": {
 		"target": "es2017",
 		"allowSyntheticDefaultImports": true,
 		"incremental": true,
-		"tsBuildInfoFile": "./Resources/Private/JavaScript/Backend/Lib/tsconfig.tsbuildinfo",
+		"tsBuildInfoFile": "./Resources/Private/JavaScript/Backend/tsconfig.tsbuildinfo",
 		"module": "es2020",
 		"moduleResolution": "node",
 		"sourceMap": false,
@@ -27,76 +29,76 @@
 		"baseUrl": "./Resources/Private/JavaScript/Backend/",
 		"paths": {
 			"@zeroseven/semantilizer/*": [
-				"./Classes/*"
+				"*"
 			],
 			"@typo3/backend/*": [
-				"./Lib/TYPO3/backend/*"
+				"./TYPO3/backend/*"
 			],
 			"@typo3/belog/*": [
-				"./Lib/TYPO3/belog/*"
+				"./TYPO3/belog/*"
 			],
 			"@typo3/beuser/*": [
-				"./Lib/TYPO3/beuser/*"
+				"./TYPO3/beuser/*"
 			],
 			"@typo3/core/*": [
-				"./Lib/TYPO3/core/*"
+				"./TYPO3/core/*"
 			],
 			"@typo3/dashboard/*": [
-				"./Lib/TYPO3/dashboard/*"
+				"./TYPO3/dashboard/*"
 			],
 			"@typo3/extensionmanager/*": [
-				"./Lib/TYPO3/extensionmanager/*"
+				"./TYPO3/extensionmanager/*"
 			],
 			"@typo3/filelist/*": [
-				"./Lib/TYPO3/filelist/*"
+				"./TYPO3/filelist/*"
 			],
 			"@typo3/form/*": [
-				"./Lib/TYPO3/form/*"
+				"./TYPO3/form/*"
 			],
 			"@typo3/impexp/*": [
-				"./Lib/TYPO3/impexp/*"
+				"./TYPO3/impexp/*"
 			],
 			"@typo3/info/*": [
-				"./Lib/TYPO3/info/*"
+				"./TYPO3/info/*"
 			],
 			"@typo3/install/*": [
-				"./Lib/TYPO3/install/*"
+				"./TYPO3/install/*"
 			],
 			"@typo3/linkvalidator/*": [
-				"./Lib/TYPO3/linkvalidator/*"
+				"./TYPO3/linkvalidator/*"
 			],
 			"@typo3/lowlevel/*": [
-				"./Lib/TYPO3/lowlevel/*"
+				"./TYPO3/lowlevel/*"
 			],
 			"@typo3/opendocs/*": [
-				"./Lib/TYPO3/opendocs/*"
+				"./TYPO3/opendocs/*"
 			],
 			"@typo3/recycler/*": [
-				"./Lib/TYPO3/recycler/*"
+				"./TYPO3/recycler/*"
 			],
 			"@typo3/redirects/*": [
-				"./Lib/TYPO3/redirects/*"
+				"./TYPO3/redirects/*"
 			],
 			"@typo3/rte-ckeditor/*": [
-				"./Lib/TYPO3/rte_ckeditor/*"
+				"./TYPO3/rte_ckeditor/*"
 			],
 			"@typo3/scheduler/*": [
-				"./Lib/TYPO3/scheduler/*"
+				"./TYPO3/scheduler/*"
 			],
 			"@typo3/setup/*": [
-				"./Lib/TYPO3/setup/*"
+				"./TYPO3/setup/*"
 			],
 			"@typo3/t3editor/*": [
-				"./Lib/TYPO3/t3editor/*"
+				"./TYPO3/t3editor/*"
 			],
 			"@typo3/tstemplate/*": [
-				"./Lib/TYPO3/tstemplate/*"
+				"./TYPO3/tstemplate/*"
 			],
 			"@typo3/viewpage/*": [
-				"./Lib/TYPO3/viewpage/*"
+				"./TYPO3/viewpage/*"
 			],
 			"@typo3/workspaces/*": [
-				"./Lib/TYPO3/workspaces/*"
+				"./TYPO3/workspaces/*"
 			]
 		}
 	}
