@@ -14,3 +14,4 @@
 /node_modules export-ignore
 /Resources/Private/JavaScript/Backend export-ignore
 /Resources/Private/Scss/Backend export-ignore
+/tsconfig.json export-ignore
