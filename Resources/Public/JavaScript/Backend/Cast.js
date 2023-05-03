@@ -1,0 +1,1 @@
+class Cast{static array(t){return t?Array.prototype.slice.call(t):[]}static string(t){return(t||"").toString()}static integer(t){return isNaN(t)?parseInt(t||0):Math.round(t)}}export{Cast};
