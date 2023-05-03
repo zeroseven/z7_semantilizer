@@ -120,14 +120,14 @@ of `[tablename]:[uid]` as `relationId`._
 If you want to make the labels of `header_layouts` more understandable, overwrite them like so:
 
 ```tsconfig
-TCEFORM.tt_content {
-    header_layout {
-      removeItems = 2
-      altLabels.. = Medium
-      altLabels.1 = Larger
-      altLabels.3 = Smaller
-      addItems.pink_sparkling_bouncing_header = 🦄
-    }
+TCEFORM.tt_content.header_layout {
+  removeItems = 1,2,3,4,5,6
+  altLabels.. = Medium
+  addItems {
+    large = Large
+    small = Small
+    pink_sparkling_bouncing_header = 🦄
+  }
 }
 ```
 
