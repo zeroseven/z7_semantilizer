@@ -24,6 +24,9 @@
 			<trans-unit id="overview.loading">
 				<source>Loading ...</source>
 			</trans-unit>
+			<trans-unit id="overview.refresh">
+				<source>Refresh</source>
+			</trans-unit>
 			<trans-unit id="overview.update">
 				<source>Structure will be updated ...</source>
 			</trans-unit>

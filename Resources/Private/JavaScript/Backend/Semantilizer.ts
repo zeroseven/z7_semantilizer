@@ -119,7 +119,7 @@ export class Semantilizer {
     this.notification.autoload.enabled() && this.notification.showIssues();
   }
 
-  private refresh(lock?: boolean): void {
+  public refresh(lock?: boolean): void {
     lock === true && this.module.lockStructure();
 
     this.collect(request => {
@@ -145,7 +145,7 @@ export class Semantilizer {
   public update(callback?: (response: ResponseInterface) => any) {
     const headlines = this.headlines.filter(headline => headline.isModified() && headline.isEditableType());
     const parameters = {data: {} as { [key: string]: any }};
-    
+
     let hasRelations = false;
 
     headlines.forEach(headline => {

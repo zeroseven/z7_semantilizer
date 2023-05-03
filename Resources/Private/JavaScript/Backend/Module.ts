@@ -78,6 +78,10 @@ export class Module {
         }
       });
 
+      Icons.getIcon('actions-refresh', Icons.sizes.small).then(icon => Node.create('button').addAttribute('type', 'button')
+        .addAttribute('title', Translation.translate('overview.refresh')).setContent(icon).setBemClassName('refresh')
+        .addEventListener('click', () => this.parent.refresh(true)).appendTo(this.element));
+
       this.wrap = wrap;
     } else {
       Node.create('p').setContent(Translation.translate('overview.empty')).appendTo(this.element);

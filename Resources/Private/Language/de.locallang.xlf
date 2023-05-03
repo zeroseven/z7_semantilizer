@@ -24,6 +24,9 @@
 			<trans-unit id="overview.loading">
 				<target>Wird geladen ...</target>
 			</trans-unit>
+			<trans-unit id="overview.refresh">
+				<target>Aktualisieren</target>
+			</trans-unit>
 			<trans-unit id="overview.update">
 				<target>Struktur wird aktualisiert ...</target>
 			</trans-unit>
