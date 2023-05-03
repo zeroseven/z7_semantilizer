@@ -133,6 +133,12 @@ TCEFORM.tt_content {
 
 ## Release notes:
 
+### Version 3.1:
+
+* Compatibility with TYPO3 12 (dropped support for TYPO3 10 and 11)
+* Refactored JavaScript, based on TypeScript
+* Working with [ES6 JavaScript modules](https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ApiOverview/Backend/JavaScript/ES6/)
+
 ### Version 3.0:
 
 * Refactored JavaScript based headline validation
