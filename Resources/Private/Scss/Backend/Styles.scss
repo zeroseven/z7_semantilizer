@@ -4,11 +4,11 @@
 @use 'sass:math';
 
 @function strip-unit($number) {
-    @if type-of($number) == 'number' and not unitless($number) {
-        @return math.div($number, $number * 0 + 1);
-    }
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return math.div($number, $number * 0 + 1);
+  }
 
-    @return $number;
+  @return $number;
 }
 
 /*************************************************
@@ -26,187 +26,193 @@ $overview-error-color: #dc3545;
 * Style Semantilizer
 *************************************************/
 .semantilizer__listwrap {
-    position: relative;
-    background: $overview-background-color;
-    border: 1px solid rgba($overview-pattern-color, 0.5);
-    margin: 1px 1px 2em 1px;
+  position: relative;
+  background: $overview-background-color;
+  border: 1px solid rgba($overview-pattern-color, 0.5);
+  margin: 1px 1px 2em 1px;
 }
 
 .semantilizer__list {
-    padding: 0;
-    list-style: none;
-    margin: 1em 1em 3em 3em;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 #{strip-unit($overview-pattern-width)} #{strip-unit($overview-pattern-height)}' xmlns='http://www.w3.org/2000/svg' width='#{strip-unit($overview-pattern-width)}' height='#{strip-unit($overview-pattern-height)}'%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' x2='#{strip-unit($overview-pattern-width) - strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='1' x2='#{strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height)}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3C/svg%3E%0A") repeat top left;
+  padding: 0;
+  list-style: none;
+  margin: 1em 1em 3em 3em;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 #{strip-unit($overview-pattern-width)} #{strip-unit($overview-pattern-height)}' xmlns='http://www.w3.org/2000/svg' width='#{strip-unit($overview-pattern-width)}' height='#{strip-unit($overview-pattern-height)}'%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' x2='#{strip-unit($overview-pattern-width) - strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height) * 0.5 + strip-unit($overview-pattern-stroke) * 0.5}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3Cline x1='#{strip-unit($overview-pattern-stroke) * 0.5}' y1='1' x2='#{strip-unit($overview-pattern-stroke) * 0.5}' y2='#{strip-unit($overview-pattern-height)}' stroke-linecap='round' stroke-width='#{strip-unit($overview-pattern-stroke)}' stroke-dasharray='0,6' stroke='%23888' /%3E%3C/svg%3E%0A") repeat top left;
 }
 
 %semantilizer__item {
-    display: block;
-    margin: 0;
-    padding: 0 1em 0 0;
-    line-height: $overview-pattern-height;
-    height: $overview-pattern-height;
-    background: $overview-background-color;
-    position: relative;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  display: block;
+  margin: 0;
+  padding: 0 1em 0 0;
+  line-height: $overview-pattern-height;
+  height: $overview-pattern-height;
+  background: $overview-background-color;
+  position: relative;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 
-    &:last-child {
-        height: math.div($overview-pattern-height, 2) + $overview-pattern-stroke;
-    }
+  &:last-child {
+    height: math.div($overview-pattern-height, 2) + $overview-pattern-stroke;
+  }
 }
 
 @for $i from 1 through 6 {
-    .semantilizer__item--level#{$i} {
-        @extend %semantilizer__item;
+  .semantilizer__item--level#{$i} {
+    @extend %semantilizer__item;
 
-        margin-left: $overview-pattern-width * ($i - 1) + math.div($overview-control-width, - 2);
-    }
+    margin-left: $overview-pattern-width * ($i - 1) + math.div($overview-control-width, - 2);
+  }
 }
 
 %semantilizer__control {
-    $height: 18px;
+  $height: 18px;
 
-    display: inline-block;
-    appearance: none;
-    border: none;
-    border-radius: 3px;
-    margin: 0 $overview-pattern-width - $overview-control-width 0 0;
-    padding: 0 0 0 5px;
-    text-align: left;
-    color: #fff;
-    font-size: round($height * 0.6);
-    line-height: $height;
-    height: $height;
-    width: $overview-control-width;
-    background: url("data:image/svg+xml,%3Csvg version='1' xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath fill='%23fff' d='M11 7H5l3-4zM5 9h6l-3 4z'/%3E%3C/svg%3E") no-repeat center right $overview-pattern-color;
+  display: inline-block;
+  appearance: none;
+  border: none;
+  border-radius: 3px;
+  margin: 0 $overview-pattern-width - $overview-control-width 0 0;
+  padding: 0 0 0 5px;
+  text-align: left;
+  color: #fff;
+  font-size: round($height * 0.6);
+  line-height: $height;
+  height: $height;
+  width: $overview-control-width;
+  background: url("data:image/svg+xml,%3Csvg version='1' xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath fill='%23fff' d='M11 7H5l3-4zM5 9h6l-3 4z'/%3E%3C/svg%3E") no-repeat center right $overview-pattern-color;
 
-    // Remove the arrows https://stackoverflow.com/a/32623650
-    &::-ms-expand {
-        display: none;
-    }
+  // Remove the arrows https://stackoverflow.com/a/32623650
+  &::-ms-expand {
+    display: none;
+  }
 
-    &:focus {
-        outline: 0;
-        animation-duration: 0.33s;
-        animation-timing-function: ease-out;
-        animation-fill-mode: forwards;
-    }
+  &:focus {
+    outline: 0;
+    animation-duration: 0.33s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+  }
 
-    &[disabled] {
-        opacity: 0.5;
-        cursor: no-drop;
-        background-image: url("data:image/svg+xml,%3Csvg version='1' xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cellipse cx='8' cy='8' rx='2' ry='3' stroke='%23fff' stroke-width='2' fill='none' /%3E%3Crect x='4' y='8' width='8' height='5' fill='%23fff' /%3E%3C/svg%3E");
-    }
+  &[disabled] {
+    opacity: 0.5;
+    cursor: no-drop;
+    background-image: url("data:image/svg+xml,%3Csvg version='1' xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cellipse cx='8' cy='8' rx='2' ry='3' stroke='%23fff' stroke-width='2' fill='none' /%3E%3Crect x='4' y='8' width='8' height='5' fill='%23fff' /%3E%3C/svg%3E");
+  }
 
-    &[data-related-to] {
-        cursor: default;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='%23fff' d='m13.7 3.8-1.4-1.4c-.8-.8-2-.8-2.8 0L5.9 5.9c-.8.8-.8 2 0 2.8l1.2 1.2.9-.8L6.9 8c-.4-.4-.4-1 0-1.4l3.2-3.2c.4-.4 1-.4 1.4 0l1.1 1.1c.4.4.4 1 0 1.4l-1.3 1.3c.2.4.4.9.4 1.4l2-2c.7-.8.7-2.1 0-2.8z'/%3E%3Cpath d='m8.9 6.1-.9.8L9.1 8c.4.4.4 1 0 1.4l-3.2 3.2c-.4.4-1 .4-1.4 0l-1.1-1.1c-.4-.4-.4-1 0-1.4l1.3-1.3c-.2-.4-.4-.9-.4-1.4l-2 2c-.8.8-.8 2 0 2.8l1.4 1.4c.8.8 2 .8 2.8 0l3.5-3.5c.8-.8.8-2 0-2.8L8.9 6.1z' fill='%23fff'/%3E%3C/svg%3E");
-    }
+  &[data-related-to] {
+    cursor: default;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='%23fff' d='m13.7 3.8-1.4-1.4c-.8-.8-2-.8-2.8 0L5.9 5.9c-.8.8-.8 2 0 2.8l1.2 1.2.9-.8L6.9 8c-.4-.4-.4-1 0-1.4l3.2-3.2c.4-.4 1-.4 1.4 0l1.1 1.1c.4.4.4 1 0 1.4l-1.3 1.3c.2.4.4.9.4 1.4l2-2c.7-.8.7-2.1 0-2.8z'/%3E%3Cpath d='m8.9 6.1-.9.8L9.1 8c.4.4.4 1 0 1.4l-3.2 3.2c-.4.4-1 .4-1.4 0l-1.1-1.1c-.4-.4-.4-1 0-1.4l1.3-1.3c-.2-.4-.4-.9-.4-1.4l-2 2c-.8.8-.8 2 0 2.8l1.4 1.4c.8.8 2 .8 2.8 0l3.5-3.5c.8-.8.8-2 0-2.8L8.9 6.1z' fill='%23fff'/%3E%3C/svg%3E");
+  }
 }
 
 @for $i from 1 through 6 {
-    $color: mix(#f1c40f, #2980b9, ($i - 1) * math.div(100, 5) * 1%);
-    $animation-name: control-focus-animtion-#{$i};
+  $color: mix(#f1c40f, #2980b9, ($i - 1) * math.div(100, 5) * 1%);
+  $animation-name: control-focus-animtion-#{$i};
 
-    @keyframes #{$animation-name} {
-        0%  { box-shadow: 0 0 0 0 rgba($color, 0); }
-        50%  { box-shadow: 0 0 0 3px rgba($color, 0.7); }
-        100%  { box-shadow: 0 0 0 6px rgba($color, 0); }
+  @keyframes #{$animation-name} {
+    0% {
+      box-shadow: 0 0 0 0 rgba($color, 0);
     }
-
-    .semantilizer__control--level#{$i} {
-        @extend %semantilizer__control;
-
-        background-color: $color;
-
-        &:focus {
-            animation-name: $animation-name;
-        }
+    50% {
+      box-shadow: 0 0 0 3px rgba($color, 0.7);
     }
+    100% {
+      box-shadow: 0 0 0 6px rgba($color, 0);
+    }
+  }
+
+  .semantilizer__control--level#{$i} {
+    @extend %semantilizer__control;
+
+    background-color: $color;
+
+    &:focus {
+      animation-name: $animation-name;
+    }
+  }
 }
 
 .semantilizer__headline {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .semantilizer__headline--error {
-    text-decoration: underline dotted $overview-error-color;
+  text-decoration: underline dotted $overview-error-color;
 
-    &:hover {
-        text-decoration: underline solid $overview-error-color;
-    }
+  &:hover {
+    text-decoration: underline solid $overview-error-color;
+  }
 }
 
 .semantilizer__issue-info {
-    $size: 14px;
+  $size: 14px;
 
-    display: inline-block;
-    appearance: none;
-    border: none;
-    width: $size;
-    height: $size;
-    border-radius: math.div($size, 2);
-    background: $overview-error-color;
-    color: #fff;
-    padding: 0;
-    margin: 0 0 0 0.5em;
-    vertical-align: middle;
-    line-height: $size;
-    text-align: center;
-    font-weight: bold;
-    transition: background-color 0.1s;
+  display: inline-block;
+  appearance: none;
+  border: none;
+  width: $size;
+  height: $size;
+  border-radius: math.div($size, 2);
+  background: $overview-error-color;
+  color: #fff;
+  padding: 0;
+  margin: 0 0 0 0.5em;
+  vertical-align: middle;
+  line-height: $size;
+  text-align: center;
+  font-weight: bold;
+  transition: background-color 0.1s;
 
-    &:before {
-        content: '?';
-        font-size: 0.8em;
-    }
+  &:before {
+    content: '?';
+    font-size: 0.8em;
+  }
 
-    &:focus,
-    &:hover {
-        background: lighten($overview-error-color, 8);
-    }
+  &:focus,
+  &:hover {
+    background: lighten($overview-error-color, 8);
+  }
 }
 
 .semantilizer__notifications-toggle {
-    appearance: none;
-    border: none;
-    background: transparent;
-    padding: 0;
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 0;
 }
 
 .semantilizer__refresh {
-    appearance: none;
-    float: right;
-    border: none;
-    background: transparent;
+  appearance: none;
+  float: right;
+  border: none;
+  background: transparent;
 
-    &:focus,
-    &:hover {
-      animation: refresh-icon 0.3s ease-in-out forwards;
+  &:focus,
+  &:hover {
+    animation: refresh-icon 0.3s ease-in-out forwards;
 
-      @at-root {
-        @keyframes refresh-icon {
-          from {transform: none}
-          to {transform: rotateZ(180deg)}
-        }
+    @at-root {
+      @keyframes refresh-icon {
+        from { transform: none; }
+        to { transform: rotateZ(180deg); }
       }
     }
+  }
 }
 
 .semantilizer__lock {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(#fff, 0.7);
-    backdrop-filter: blur(2px);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(#fff, 0.7);
+  backdrop-filter: blur(2px);
 }
 
 .semantilizer__lock-message {
-    position: inherit;
-    top: 50%;
-    left: 50%;
-    max-width: 100%;
-    transform: translateX(-50%) translateY(-50%);
+  position: inherit;
+  top: 50%;
+  left: 50%;
+  max-width: 100%;
+  transform: translateX(-50%) translateY(-50%);
 }
