@@ -10,4 +10,4 @@ services:
   Zeroseven\Semantilizer\Events\ValidationEvent:
     tags:
       - name: event.listener
-        identifier: 'zeroseven/z7-semantilizer/modify-page-module-content'
+        identifier: 'zeroseven/z7-semantilizer/validation-event'

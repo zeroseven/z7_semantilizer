@@ -88,7 +88,7 @@ The Semantilizer checks the whole page `body` when standard settings are selecte
 of the page checked, this can be adjusted in TSconfig settings by providing the necessary `querySelector`:
 
 ```tsconfig
-tx_semantilizer.contentSelectors := #main-content, .sidebar, div[role=banner]
+tx_semantilizer.contentSelectors = #main-content, .sidebar, div[role=banner]
 ```
 
 ### Connect headlines

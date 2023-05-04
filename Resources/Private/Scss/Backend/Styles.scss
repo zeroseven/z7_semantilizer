@@ -109,15 +109,9 @@ $overview-error-color: #dc3545;
   $animation-name: control-focus-animtion-#{$i};
 
   @keyframes #{$animation-name} {
-    0% {
-      box-shadow: 0 0 0 0 rgba($color, 0);
-    }
-    50% {
-      box-shadow: 0 0 0 3px rgba($color, 0.7);
-    }
-    100% {
-      box-shadow: 0 0 0 6px rgba($color, 0);
-    }
+    0% { box-shadow: 0 0 0 0 rgba($color, 0); }
+    50% { box-shadow: 0 0 0 3px rgba($color, 0.7); }
+    100% { box-shadow: 0 0 0 6px rgba($color, 0); }
   }
 
   .semantilizer__control--level#{$i} {

@@ -43,7 +43,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         if (is_array($value)) {
             return [
                 'table' => $value['table'] ?? null,
-                'uid' => (int)($value['uid'] ?? null),
+                'uid' => (int)($value['uid'] ?? 0),
                 'field' => $value['field'] ?? null
             ];
         }
