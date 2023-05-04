@@ -73,7 +73,6 @@
       "rm -rf .github",
       "rm .nvmrc",
       "rm .php-cs-fixer.php",
-      "rm .satisinclude",
       "rm gulpfile.js",
       "rm package-lock.json",
       "rm package.json",

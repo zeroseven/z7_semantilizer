@@ -133,7 +133,7 @@ TCEFORM.tt_content.header_layout {
 
 ## Release notes:
 
-### Version 3.1:
+### Version 4.0:
 
 * Compatibility with TYPO3 12 (dropped support for TYPO3 10 and 11)
 * Refactored JavaScript, based on TypeScript
