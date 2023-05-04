@@ -41,7 +41,10 @@
   },
   "config": {
     "vendor-dir": ".Build/vendor",
-    "bin-dir": ".Build/bin"
+    "bin-dir": ".Build/bin",
+    "allow-plugins": {
+      "typo3/cms-composer-installers": true
+    }
   },
   "scripts": {
     "test": [
