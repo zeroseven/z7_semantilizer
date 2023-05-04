@@ -24,6 +24,9 @@
 			<trans-unit id="overview.loading">
 				<target>Wird geladen ...</target>
 			</trans-unit>
+			<trans-unit id="overview.refresh">
+				<target>Aktualisieren</target>
+			</trans-unit>
 			<trans-unit id="overview.update">
 				<target>Struktur wird aktualisiert ...</target>
 			</trans-unit>
@@ -45,28 +48,28 @@
 				<target>Keine Hauptüberschrift</target>
 			</trans-unit>
 			<trans-unit id="notification.mainHeadingRequired.description">
-				<target>Für diese Seite ist aktuell keine Hauptüberschrift vorhanden. Für einen korrekten Aufbau der Überschriften wird eine Hauptüberschrift (Typ: "H1") benötigt.</target>
+				<target>Für diese Seite ist aktuell keine Hauptüberschrift vorhanden. Für einen korrekten Aufbau der Überschriften wird eine Hauptüberschrift (H1) benötigt.</target>
 			</trans-unit>
 
 			<trans-unit id="notification.mainHeadingNumber.title">
 				<target>Mehrere Hauptüberschriften</target>
 			</trans-unit>
 			<trans-unit id="notification.mainHeadingNumber.description">
-				<target>Es wird empfohlen nur eine Hauptüberschrift (Typ: "H1") pro Seite zu verwenden.</target>
+				<target>Es wird empfohlen nur eine Hauptüberschrift (H1) pro Seite zu verwenden.</target>
 			</trans-unit>
 
 			<trans-unit id="notification.mainHeadingPosition.title">
 				<target>Positionierung der Hauptüberschrift</target>
 			</trans-unit>
 			<trans-unit id="notification.mainHeadingPosition.description">
-				<target>Es wird empfohlen die erste Überschrift der Seite als die Hauptüberschrift (Typ: "H1") auszuzeichnen. Aktuell steht diese an falscher Stelle.</target>
+				<target>Es wird empfohlen die erste Überschrift der Seite als die Hauptüberschrift (H1) auszuzeichnen. Aktuell steht diese an falscher Stelle.</target>
 			</trans-unit>
 
 			<trans-unit id="notification.headingStructure.title">
 				<target>Ungültige Überschriften-Hierarchie</target>
 			</trans-unit>
 			<trans-unit id="notification.headingStructure.description">
-				<target>Es wurde ein Fehler in der Hierarchie der Überschriften festgestellt. Für eine korrekte semantische Auszeichnung einer Seite soll auf eine H1 eine H2 folgen, nach einer H2 eine H3 usw.</target>
+				<target>Es wurde ein Fehler in der Hierarchie der Überschriften festgestellt. Für eine korrekte semantische Auszeichnung einer Seite soll auf eine H1 eine H2 folgen, unterhalb einer H2 eine H3 usw.</target>
 			</trans-unit>
 		</body>
 	</file>

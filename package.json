@@ -1,19 +1,28 @@
 {
   "name": "z7_semantilizer",
   "private": true,
+  "config": {
+    "typo3_repository": "https://github.com/TYPO3/typo3.git",
+    "typescript_folder": "Build/Sources/TypeScript",
+    "typescript_target": "./Resources/Private/JavaScript/Backend/TYPO3/"
+  },
   "scripts": {
+    "load-source": "git clone --no-checkout $npm_package_config_typo3_repository $npm_package_config_typescript_target && cd $npm_package_config_typescript_target && git sparse-checkout set $npm_package_config_typescript_folder && git reset --hard HEAD && mv $npm_package_config_typescript_folder/* .",
+    "postinstall": "test -d $npm_package_config_typescript_target || npm run load-source",
     "build": "gulp build",
     "build-dev": "GULP_CONTEXT=development gulp build"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.5",
-    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/register": "^7.17.0",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-sass": "^5.1.0",
-    "sass": "^1.49.9"
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-uglify": "^3.0.2",
+    "interactjs": "^1.10.17",
+    "lit": "^2.7.3",
+    "sass": "^1.62.1",
+    "tsify": "^5.0.4"
   }
 }

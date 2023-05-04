@@ -6,10 +6,12 @@ namespace Zeroseven\Semantilizer\ViewHelpers\Headline;
 
 class ChildViewHelper extends AbstractRelationViewHelper
 {
-    public function render()
+    public function render(): string
     {
-        $type = empty($relationType = $this->getRelation($this->arguments['of'])) ? 0 : $relationType + 1;
+        if (($relation = $this->arguments['of'] ?? null) && $type = $this->getRelation($relation)) {
+            return $this->renderHeadline($type + 1);
+        }
 
-        return $this->renderHeadline($type);
+        return $this->renderHeadline(0);
     }
 }

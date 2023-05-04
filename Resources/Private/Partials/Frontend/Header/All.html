@@ -10,7 +10,9 @@
 					<f:link.typolink parameter="{data.header_link}">{data.header}</f:link.typolink>
 				</semantilizer:headline>
 
-				<semantilizer:headline class="ce__subheader{f:if(condition:layout, then:'--{layout}')}{f:if(condition:position, then:' ce__subheader--{position}')}" content="{data.subheader}"/>
+				<f:if condition="{data.subheader}">
+					<semantilizer:headline class="ce__subheader{f:if(condition:layout, then:'--{layout}')}{f:if(condition:position, then:' ce__subheader--{position}')}" content="{data.subheader}"/>
+				</f:if>
 
 				<f:comment><!-- Call the "original" partial --></f:comment>
 				<f:render partial="Header/Date" arguments="{date: data.date, positionClass: 'ce__date{f:if(condition: position, then: \'-{position}\')}'}" />

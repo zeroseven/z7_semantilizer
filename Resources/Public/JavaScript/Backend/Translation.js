@@ -1,0 +1,1 @@
+class Translation{static translate(a){return window.TYPO3.lang[a]||a}}export{Translation};

@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace Zeroseven\Semantilizer\ViewHelpers;
 
+use JsonException;
 use Psr\Http\Message\RequestInterface;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
 {
-    /** @var BackendUserAuthentication|null */
-    protected $backendUser;
-
-    /** @var array */
-    protected $dataAttributes;
+    protected ?BackendUserAuthentication $backendUser;
+    protected array $dataAttributes;
 
     public function __construct()
     {
@@ -30,8 +29,8 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        parent::registerUniversalTagAttributes();
 
+        $this->registerUniversalTagAttributes();
         $this->registerArgument('content', 'string', 'Header content');
         $this->registerArgument('relationId', 'string', 'Relation identifier for child and sibling viewHelpers');
         $this->registerArgument('edit', 'string|array', 'Content edit setup (Example "{table:\'tt_content\', uid:data.uid, field:\'header_type\'}" or "tt_content:{data.uid}:header_type")');
@@ -44,7 +43,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         if (is_array($value)) {
             return [
                 'table' => $value['table'] ?? null,
-                'uid' => (int)$value['uid'] ?? null,
+                'uid' => (int)($value['uid'] ?? 0),
                 'field' => $value['field'] ?? null
             ];
         }
@@ -63,7 +62,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
     protected function getEditSetup(): ?array
     {
         // Get values and assign them to the variables
-        list($table, $uid, $field) = ($setup = $this->parseEditSetup()) ? array_values($setup) : [null, null, null];
+        [$table, $uid, $field] = ($setup = $this->parseEditSetup()) ? array_values($setup) : [null, null, null];
 
         // Check backend user permissions
         if (!$table || !$uid || !$this->backendUser || !$this->backendUser->check('tables_modify', $table)) {
@@ -71,11 +70,15 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         }
 
         // Get localized uid
-        if (($languageUid = GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('language', 'id'))
-            && ($localizedRecord = BackendUtility::getRecordLocalization($table, $uid, $languageUid))
-            && ($localizedUid = reset($localizedRecord)['uid'] ?? null)
-        ) {
-            $uid = (int)$localizedUid;
+        try {
+            if (($languageUid = GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('language', 'id'))
+                && ($localizedRecord = BackendUtility::getRecordLocalization($table, $uid, $languageUid))
+                && ($localizedUid = reset($localizedRecord)['uid'] ?? null)
+            ) {
+                $uid = (int)$localizedUid;
+            }
+        } catch (AspectNotFoundException $e) {
+            return null;
         }
 
         // Check content permission
@@ -89,7 +92,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         }
 
         // Check field permissions
-        if ($field && ($GLOBALS['TCA'][$table]['columns'][$field]['exclude'] ?? false) && !$this->backendUser->check('non_exclude_fields', $table . ':' . $field)) {
+        if ($field && ($GLOBALS['TCA'][$table]['columns'][$field]['exclude'] ?? null) && !$this->backendUser->check('non_exclude_fields', $table . ':' . $field)) {
             $field = null;
         }
 
@@ -150,7 +153,10 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
             }
 
             if (!empty($this->dataAttributes)) {
-                $this->tag->addAttribute('data-semantilizer', json_encode($this->dataAttributes));
+                try {
+                    $this->tag->addAttribute('data-semantilizer', json_encode($this->dataAttributes, JSON_THROW_ON_ERROR));
+                } catch (JsonException $e) {
+                }
             }
         }
 

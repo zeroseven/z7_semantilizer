@@ -88,7 +88,7 @@ The Semantilizer checks the whole page `body` when standard settings are selecte
 of the page checked, this can be adjusted in TSconfig settings by providing the necessary `querySelector`:
 
 ```tsconfig
-tx_semantilizer.contentSelectors := #main-content, .sidebar, div[role=banner]
+tx_semantilizer.contentSelectors = #main-content, .sidebar, div[role=banner]
 ```
 
 ### Connect headlines
@@ -132,6 +132,12 @@ TCEFORM.tt_content.header_layout {
 ```
 
 ## Release notes:
+
+### Version 3.1:
+
+* Compatibility with TYPO3 12 (dropped support for TYPO3 10 and 11)
+* Refactored JavaScript, based on TypeScript
+* Working with [ES6 JavaScript modules](https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ApiOverview/Backend/JavaScript/ES6/)
 
 ### Version 3.0:
 
