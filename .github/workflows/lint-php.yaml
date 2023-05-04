@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '**.php'
+      - 'composer.json'
   pull_request:
     paths:
       - '**.php'
