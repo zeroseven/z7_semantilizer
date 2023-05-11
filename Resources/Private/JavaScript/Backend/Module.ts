@@ -1,7 +1,7 @@
 import {Semantilizer} from "@zeroseven/semantilizer/Semantilizer.js";
 import {Node} from "@zeroseven/semantilizer/Node.js";
 import {Translation} from "@zeroseven/semantilizer/Translation.js";
-import Icons from "@typo3/backend/Icons.js";
+import Icons from "@typo3/backend/icons.js";
 
 export class Module {
   private readonly element: HTMLElement;
