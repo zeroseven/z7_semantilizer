@@ -137,7 +137,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
             $this->tag->setTagName('h' . $type);
         } else {
             $this->tag->setTagName('div');
-            $this->tag->addAttribute('role', 'heading');
+            $this->tag->addAttribute('data-heading', 'true');
         }
 
         // Store the relation for sibling and child viewHelpers
