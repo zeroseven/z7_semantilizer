@@ -18,7 +18,7 @@ $overview-pattern-width: 48px;
 $overview-pattern-height: 24px;
 $overview-pattern-color: #888;
 $overview-pattern-stroke: 2px;
-$overview-background-color: #fff;
+$overview-background-color: var(--pagemodule-element-bg);
 $overview-control-width: 36px;
 $overview-error-color: #dc3545;
 
