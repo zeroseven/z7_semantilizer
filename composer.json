@@ -24,7 +24,7 @@
     "docs": "https://github.com/zeroseven/z7_semantilizer/blob/master/README.md"
   },
   "require": {
-    "typo3/cms-core": "^12.4 || ^13.1",
+    "typo3/cms-core": "^13.1",
     "ext-json": "*"
   },
   "require-dev": {
