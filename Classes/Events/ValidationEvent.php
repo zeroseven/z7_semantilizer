@@ -26,8 +26,7 @@ class ValidationEvent
         PageRepository::DOKTYPE_BE_USER_SECTION,
         PageRepository::DOKTYPE_MOUNTPOINT,
         PageRepository::DOKTYPE_SPACER,
-        PageRepository::DOKTYPE_SYSFOLDER,
-        PageRepository::DOKTYPE_RECYCLER
+        PageRepository::DOKTYPE_SYSFOLDER
     ];
 
     protected string $identifier;

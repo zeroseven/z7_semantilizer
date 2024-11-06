@@ -18,18 +18,19 @@ $overview-pattern-width: 48px;
 $overview-pattern-height: 24px;
 $overview-pattern-color: #888;
 $overview-pattern-stroke: 2px;
-$overview-background-color: #fff;
 $overview-control-width: 36px;
-$overview-error-color: #dc3545;
 
 /*************************************************
 * Style Semantilizer
 *************************************************/
 .semantilizer__listwrap {
   position: relative;
-  background: $overview-background-color;
-  border: 1px solid rgba($overview-pattern-color, 0.5);
-  margin: 1px 1px 2em 1px;
+  color: var(--typo3-text-color-base);
+  background: var(--pagemodule-element-bg);
+  border: 1px solid var(--pagemodule-grid-border-color);
+  border-radius: var(--pagemodule-grid-border-radius);
+  margin: 0 0 var(--pagemodule-element-spacing) 0;
+  box-shadow: var(--typo3-component-box-shadow-strong);
 }
 
 .semantilizer__list {
@@ -42,10 +43,10 @@ $overview-error-color: #dc3545;
 %semantilizer__item {
   display: block;
   margin: 0;
-  padding: 0 1em 0 0;
+  padding: 0 var(--pagemodule-element-spacing) 0 0;
   line-height: $overview-pattern-height;
   height: $overview-pattern-height;
-  background: $overview-background-color;
+  background: var(--pagemodule-element-bg);
   position: relative;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -69,7 +70,7 @@ $overview-error-color: #dc3545;
   display: inline-block;
   appearance: none;
   border: none;
-  border-radius: 3px;
+  border-radius: var(--pagemodule-grid-border-radius);
   margin: 0 $overview-pattern-width - $overview-control-width 0 0;
   padding: 0 0 0 5px;
   text-align: left;
@@ -127,13 +128,14 @@ $overview-error-color: #dc3545;
 
 .semantilizer__headline {
   text-decoration: none;
+  color: inherit;
 }
 
 .semantilizer__headline--error {
-  text-decoration: underline dotted $overview-error-color;
+  text-decoration: underline dotted var(--typo3-text-color-danger);
 
   &:hover {
-    text-decoration: underline solid $overview-error-color;
+    text-decoration: underline solid var(--typo3-text-color-danger);
   }
 }
 
@@ -146,7 +148,7 @@ $overview-error-color: #dc3545;
   width: $size;
   height: $size;
   border-radius: math.div($size, 2);
-  background: $overview-error-color;
+  background: var(--typo3-text-color-danger);
   color: #fff;
   padding: 0;
   margin: 0 0 0 0.5em;
@@ -163,7 +165,7 @@ $overview-error-color: #dc3545;
 
   &:focus,
   &:hover {
-    background: lighten($overview-error-color, 8);
+    opacity: 0.7;
   }
 }
 
@@ -199,8 +201,9 @@ $overview-error-color: #dc3545;
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(#fff, 0.7);
+  background: var(--pagemodule-element-bg);
   backdrop-filter: blur(2px);
+  opacity: 0.7;
 }
 
 .semantilizer__lock-message {

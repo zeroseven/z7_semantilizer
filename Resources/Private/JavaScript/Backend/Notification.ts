@@ -80,9 +80,6 @@ export class Notification {
   }
 
   public hideAll(): void {
-    // @ts-ignore
-    let container = (window.top.TYPO3 && window.top.TYPO3.Notification && window.top.TYPO3.Notification.messageContainer) ? window.top.TYPO3.Notification.messageContainer : 'null';
-
-    container && Cast.array(container.childNodes).forEach(message => container.removeChild(message));
+    (typeof window.TYPO3.Notification === 'function' ? document : window.top.document).dispatchEvent(new CustomEvent('typo3-notification-clear-all', {bubbles: true, composed: true}));
   }
 }

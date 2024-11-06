@@ -180,6 +180,10 @@ export class Semantilizer {
     this.module.loader();
 
     // Watch the sorting of the content elements in the page module
-    interact('.t3js-page-ce-sortable').draggable({onend: () => this.refresh(true)})
+    document.addEventListener('drop', (event: DragEvent) => {
+      if ((event.target as HTMLElement).classList.contains('t3js-page-ce-dropzone-available')) {
+        this.refresh(true)
+      }
+    });
   }
 }
