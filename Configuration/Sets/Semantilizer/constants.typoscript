@@ -1,0 +1,6 @@
+###############################################################
+# We do not need this option anymore. The selected type of a
+# headline will be stored in the database and it's not a good
+# idea to use a typoscript variable inside the TCA as a default.
+###############################################################
+styles.content.defaultHeaderType >
