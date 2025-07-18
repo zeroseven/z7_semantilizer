@@ -64,7 +64,7 @@ class ValidationEvent
 
     private function getPreviewUrl(): ?UriInterface
     {
-        return GeneralUtility::makeInstance(PreviewUriBuilder::class, $this->pageUid)->withLanguage($this->languageUid)->buildUri();
+        return GeneralUtility::makeInstance(PreviewUriBuilder::class, $this->pageUid)->create($this->pageUid)->withLanguage($this->languageUid)->buildUri();
     }
 
     private function skipSemantilizer(): bool
