@@ -86,7 +86,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
             $typeField = $GLOBALS['TCA'][$table]['ctrl']['type'];
             $type = BackendUtility::getRecord($table, $uid, $typeField);
 
-            if (empty($type) || !$this->backendUser->check('explicit_allowdeny', $table . ':' . $typeField . ':' . reset($type) . ':ALLOW')) {
+            if (empty($type) || !$this->backendUser->check('explicit_allowdeny', $table . ':' . $typeField . ':' . reset($type))) {
                 return null;
             }
         }
