@@ -65,15 +65,18 @@ class ValidationEvent
 
     private function getPreviewUrl(): ?UriInterface
     {
-        return GeneralUtility::makeInstance(PreviewUriBuilder::class, $this->pageUid)->buildUri();
+        return PreviewUriBuilder::create($this->pageUid)->withLanguage($this->languageUid)->buildUri();
     }
 
     private function skipSemantilizer(): bool
     {
         return
 
+            // There is a defined language
+            $this->languageUid < 0
+
             // The page must be available
-            empty($pageData = $this->getPageData())
+            || empty($pageData = $this->getPageData())
 
             // Ts configuration can be loaded
             || empty($this->tsConfig)
