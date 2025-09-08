@@ -15,7 +15,7 @@ class AbstractRelationViewHelper extends AbstractHeadlineViewHelper
         $this->registerArgument('of', 'string', 'Relation id', true);
     }
 
-    protected function renderHeadline(int $type, string $relationId = null): string
+    protected function renderHeadline(int $type, ?string $relationId = null): string
     {
         $this->addSemantilizerData(['relatedTo' => $this->arguments['of']]);
 
