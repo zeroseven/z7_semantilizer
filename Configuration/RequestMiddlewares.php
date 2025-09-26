@@ -2,8 +2,8 @@
 
 return [
     'frontend' => [
-        'zeroseven/z7_semantilizer/request' => [
-            'target' => \Zeroseven\Semantilizer\Middleware\Request::class,
+        'zeroseven/z7_semantilizer/cache-control' => [
+            'target' => \Zeroseven\Semantilizer\Middleware\CacheControl::class,
             'after' => [
                 'typo3/cms-frontend/tsfe'
             ]
