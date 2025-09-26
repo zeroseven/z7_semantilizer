@@ -8,6 +8,12 @@ return [
                 'typo3/cms-frontend/tsfe'
             ]
         ],
+        'zeroseven/z7_semantilizer/cors-headers' => [
+            'target' => \Zeroseven\Semantilizer\Middleware\CorsHeaders::class,
+            'after' => [
+                'typo3/cms-frontend/csp-headers'
+            ]
+        ],
         'zeroseven/z7_semantilizer/user-ts-config' => [
             'target' => \Zeroseven\Semantilizer\Middleware\UserTsConfig::class,
             'before' => [
