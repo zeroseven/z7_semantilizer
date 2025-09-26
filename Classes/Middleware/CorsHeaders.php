@@ -27,8 +27,10 @@ class CorsHeaders extends AbstractMiddleware
     private function isOriginAllowed(string $origin, array $serverParams): bool
     {
         // 1. Check urls of site config. NOTE: Base must be a full url definition!
-        $siteUrls = array_filter(array_map(fn(Site $site) => $this->urlToDomain((string)$site->getBase()),
-            GeneralUtility::makeInstance(SiteFinder::class)?->getAllSites() ?? []));
+        $siteUrls = array_filter(array_map(
+            fn (Site $site) => $this->urlToDomain((string)$site->getBase()),
+            GeneralUtility::makeInstance(SiteFinder::class)?->getAllSites() ?? []
+        ));
 
         if (in_array($origin, $siteUrls)) {
             return true;
