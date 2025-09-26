@@ -14,7 +14,7 @@ class UserTsConfig extends AbstractMiddleware
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // Disable the admin panel
-        $this->isSemantilizerRequest($request)
+        $this->isSemantilizerRequest($request, true)
         && ExtensionManagementUtility::isLoaded('adminpanel')
         && ExtensionManagementUtility::addUserTSConfig('admPanel.hide = 1');
 
