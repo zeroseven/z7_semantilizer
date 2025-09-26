@@ -1,4 +1,5 @@
-/node_modules
 .php_cs.cache
+.idea/
+/node_modules
 /composer.lock
 /Resources/Private/JavaScript/Backend/TYPO3
