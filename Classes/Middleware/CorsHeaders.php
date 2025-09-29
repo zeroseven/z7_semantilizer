@@ -17,11 +17,9 @@ class CorsHeaders extends AbstractMiddleware
 {
     protected function urlToDomain(string $url): ?string
     {
-        if (empty($url)) {
-            return null;
-        }
-
-        return parse_url($url, PHP_URL_SCHEME) . '://' . parse_url($url, PHP_URL_HOST);
+        return ($parts = parse_url($url)) && isset($parts['scheme'], $parts['host'])
+            ? $parts['scheme'] . '://' . $parts['host']
+            : null;
     }
 
     private function isOriginAllowed(string $origin, array $serverParams): bool
@@ -29,7 +27,7 @@ class CorsHeaders extends AbstractMiddleware
         // 1. Check urls of site config. NOTE: Base must be a full url definition!
         $siteUrls = array_filter(array_map(
             fn (Site $site) => $this->urlToDomain((string)$site->getBase()),
-            GeneralUtility::makeInstance(SiteFinder::class)?->getAllSites() ?? []
+            GeneralUtility::makeInstance(SiteFinder::class)?->getAllSites()
         ));
 
         if (in_array($origin, $siteUrls)) {
@@ -40,7 +38,7 @@ class CorsHeaders extends AbstractMiddleware
         $trustedHostsPattern = $GLOBALS['TYPO3_CONF_VARS']['SYS']['trustedHostsPattern'] ?? 'SERVER_NAME';
         $verifier = new VerifyHostHeader($trustedHostsPattern);
 
-        return $verifier->isAllowedHostHeaderValue($origin, $serverParams);
+        return $verifier->isAllowedHostHeaderValue(parse_url($origin, PHP_URL_HOST), $serverParams);
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
