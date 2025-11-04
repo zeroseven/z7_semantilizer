@@ -123,7 +123,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         return $GLOBALS['USER']['z7_semantilizer']['temp']['relations'][$relationId] ?? null;
     }
 
-    protected function renderHeadline(int $type, string $relationId = null): string
+    protected function renderHeadline(int $type, ?string $relationId = null): string
     {
         // Set content or abort if empty
         if ($content = trim((string)($this->arguments['content'] ?: $this->renderChildren()))) {
