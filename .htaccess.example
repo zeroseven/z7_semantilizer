@@ -1,0 +1,30 @@
+# Apache CORS configuration for z7_semantilizer
+#
+# This configuration is ONLY needed if you want to use the Semantilizer
+# across different domains (e.g., editing content on domain-a.com while
+# viewing from the TYPO3 backend on domain-b.com).
+#
+# For same-origin usage, this is NOT required.
+#
+# Copy the relevant parts to your document root's .htaccess if using Apache
+
+<IfModule mod_headers.c>
+    <IfModule mod_rewrite.c>
+        RewriteEngine On
+
+        # Handle preflight OPTIONS requests for semantilizer
+        # This must be done at webserver level as OPTIONS requests
+        # never reach PHP middleware in most setups
+        RewriteCond %{REQUEST_METHOD} OPTIONS
+        RewriteCond %{HTTP:Access-Control-Request-Headers} (?:^|,\s*)x-semantilizer(?:,|$) [NC]
+        RewriteCond %{HTTP:Origin} ^https?://(.+)$ [NC]
+        RewriteRule .* - [R=204,L,E=CORS_ORIGIN:%1]
+
+        # Set CORS headers for preflight response
+        Header always set Access-Control-Allow-Origin "%{HTTP:Origin}e" env=CORS_ORIGIN
+        Header always set Access-Control-Allow-Credentials "true" env=CORS_ORIGIN
+        Header always set Access-Control-Allow-Methods "GET, OPTIONS" env=CORS_ORIGIN
+        Header always set Access-Control-Allow-Headers "X-Semantilizer" env=CORS_ORIGIN
+        Header always set Access-Control-Max-Age "86400" env=CORS_ORIGIN
+    </IfModule>
+</IfModule>

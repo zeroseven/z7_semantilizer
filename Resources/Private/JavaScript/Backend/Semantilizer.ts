@@ -64,6 +64,7 @@ export class Semantilizer {
     };
 
     request.open('GET', (this.url.indexOf('#') < 0 ? this.url : this.url.substr(0, this.url.indexOf('#'))) + '#' + Math.random().toString(36).slice(2), true);
+    request.withCredentials = true;
     request.setRequestHeader('X-Semantilizer', 'true');
     request.send();
   }

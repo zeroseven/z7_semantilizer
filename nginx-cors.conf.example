@@ -1,0 +1,37 @@
+# Nginx CORS configuration for z7_semantilizer
+#
+# This configuration is ONLY needed if you want to use the Semantilizer
+# across different domains (e.g., editing content on domain-a.com while
+# viewing from the TYPO3 backend on domain-b.com).
+#
+# For same-origin usage, this is NOT required.
+#
+# Add this to your nginx server block or include it from your main config
+
+# Handle CORS preflight (OPTIONS) requests
+# This is required as OPTIONS requests don't reach PHP in most nginx setups
+location / {
+    # Check if it's an OPTIONS request with X-Semantilizer header
+    if ($request_method = 'OPTIONS') {
+        # Check if Access-Control-Request-Headers contains x-semantilizer
+        set $cors_preflight 0;
+        if ($http_access_control_request_headers ~* "x-semantilizer") {
+            set $cors_preflight 1;
+        }
+
+        # Return 204 for semantilizer preflight
+        if ($cors_preflight = 1) {
+            add_header 'Access-Control-Allow-Origin' $http_origin always;
+            add_header 'Access-Control-Allow-Credentials' 'true' always;
+            add_header 'Access-Control-Allow-Methods' 'GET, OPTIONS' always;
+            add_header 'Access-Control-Allow-Headers' 'X-Semantilizer' always;
+            add_header 'Access-Control-Max-Age' 86400 always;
+            add_header 'Content-Type' 'text/plain; charset=utf-8' always;
+            add_header 'Content-Length' 0 always;
+            return 204;
+        }
+    }
+
+    # Your normal location configuration continues here
+    try_files $uri $uri/ /index.php$is_args$args;
+}
