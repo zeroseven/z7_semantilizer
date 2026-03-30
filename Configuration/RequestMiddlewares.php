@@ -11,7 +11,7 @@ return [
         'zeroseven/z7_semantilizer/cors-headers' => [
             'target' => \Zeroseven\Semantilizer\Middleware\CorsHeaders::class,
             'after' => [
-                'typo3/cms-frontend/csp-headers'
+                'typo3/cms-frontend/site'
             ]
         ],
         'zeroseven/z7_semantilizer/user-ts-config' => [
