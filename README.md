@@ -17,6 +17,34 @@ the Semantilizer, too, for sure!
 * Make sure the TypoScript setup gets included after the configuration of `fluid_styled_content` to override their
   partials for the headlines
 
+## Development (DDEV test instance)
+
+Prerequisites: [DDEV](https://ddev.com/), Composer, Node (for backend asset build).
+
+```bash
+ddev start
+ddev init              # TYPO3 setup + demo content
+```
+
+| Resource | URL / command |
+|----------|----------------|
+| Frontend demo | https://z7-semantilizer.ddev.site/semantilizer-demo |
+| Backend | https://z7-semantilizer.ddev.site/typo3 |
+| Login | `demo` / `Z7Typo3Demo42#` |
+| Tests | `ddev test` |
+| Re-seed demo | `ddev seed --force` |
+| TYPO3 CLI | `ddev typo3 cache:flush` |
+
+Composer scripts (inside DDEV or with `.build/` present):
+
+```bash
+composer test          # PHPStan + PHP-CS-Fixer + unit tests
+composer test:all      # + functional tests
+composer cs:fix
+```
+
+Project values for demo and DDEV live in `Build/seed-config.yaml`. The TYPO3 instance is generated under `.build/` (not committed).
+
 ## How it works
 
 The Semantilizer divides the headline setup of website content elements into two different fields. By detaching the
@@ -132,6 +160,13 @@ TCEFORM.tt_content.header_layout {
 ```
 
 ## Release notes:
+
+### Version 4.4:
+
+* Compatibility with TYPO3 14 (TYPO3 13 remains supported)
+* Minimum PHP version 8.3 (PHP 8.4 compatible)
+* Migrated backend template rendering to `ViewFactoryInterface` (required for TYPO3 14)
+* Migrated frontend cache disabling to `CacheInstruction` request attribute (TYPO3 14)
 
 ### Version 4.0:
 

@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+## Description: Run unit and/or functional tests (TYPO3 Testing Framework)
+## Usage: test [flags]
+## Example: "ddev test" or "ddev test --unit" or "ddev test --functional"
+## Flags: [{"Name":"unit","Shorthand":"u","Usage":"Run unit tests only"},{"Name":"functional","Shorthand":"f","Usage":"Run functional tests only"},{"Name":"filter","Usage":"PHPUnit filter expression"}]
+
+set -Eeuo pipefail
+
+if [ -z "${IS_DDEV_PROJECT:-}" ]; then
+    if command -v ddev >/dev/null 2>&1 && [ -d ".ddev" ]; then
+        ddev exec bash -lc "/var/www/html/.ddev/commands/web/test $*"
+        exit $?
+    fi
+fi
+
+GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; BLUE='\033[0;34m'; NC='\033[0m'
+info()   { echo -e "${YELLOW}$*${NC}"; }
+ok()     { echo -e "${GREEN}✓ $*${NC}"; }
+err()    { echo -e "${RED}✗ $*${NC}"; }
+header() { echo -e "${BLUE}━━━ $* ━━━${NC}"; }
+
+RUN_UNIT=false; RUN_FUNCTIONAL=false; FILTER=""
+
+for arg in "$@"; do
+    case $arg in
+        --unit|-u)       RUN_UNIT=true ;;
+        --functional|-f) RUN_FUNCTIONAL=true ;;
+        --filter=*)      FILTER="${arg#*=}" ;;
+        --help|-h)
+            echo "Usage: ddev test [flags]"
+            echo "  -u, --unit           Unit tests only"
+            echo "  -f, --functional     Functional tests only"
+            echo "      --filter=EXPR    PHPUnit --filter"
+            exit 0
+            ;;
+    esac
+done
+
+if [ "$RUN_UNIT" = false ] && [ "$RUN_FUNCTIONAL" = false ]; then
+    RUN_UNIT=true; RUN_FUNCTIONAL=true
+fi
+
+echo ""; header "The Semantilizer Test Runner"; echo ""
+
+header "Readiness: Dependencies"
+if [ ! -f "/var/www/html/.build/vendor/autoload.php" ]; then
+    cd /var/www/html && composer install --no-interaction --no-progress
+    ok "Dependencies installed"
+else
+    ok "Dependencies ready"
+fi
+
+if [ "$RUN_FUNCTIONAL" = true ]; then
+    header "Readiness: Database"
+    DB_READY=false
+    for i in $(seq 1 15); do
+        if mysqladmin ping -h db -u root -proot --silent 2>/dev/null; then
+            DB_READY=true; break
+        fi
+        info "Waiting for database... ($i/15)"; sleep 2
+    done
+    if [ "$DB_READY" = false ]; then
+        err "Database not reachable. Run: ddev start"; exit 1
+    fi
+    ok "Database reachable"
+fi
+
+header "Readiness: Test environment"
+if [ ! -f "/var/www/html/.build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php" ]; then
+    err "Testing Framework missing. Run: ddev composer install"
+    exit 1
+fi
+ok "Test environment ready"
+
+PHPUNIT="/var/www/html/.build/bin/phpunit"
+FILTER_ARG="${FILTER:+--filter=$FILTER}"
+EXIT_CODE=0
+
+if [ "$RUN_UNIT" = true ]; then
+    header "Unit tests"
+    "$PHPUNIT" -c /var/www/html/phpunit.unit.xml --no-coverage $FILTER_ARG || EXIT_CODE=$?
+fi
+
+if [ "$RUN_FUNCTIONAL" = true ]; then
+    header "Functional tests"
+    "$PHPUNIT" -c /var/www/html/phpunit.functional.xml --no-coverage $FILTER_ARG || EXIT_CODE=$?
+fi
+
+echo ""
+if [ $EXIT_CODE -eq 0 ]; then ok "All tests passed!"; else err "Tests failed (exit $EXIT_CODE)"; fi
+echo ""
+exit $EXIT_CODE

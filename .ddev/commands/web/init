@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+
+## Description: Initialize TYPO3 test instance (Testing Framework + setup + demo)
+## Usage: init [flags]
+## Example: "ddev init" or "ddev init --force" or "ddev init --skip-seed"
+## Flags: [{"Name":"force","Shorthand":"f","Usage":"Force reinit even if TYPO3 is already configured"},{"Name":"skip-seed","Shorthand":"s","Usage":"Skip demo bootstrap"}]
+
+set -Eeuo pipefail
+
+if [ -z "${IS_DDEV_PROJECT:-}" ]; then
+    if command -v ddev >/dev/null 2>&1 && [ -d ".ddev" ]; then
+        ddev exec bash -lc "/var/www/html/.ddev/commands/web/init $*"
+        exit $?
+    fi
+fi
+
+GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; BLUE='\033[0;34m'; NC='\033[0m'
+info()   { echo -e "${YELLOW}$*${NC}"; }
+ok()     { echo -e "${GREEN}✓ $*${NC}"; }
+err()    { echo -e "${RED}✗ $*${NC}"; }
+header() { echo -e "\n${BLUE}━━━ $* ━━━${NC}"; }
+
+FORCE=false; SKIP_SEED=false
+
+for arg in "$@"; do
+    case $arg in
+        --force|-f)     FORCE=true ;;
+        --skip-seed|-s) SKIP_SEED=true ;;
+        --help|-h)
+            echo "Usage: ddev init [flags]"
+            echo "  -f, --force        Wipe and reinitialize TYPO3"
+            echo "  -s, --skip-seed    Skip demo bootstrap"
+            exit 0
+            ;;
+    esac
+done
+
+TYPO3_BIN="/var/www/html/.build/bin/typo3"
+SETTINGS_PHP="/var/www/html/.build/config/system/settings.php"
+SITE_URL="https://z7-semantilizer.ddev.site"
+MIN_PHP_ID=80300
+
+echo ""
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${BLUE}  The Semantilizer TYPO3 Initialization${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+
+if [ -f "$SETTINGS_PHP" ] && [ "$FORCE" = false ]; then
+    info "TYPO3 is already configured ($SETTINGS_PHP exists)."
+    echo ""
+    echo "  ddev init --force     # Wipe and reinitialize"
+    echo "  ddev seed --force     # Re-run demo bootstrap only"
+    exit 0
+fi
+
+if [ "$FORCE" = true ] && [ -f "$SETTINGS_PHP" ]; then
+    header "Cleanup"
+    rm -rf /var/www/html/.build/config /var/www/html/.build/public/typo3conf /var/www/html/.build/var
+    ok "Existing configuration removed"
+fi
+
+header "Step 1: PHP & dependencies"
+PHP_ID=$(php -r 'echo PHP_VERSION_ID;')
+if [ "$PHP_ID" -lt "$MIN_PHP_ID" ]; then
+    err "PHP $(php -r 'echo PHP_VERSION;') in DDEV is too old (need >= 8.3)."
+    echo "  .ddev/config.yaml has php_version — run: ddev restart"
+    exit 1
+fi
+ok "PHP $(php -r 'echo PHP_VERSION;')"
+
+cd /var/www/html && composer install --no-interaction --no-progress
+ok "Composer dependencies installed for container PHP"
+
+header "Step 2: Database"
+for i in $(seq 1 15); do
+    mysqladmin ping -h db -u root -proot --silent 2>/dev/null && break
+    sleep 2
+done
+
+TABLE_COUNT=$(mysql -h db -u root -proot db -ss \
+    -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'db';" 2>/dev/null || echo "0")
+
+if [ "$TABLE_COUNT" -gt 0 ]; then
+    info "Found $TABLE_COUNT existing tables — dropping for clean init..."
+    DROPS=$(mysql -h db -u root -proot db -ss \
+        -e "SELECT CONCAT('DROP TABLE IF EXISTS \`', table_name, '\`;') FROM information_schema.tables WHERE table_schema='db';" 2>/dev/null)
+    mysql -h db -u root -proot db -e "SET FOREIGN_KEY_CHECKS=0; $DROPS SET FOREIGN_KEY_CHECKS=1;" 2>/dev/null
+    ok "Database cleaned"
+else
+    ok "Database is empty"
+fi
+
+header "Step 3: TYPO3 Setup"
+"$TYPO3_BIN" setup \
+    --no-interaction \
+    --driver=mysqli \
+    --host=db \
+    --port=3306 \
+    --dbname=db \
+    --username=root \
+    --password=root \
+    --admin-username=demo \
+    --admin-user-password='Z7Typo3Demo42#' \
+    --admin-email=demo@example.invalid \
+    --project-name="The Semantilizer demo" \
+    --create-site="${SITE_URL}" \
+    --server-type=other \
+    --force
+ok "TYPO3 setup complete"
+
+header "Step 4: DDEV configuration"
+mkdir -p /var/www/html/.build/config/system
+cp /var/www/html/Build/config-ddev/system/additional.php /var/www/html/.build/config/system/additional.php
+ok "Trusted hosts: *.ddev.site"
+
+header "Step 5: Caches"
+"$TYPO3_BIN" cache:flush
+ok "Caches flushed"
+
+if [ "$SKIP_SEED" = false ]; then
+    header "Step 6: Demo content"
+    /var/www/html/.ddev/commands/web/seed --force
+fi
+
+echo ""
+echo -e "${GREEN}✓ Initialization complete!${NC}"
+echo ""
+echo "  Frontend demo: ${SITE_URL}/semantilizer-demo"
+echo "  Backend:       ${SITE_URL}/typo3"
+echo "  User:          demo / Z7Typo3Demo42#"
+echo ""
+echo "  ddev test       # Run PHPUnit"
+echo "  ddev seed       # Re-import demo content"
+echo ""

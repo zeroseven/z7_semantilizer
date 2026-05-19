@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+## Description: Bootstrap extension demo page (TypoScript, CE, extension data)
+## Usage: seed [flags]
+## Example: "ddev seed" or "ddev seed --force"
+## Flags: [{"Name":"force","Shorthand":"f","Usage":"Replace existing demo content on demo page"}]
+
+set -Eeuo pipefail
+
+if [ -z "${IS_DDEV_PROJECT:-}" ]; then
+    if command -v ddev >/dev/null 2>&1 && [ -d ".ddev" ]; then
+        ddev exec bash -lc "/var/www/html/.ddev/commands/web/seed $*"
+        exit $?
+    fi
+fi
+
+GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; BLUE='\033[0;34m'; NC='\033[0m'
+info()   { echo -e "${YELLOW}$*${NC}"; }
+ok()     { echo -e "${GREEN}✓ $*${NC}"; }
+err()    { echo -e "${RED}✗ $*${NC}"; }
+header() { echo -e "${BLUE}━━━ $* ━━━${NC}"; }
+
+FORCE=false
+for arg in "$@"; do
+    case $arg in
+        --force|-f) FORCE=true ;;
+        --help|-h)
+            echo "Usage: ddev seed [--force]"
+            exit 0
+            ;;
+    esac
+done
+
+TYPO3_BIN="/var/www/html/.build/bin/typo3"
+SITE_URL="https://z7-semantilizer.ddev.site"
+
+echo ""; header "The Semantilizer Demo Bootstrap"; echo ""
+
+if [ ! -x "$TYPO3_BIN" ]; then
+    err "TYPO3 CLI not found. Run: ddev composer install"; exit 1
+fi
+if ! mysqladmin ping -h db -u root -proot --silent 2>/dev/null; then
+    err "Database not reachable. Run: ddev start"; exit 1
+fi
+if ! mysql -h db -u root -proot db -e "SELECT uid FROM pages LIMIT 1;" >/dev/null 2>&1; then
+    err "TYPO3 not installed — run: ddev init"; exit 1
+fi
+
+SEED_ARGS=""
+if [ "$FORCE" = true ]; then
+    SEED_ARGS="--force"
+fi
+
+"$TYPO3_BIN" z7_semantilizer_dev:bootstrap-demo $SEED_ARGS
+"$TYPO3_BIN" cache:flush
+
+echo ""
+ok "Demo ready: ${SITE_URL}/semantilizer-demo"
+echo ""

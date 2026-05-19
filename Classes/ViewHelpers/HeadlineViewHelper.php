@@ -21,6 +21,6 @@ class HeadlineViewHelper extends AbstractHeadlineViewHelper
             $relationId = $editSetup['table'] . ':' . $editSetup['uid'];
         }
 
-        return $this->renderHeadline((int)($this->arguments['type'] ?? 0), (string)$relationId);
+        return $this->renderHeadline((int) ($this->arguments['type'] ?? 0), (string) $relationId);
     }
 }

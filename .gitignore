@@ -1,4 +1,13 @@
 /node_modules
 .php_cs.cache
-/composer.lock
+/.build/
+/.phpunit.cache/
+/.php-cs-fixer.cache/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 /Resources/Private/JavaScript/Backend/TYPO3
+.ddev/.dbimageBuild/
+.ddev/.webimageBuild/
+.ddev/.ddev-docker-compose-*.yaml

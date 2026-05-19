@@ -1,2 +1,4 @@
 name: zeroseven/semantilizer
 label: 'Semantilizer'
+optionalDependencies:
+  - typo3/fluid-styled-content

@@ -15,7 +15,8 @@ use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\View\AbstractTemplateView;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 class ValidationEvent
@@ -26,7 +27,7 @@ class ValidationEvent
         PageRepository::DOKTYPE_BE_USER_SECTION,
         PageRepository::DOKTYPE_MOUNTPOINT,
         PageRepository::DOKTYPE_SPACER,
-        PageRepository::DOKTYPE_SYSFOLDER
+        PageRepository::DOKTYPE_SYSFOLDER,
     ];
 
     protected string $identifier;
@@ -39,8 +40,8 @@ class ValidationEvent
     {
         $this->identifier = uniqid('js-', false);
         $this->pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        $this->pageUid = (int)($_GET['id'] ?? 0);
-        $this->languageUid = (int)(BackendUtility::getModuleData([], null, 'web_layout')['language'] ?? 0);
+        $this->pageUid = (int) ($_GET['id'] ?? 0);
+        $this->languageUid = (int) (BackendUtility::getModuleData([], [], 'web_layout')['language'] ?? 0);
         $this->tsConfig = $this->getTsConfig();
     }
 
@@ -59,7 +60,7 @@ class ValidationEvent
             return BackendUtility::getRecordLocalization('pages', $this->pageUid, $this->languageUid)[0] ?? null;
         }
 
-        return BackendUtility::readPageAccess($this->pageUid, true) ?: null;
+        return BackendUtility::readPageAccess($this->pageUid, '') ?: null;
     }
 
     private function getPreviewUrl(): ?UriInterface
@@ -78,7 +79,7 @@ class ValidationEvent
             || empty($this->tsConfig)
 
             // The "doktype" must not be disabled
-            || in_array((int)($pageData['doktype'] ?? 0), array_merge(self::IGNORED_DOKTYPES, GeneralUtility::intExplode(',', ($this->tsConfig['disabledDoktypes'] ?? ''))), true)
+            || in_array((int) ($pageData['doktype'] ?? 0), array_merge(self::IGNORED_DOKTYPES, GeneralUtility::intExplode(',', ($this->tsConfig['disabledDoktypes'] ?? ''))), true)
 
             // The page uid must not be disabled
             || in_array($this->pageUid, GeneralUtility::intExplode(',', ($this->tsConfig['disabledPages'] ?? '')), true);
@@ -92,20 +93,31 @@ class ValidationEvent
         }
     }
 
-    private function createView(): AbstractTemplateView
+    private function renderPageHeaderTemplate(): string
     {
+        $templatePath = GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html');
+
+        if (interface_exists(ViewFactoryInterface::class)) {
+            $view = GeneralUtility::makeInstance(ViewFactoryInterface::class)->create(
+                new ViewFactoryData(templatePathAndFilename: $templatePath),
+            );
+            $view->assign('identifier', $this->identifier);
+
+            return $view->render();
+        }
+
         $view = GeneralUtility::makeInstance(StandaloneView::class);
-        $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:z7_semantilizer/Resources/Private/Templates/Backend/PageHeader.html'));
+        $view->setTemplatePathAndFilename($templatePath);
         $view->assign('identifier', $this->identifier);
 
-        return $view;
+        return $view->render();
     }
 
     /** @throws JsonException */
     private function render(): string
     {
         // Define JavaScript parameters
-        $url = (string)$this->getPreviewUrl();
+        $url = (string) $this->getPreviewUrl();
         $id = $this->identifier;
         $contentSelectors = GeneralUtility::trimExplode(',', ($this->tsConfig['contentSelectors'] ?? ''));
 
@@ -122,7 +134,7 @@ class ValidationEvent
         $this->clearCache();
 
         // Render view
-        return $this->createView()->render();
+        return $this->renderPageHeaderTemplate();
     }
 
     /** @throws JsonException */

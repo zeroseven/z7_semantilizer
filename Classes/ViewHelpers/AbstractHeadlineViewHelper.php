@@ -43,16 +43,16 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         if (is_array($value)) {
             return [
                 'table' => $value['table'] ?? null,
-                'uid' => (int)($value['uid'] ?? 0),
-                'field' => $value['field'] ?? null
+                'uid' => (int) ($value['uid'] ?? 0),
+                'field' => $value['field'] ?? null,
             ];
         }
 
         if (is_string($value) && preg_match('/^(\w+):(\d+)(?::(\w+))?$/', $value, $matches)) {
             return [
                 'table' => $matches[1],
-                'uid' => (int)$matches[2],
-                'field' => $matches[3] ?? null
+                'uid' => (int) $matches[2],
+                'field' => $matches[3] ?? null,
             ];
         }
 
@@ -75,7 +75,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
                 && ($localizedRecord = BackendUtility::getRecordLocalization($table, $uid, $languageUid))
                 && ($localizedUid = reset($localizedRecord)['uid'] ?? null)
             ) {
-                $uid = (int)$localizedUid;
+                $uid = (int) $localizedUid;
             }
         } catch (AspectNotFoundException $e) {
             return null;
@@ -100,7 +100,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
         return array_filter([
             'table' => $table,
             'uid' => $uid,
-            'field' => $field
+            'field' => $field,
         ]);
     }
 
@@ -126,7 +126,7 @@ class AbstractHeadlineViewHelper extends AbstractTagBasedViewHelper
     protected function renderHeadline(int $type, ?string $relationId = null): string
     {
         // Set content or abort if empty
-        if ($content = trim((string)($this->arguments['content'] ?: $this->renderChildren()))) {
+        if ($content = trim((string) ($this->arguments['content'] ?: $this->renderChildren()))) {
             $this->tag->setContent($content);
         } else {
             return '';

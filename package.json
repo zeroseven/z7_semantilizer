@@ -7,12 +7,21 @@
     "typescript_target": "./Resources/Private/JavaScript/Backend/TYPO3/"
   },
   "scripts": {
+    "typo3:build": "bash scripts/build-typo3.sh",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:install": "playwright install --with-deps chromium",
+    "test:unit": "composer test:unit",
+    "test:functional": "ddev test --functional",
+    "test:php": "ddev test",
+    "test:all": "ddev test && npm run test:e2e",
     "load-source": "git clone --no-checkout $npm_package_config_typo3_repository $npm_package_config_typescript_target && cd $npm_package_config_typescript_target && git sparse-checkout set $npm_package_config_typescript_folder && git reset --hard HEAD && mv $npm_package_config_typescript_folder/* .",
     "postinstall": "test -d $npm_package_config_typescript_target || npm run load-source",
     "build": "gulp build",
     "build-dev": "GULP_CONTEXT=development gulp build"
   },
   "devDependencies": {
+    "@playwright/test": "^1.50.0",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-clean-css": "^4.3.0",

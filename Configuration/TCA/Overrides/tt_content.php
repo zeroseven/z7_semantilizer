@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 defined('TYPO3') || die('✘');
 
 call_user_func(static function () {
@@ -18,43 +20,43 @@ call_user_func(static function () {
                 'items' => [
                     [
                         'label' => 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.semantic',
-                        'value' => '--div--'
+                        'value' => '--div--',
                     ],
                     [
                         'label' => 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.1',
-                        'value' => 1
+                        'value' => 1,
                     ],
                     [
                         'label' => 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.2',
-                        'value' => 2
+                        'value' => 2,
                     ],
                     [
                         'label' => 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.3',
-                        'value' => 3
+                        'value' => 3,
                     ],
                     [
                         'label' => 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.4',
-                        'value' => 4
+                        'value' => 4,
                     ],
                     [
                         'label' => 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.5',
-                        'value' => 5
+                        'value' => 5,
                     ],
                     [
                         'label' => 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.6',
-                        'value' => 6
+                        'value' => 6,
                     ],
                     [
                         'label' => 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.no_semantic',
-                        'value' => '--div--'
+                        'value' => '--div--',
                     ],
                     [
                         'label' => 'LLL:EXT:z7_semantilizer/Resources/Private/Language/locallang_db.xlf:tt_content.header_type.0',
-                        'value' => 0
-                    ]
-                ]
-            ]
-        ]
+                        'value' => 0,
+                    ],
+                ],
+            ],
+        ],
     ]);
 
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('tt_content', 'header', 'header_type', 'after:header_layout');

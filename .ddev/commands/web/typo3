@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+## Description: Run TYPO3 CLI commands
+## Usage: typo3 [flags] [args]
+## Example: "ddev typo3 cache:flush"
+
+/var/www/html/.build/bin/typo3 "$@"

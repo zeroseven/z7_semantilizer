@@ -1,0 +1,34 @@
+# Projektspezifische Demo-/DDEV-Werte — Quelle für Skripte, dev-Paket, Tests, README.
+
+extension:
+  key: z7_semantilizer
+  composer_package: zeroseven/z7-semantilizer
+  label: The Semantilizer
+
+ddev:
+  name: z7-semantilizer
+  site_url: https://z7-semantilizer.ddev.site
+
+php:
+  minimum: "8.3"
+  minimum_id: 80300
+
+demo:
+  enabled: true
+  strategy: cli
+  dev_extension_key: z7_semantilizer_dev
+  dev_composer_package: zeroseven/z7-semantilizer-dev
+  bootstrap_command: z7_semantilizer_dev:bootstrap-demo
+  marker: z7_semantilizer_dev
+  page_slug: semantilizer-demo
+  page_title: Semantilizer demo
+  post_seed_cli: []
+
+content:
+  ctype: text
+
+typo3:
+  static_includes:
+    - EXT:fluid_styled_content/Configuration/TypoScript/
+    - EXT:fluid_styled_content/Configuration/TypoScript/Styling/
+    - EXT:z7_semantilizer/Configuration/TypoScript/

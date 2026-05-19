@@ -1,0 +1,20 @@
+includes:
+    - .build/vendor/phpstan/phpstan-phpunit/extension.neon
+
+parameters:
+    level: 6
+    phpVersion: 80300
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    paths:
+        - Classes
+        - Tests
+        - Configuration
+    excludePaths:
+        - ext_emconf.php
+        - Build/z7_semantilizer_dev
+    ignoreErrors:
+        - identifier: missingType.iterableValue
+          path: Classes/*
+        - identifier: missingType.parameter
+          path: Classes/ViewHelpers/*

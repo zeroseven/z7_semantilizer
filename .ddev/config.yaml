@@ -1,0 +1,32 @@
+name: z7-semantilizer
+type: typo3
+docroot: .build/public
+php_version: "8.3"
+webserver_type: nginx-fpm
+database:
+    type: mariadb
+    version: "10.11"
+use_dns_when_possible: true
+composer_version: "2"
+xdebug_enabled: false
+additional_hostnames: []
+additional_fqdns: []
+web_environment:
+    - TYPO3_CONTEXT=Development/DDEV
+    - TYPO3_PATH_APP=/var/www/html/.build
+    - typo3DatabaseHost=db
+    - typo3DatabaseUsername=root
+    - typo3DatabasePassword=root
+    - typo3DatabaseName=db
+hooks:
+    post-start:
+        - exec: |
+            if [ -d "/var/www/html/config" ] && [ ! -L "/var/www/html/config" ]; then
+              rm -rf /var/www/html/.build/config
+              mv /var/www/html/config /var/www/html/.build/config
+            fi
+            if [ -d "/var/www/html/var" ] && [ ! -L "/var/www/html/var" ]; then
+              rm -rf /var/www/html/.build/var
+              mv /var/www/html/var /var/www/html/.build/var
+            fi
+        - composer: install

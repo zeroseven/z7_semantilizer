@@ -1,0 +1,78 @@
+name: CI
+
+on:
+    push:
+        branches: [main, master, 'feature/**']
+    pull_request:
+        branches: [main, master]
+
+jobs:
+    lint:
+        name: Lint & static analysis (PHP ${{ matrix.php-version }})
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                php-version: ['8.3', '8.4']
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Cache Composer dependencies
+              uses: actions/cache@v4
+              with:
+                  path: ~/.composer/cache
+                  key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.json') }}
+                  restore-keys: composer-${{ runner.os }}-${{ matrix.php-version }}-
+
+            - name: Set PHP version
+              env:
+                  PHP_VERSION: ${{ matrix.php-version }}
+              run: |
+                  sed -i "s/^php_version:.*/php_version: \"${PHP_VERSION}\"/" .ddev/config.yaml
+
+            - name: Setup DDEV
+              uses: ddev/github-action-setup-ddev@v1
+
+            - name: Install dependencies
+              run: ddev composer install
+
+            - name: PHPStan
+              run: ddev composer phpstan
+
+            - name: PHP-CS-Fixer (dry-run)
+              run: ddev composer cs:check
+
+    tests:
+        name: Tests (PHP ${{ matrix.php-version }}, ${{ matrix.test-type }})
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                php-version: ['8.3', '8.4']
+                test-type: [unit, functional]
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Cache Composer dependencies
+              uses: actions/cache@v4
+              with:
+                  path: ~/.composer/cache
+                  key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.json') }}
+                  restore-keys: composer-${{ runner.os }}-${{ matrix.php-version }}-
+
+            - name: Set PHP version
+              env:
+                  PHP_VERSION: ${{ matrix.php-version }}
+              run: |
+                  sed -i "s/^php_version:.*/php_version: \"${PHP_VERSION}\"/" .ddev/config.yaml
+
+            - name: Setup DDEV
+              uses: ddev/github-action-setup-ddev@v1
+
+            - name: Install dependencies
+              run: ddev composer install
+
+            - name: Run tests
+              run: ddev composer test:${{ matrix.test-type }}

@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Zeroseven\SemantilizerDev\:
+    resource: '../Classes/*'
+
+  Zeroseven\SemantilizerDev\Command\BootstrapDemoCommand:
+    tags:
+      - name: console.command
+        command: z7_semantilizer_dev:bootstrap-demo
+        description: 'Semantilizer demo bootstrap'
