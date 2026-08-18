@@ -44,7 +44,8 @@ final class PreviewController
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
         private readonly SiteFinder $siteFinder,
-    ) {}
+    ) {
+    }
 
     /**
      * Proxies one frontend preview after repeating page and language access checks at the endpoint boundary.
