@@ -27,6 +27,13 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Loads the frontend page server-side for the Semantilizer backend UI.
+ *
+ * The browser only calls this authenticated same-origin route. The controller resolves the actual frontend URL,
+ * transfers the current backend session to its target domain and returns the resulting HTML. This avoids CORS while
+ * preserving TYPO3 preview behavior for hidden pages, workspaces and languages.
+ */
 #[AsController]
 final class PreviewController
 {
@@ -39,6 +46,9 @@ final class PreviewController
         private readonly SiteFinder $siteFinder,
     ) {}
 
+    /**
+     * Proxies one frontend preview after repeating page and language access checks at the endpoint boundary.
+     */
     public function fetch(ServerRequestInterface $request): ResponseInterface
     {
         $pageUid = (int)($request->getQueryParams()['pageUid'] ?? 0);
@@ -60,6 +70,7 @@ final class PreviewController
             return $this->createErrorResponse(403, 'Language access denied');
         }
 
+        // Keep TYPO3's native preview semantics instead of rebuilding frontend URLs in the extension.
         $previewUri = PreviewUriBuilder::create($pageUid)->withLanguage($languageUid)->buildUri();
         if (!$previewUri instanceof UriInterface) {
             return $this->createErrorResponse(404, 'Preview URL could not be generated');
@@ -68,6 +79,9 @@ final class PreviewController
         $allowedHosts = $this->getAllowedHosts($request);
         try {
             $this->assertAllowedUri($previewUri, $allowedHosts);
+
+            // Backend session JWTs are bound to a cookie domain and path. Reissue the current session for the
+            // frontend target so its TYPO3 request still recognizes the editor, workspace and preview permissions.
             $cookieScope = $this->createCookieScope($previewUri->getHost(), $request);
             $sessionCookie = new SetCookie([
                 'Name' => BackendUserAuthentication::getCookieName(),
@@ -86,6 +100,7 @@ final class PreviewController
                     'strict' => true,
                     'referer' => false,
                     'on_redirect' => function (RequestInterface $redirectRequest, ResponseInterface $redirectResponse, UriInterface $redirectUri) use ($allowedHosts): void {
+                        // Redirects must not turn this endpoint into an unrestricted server-side HTTP proxy.
                         $this->assertAllowedUri($redirectUri, $allowedHosts);
                     },
                 ],
@@ -121,13 +136,18 @@ final class PreviewController
             return $this->createErrorResponse(502, 'Frontend preview is too large');
         }
 
+        // Intentionally return only the HTML body; frontend headers and cookies must not leak into the backend.
         return $this->responseFactory->createResponse()
             ->withHeader('Cache-Control', 'no-store')
             ->withHeader('Content-Type', 'text/html; charset=utf-8')
             ->withBody($this->streamFactory->createStream($html));
     }
 
-    /** @return list<string> */
+    /**
+     * Builds the SSRF allow-list from configured site hosts and the current host used by relative site bases.
+     *
+     * @return list<string>
+     */
     private function getAllowedHosts(ServerRequestInterface $request): array
     {
         $hosts = array_filter(array_map(
@@ -152,6 +172,9 @@ final class PreviewController
         }
     }
 
+    /**
+     * Reproduces TYPO3's backend cookie scope for the frontend target instead of the current backend host.
+     */
     private function createCookieScope(string $targetHost, ServerRequestInterface $request): CookieScope
     {
         $normalizedParams = $request->getAttribute('normalizedParams');

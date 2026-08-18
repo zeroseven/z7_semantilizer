@@ -63,6 +63,7 @@ export class Semantilizer {
       }
     };
 
+    // The backend proxy adds preview credentials server-side, keeping this browser request same-origin.
     request.open('GET', this.url, true);
     request.send();
   }

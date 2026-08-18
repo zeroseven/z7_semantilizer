@@ -98,7 +98,7 @@ class ValidationEvent
     /** @throws JsonException */
     private function render(): string
     {
-        // Define JavaScript parameters
+        // Give JavaScript a same-origin backend URL; the controller resolves and loads the actual frontend domain.
         $url = (string)$this->uriBuilder->buildUriFromRoute('ajax_semantilizer_preview', [
             'pageUid' => $this->pageUid,
             'languageUid' => $this->languageUid,
