@@ -14,12 +14,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractMiddleware implements MiddlewareInterface
 {
-    protected function isSemantilizerRequest(ServerRequestInterface $request, bool $requireLogin = null): bool
+    protected function isSemantilizerRequest(ServerRequestInterface $request): bool
     {
-        $headerExists = !empty($request->getHeader('X-Semantilizer'));
+        if (!$request->hasHeader('X-Semantilizer')) {
+            return false;
+        }
 
         try {
-            return $headerExists && (!$requireLogin || GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('backend.user', 'isLoggedIn', false));
+            return GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('backend.user', 'isLoggedIn', false);
         } catch (AspectNotFoundException) {
             return false;
         }

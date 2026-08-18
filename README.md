@@ -41,11 +41,10 @@ possibly be there.
 
 ## Setup
 
-### Multi-Site / Cross-Origin Setup
+### Multi-Site Setup
 
-For multi-site TYPO3 installations where the Semantilizer needs to work across different domains, additional webserver configuration may be required. See **[CORS-SETUP.md](CORS-SETUP.md)** for detailed instructions.
-
-Note: This is only needed for cross-origin scenarios. Same-origin usage works out of the box.
+The frontend preview is loaded through an authenticated TYPO3 backend endpoint. Multi-site installations therefore work
+across domains without additional CORS, Content Security Policy or webserver configuration.
 
 ### Render headlines
 

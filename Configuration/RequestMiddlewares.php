@@ -2,16 +2,10 @@
 
 return [
     'frontend' => [
-        'zeroseven/z7_semantilizer/cache-control' => [
-            'target' => \Zeroseven\Semantilizer\Middleware\CacheControl::class,
+        'zeroseven/z7_semantilizer/request' => [
+            'target' => \Zeroseven\Semantilizer\Middleware\Request::class,
             'after' => [
                 'typo3/cms-frontend/tsfe'
-            ]
-        ],
-        'zeroseven/z7_semantilizer/cors-headers' => [
-            'target' => \Zeroseven\Semantilizer\Middleware\CorsHeaders::class,
-            'after' => [
-                'typo3/cms-frontend/site'
             ]
         ],
         'zeroseven/z7_semantilizer/user-ts-config' => [

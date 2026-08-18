@@ -9,16 +9,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-class CacheControl extends AbstractMiddleware
+class Request extends AbstractMiddleware
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // Disable cache on some conditions
-        $this->isSemantilizerRequest($request, true)
+        $this->isSemantilizerRequest($request)
         && $GLOBALS['TSFE'] instanceof TypoScriptFrontendController
         && $GLOBALS['TSFE']->set_no_cache(sprintf('Semantilizer frontend request (%s, line %d)', self::class, __LINE__));
 
-        // Go your way …
         return $handler->handle($request);
     }
 }
