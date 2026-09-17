@@ -63,8 +63,8 @@ export class Semantilizer {
       }
     };
 
-    request.open('GET', (this.url.indexOf('#') < 0 ? this.url : this.url.substr(0, this.url.indexOf('#'))) + '#' + Math.random().toString(36).slice(2), true);
-    request.setRequestHeader('X-Semantilizer', 'true');
+    // The backend proxy adds preview credentials server-side, keeping this browser request same-origin.
+    request.open('GET', this.url, true);
     request.send();
   }
 

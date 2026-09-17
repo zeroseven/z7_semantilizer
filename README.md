@@ -41,6 +41,11 @@ possibly be there.
 
 ## Setup
 
+### Multi-Site Setup
+
+The frontend preview is loaded through an authenticated TYPO3 backend endpoint. Multi-site installations therefore work
+across domains without additional CORS, Content Security Policy or webserver configuration.
+
 ### Render headlines
 
 You’ll need to render your headlines via an extra ViewHelper in order to be able to edit or correct them automatically

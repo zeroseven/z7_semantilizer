@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Zeroseven\Semantilizer\Events;
 
 use JsonException;
-use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Backend\Controller\Event\ModifyPageLayoutContentEvent;
-use TYPO3\CMS\Backend\Routing\PreviewUriBuilder;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
@@ -35,7 +34,7 @@ class ValidationEvent
     protected int $languageUid;
     protected array $tsConfig;
 
-    public function __construct()
+    public function __construct(private readonly UriBuilder $uriBuilder)
     {
         $this->identifier = uniqid('js-', false);
         $this->pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
@@ -60,11 +59,6 @@ class ValidationEvent
         }
 
         return BackendUtility::readPageAccess($this->pageUid, true) ?: null;
-    }
-
-    private function getPreviewUrl(): ?UriInterface
-    {
-        return PreviewUriBuilder::create($this->pageUid)->withLanguage($this->languageUid)->buildUri();
     }
 
     private function skipSemantilizer(): bool
@@ -104,8 +98,11 @@ class ValidationEvent
     /** @throws JsonException */
     private function render(): string
     {
-        // Define JavaScript parameters
-        $url = (string)$this->getPreviewUrl();
+        // Give JavaScript a same-origin backend URL; the controller resolves and loads the actual frontend domain.
+        $url = (string)$this->uriBuilder->buildUriFromRoute('ajax_semantilizer_preview', [
+            'pageUid' => $this->pageUid,
+            'languageUid' => $this->languageUid,
+        ]);
         $id = $this->identifier;
         $contentSelectors = GeneralUtility::trimExplode(',', ($this->tsConfig['contentSelectors'] ?? ''));
 

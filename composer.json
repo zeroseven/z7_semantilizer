@@ -63,7 +63,7 @@
       "php-cs-fixer fix -v --dry-run --using-cache no --diff"
     ],
     "test-php-cs-fixer-fix": [
-      "php-cs-fixer fix -v --using-cache false"
+      "php-cs-fixer fix"
     ],
     "prepare-release": [
       "rm .editorconfig",
